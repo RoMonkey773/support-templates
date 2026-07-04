@@ -28,6 +28,7 @@
             --accent: #7c3aed;
             --accent-hover: #6d28d9;
             --input-bg: #ede9fe;
+            --scrollbar-track: rgba(255,255,255,0.15);
         }
         body.theme-purple.dark {
             --bg-main: #1e1b4b;
@@ -41,6 +42,7 @@
             --accent: #8b5cf6;
             --accent-hover: #7c3aed;
             --input-bg: #5b21b6;
+            --scrollbar-track: rgba(255,255,255,0.1);
         }
         body.theme-wb {
             --bg-main: #f8f9fa;
@@ -54,6 +56,7 @@
             --accent: #6c3eb8;
             --accent-hover: #5a2d9e;
             --input-bg: #f1f3f5;
+            --scrollbar-track: rgba(255,255,255,0.1);
         }
         body.theme-wb.dark {
             --bg-main: #0f0f1a;
@@ -67,6 +70,7 @@
             --accent: #8b5cf6;
             --accent-hover: #7c3aed;
             --input-bg: #2d2d4a;
+            --scrollbar-track: rgba(255,255,255,0.08);
         }
         body {
             background: var(--bg-main);
@@ -101,10 +105,10 @@
             margin-right: -5px;
         }
         .sidebar .theme-scroll::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
         .sidebar .theme-scroll::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
+            background: var(--scrollbar-track);
             border-radius: 10px;
         }
         .sidebar .theme-scroll::-webkit-scrollbar-thumb {
@@ -246,12 +250,17 @@
             width: 6px;
         }
         .content .templates-scroll::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.06);
             border-radius: 10px;
         }
         .content .templates-scroll::-webkit-scrollbar-thumb {
             background: var(--accent);
             border-radius: 10px;
+        }
+        /* ===== СКРОЛЛ ДЛЯ ВСЕГО САЙТА (Firefox) ===== */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--scrollbar-track, rgba(255,255,255,0.1));
         }
         .template-card {
             background: var(--bg-card);
