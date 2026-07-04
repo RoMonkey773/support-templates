@@ -4,146 +4,148 @@
     <meta charset="UTF-8">
     <title>База знаний поддержки</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f4f7fc;
-            height: 100vh;
-            display: flex;
-        }
-        .sidebar {
-            width: 280px;
-            background: #1e293b;
-            color: white;
-            padding: 30px 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar h2 {
-            font-size: 22px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 15px;
-        }
-        .theme-btn {
-            display: block;
-            width: 100%;
-            padding: 14px 18px;
-            margin-bottom: 8px;
-            background: transparent;
-            color: #cbd5e1;
-            border: none;
-            border-radius: 10px;
-            text-align: left;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .theme-btn:hover {
-            background: #334155;
-            color: white;
-        }
-        .theme-btn.active {
-            background: #3b82f6;
-            color: white;
-            font-weight: bold;
-        }
-        .sidebar .refresh-btn {
-            margin-top: auto;
-            padding: 12px;
-            background: #334155;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .sidebar .refresh-btn:hover {
-            background: #475569;
-        }
-        .content {
-            flex: 1;
-            padding: 40px 50px;
-            overflow-y: auto;
-            background: white;
-        }
-        .content h1 {
-            font-size: 28px;
-            color: #0f172a;
-            margin-bottom: 10px;
-        }
-        .content .subtitle {
-            color: #64748b;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-        .template-card {
-            background: #f8fafc;
-            border-left: 5px solid #3b82f6;
-            padding: 20px 25px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        .template-text {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #1e293b;
-            white-space: pre-wrap;
-            flex: 1;
-        }
-        .copy-btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: 0.2s;
-            height: 36px;
-        }
-        .copy-btn:hover {
-            background: #2563eb;
-        }
-        .copy-btn.copied {
-            background: #22c55e;
-        }
-        .empty-state {
-            color: #94a3b8;
-            font-size: 18px;
-            margin-top: 50px;
-            text-align: center;
-        }
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 18px;
-            color: #64748b;
-        }
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
-        @media (max-width: 700px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; }
-            .content { padding: 20px; }
-        }
-    </style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #0f172a;
+        height: 100vh;
+        display: flex;
+        color: #e2e8f0;
+    }
+    .sidebar {
+        width: 280px;
+        background: #1e293b;
+        padding: 30px 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #334155;
+    }
+    .sidebar h2 {
+        font-size: 22px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 15px;
+        color: #f1f5f9;
+    }
+    .theme-btn {
+        display: block;
+        width: 100%;
+        padding: 14px 18px;
+        margin-bottom: 8px;
+        background: transparent;
+        color: #94a3b8;
+        border: none;
+        border-radius: 10px;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .theme-btn:hover {
+        background: #334155;
+        color: #f1f5f9;
+    }
+    .theme-btn.active {
+        background: #3b82f6;
+        color: white;
+        font-weight: bold;
+    }
+    .sidebar .refresh-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #334155;
+        border: none;
+        border-radius: 10px;
+        color: #e2e8f0;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .sidebar .refresh-btn:hover {
+        background: #475569;
+    }
+    .content {
+        flex: 1;
+        padding: 40px 50px;
+        overflow-y: auto;
+        background: #0f172a;
+    }
+    .content h1 {
+        font-size: 28px;
+        color: #f1f5f9;
+        margin-bottom: 10px;
+    }
+    .content .subtitle {
+        color: #94a3b8;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+    .template-card {
+        background: #1e293b;
+        border-left: 5px solid #3b82f6;
+        padding: 20px 25px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .template-text {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        flex: 1;
+    }
+    .copy-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: 0.2s;
+        height: 36px;
+    }
+    .copy-btn:hover {
+        background: #2563eb;
+    }
+    .copy-btn.copied {
+        background: #22c55e;
+    }
+    .empty-state {
+        color: #64748b;
+        font-size: 18px;
+        margin-top: 50px;
+        text-align: center;
+    }
+    .loading {
+        text-align: center;
+        padding: 50px;
+        font-size: 18px;
+        color: #94a3b8;
+    }
+    .error {
+        background: #7f1d1d;
+        color: #fca5a5;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+    @media (max-width: 700px) {
+        body { flex-direction: column; }
+        .sidebar { width: 100%; height: auto; }
+        .content { padding: 20px; }
+    }
+</style>
 </head>
 <body>
 
