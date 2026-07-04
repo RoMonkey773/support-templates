@@ -4,153 +4,175 @@
     <meta charset="UTF-8">
     <title>База знаний поддержки</title>
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    body {
-        font-family: 'Segoe UI', Arial, sans-serif;
-        background: #0f172a;
-        height: 100vh;
-        display: flex;
-        color: #e2e8f0;
-    }
-    .sidebar {
-        width: 280px;
-        background: #1e293b;
-        padding: 30px 20px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        border-right: 1px solid #334155;
-    }
-    .sidebar h2 {
-        font-size: 22px;
-        margin-bottom: 30px;
-        border-bottom: 2px solid #3b82f6;
-        padding-bottom: 15px;
-        color: #f1f5f9;
-    }
-    .theme-btn {
-        display: block;
-        width: 100%;
-        padding: 14px 18px;
-        margin-bottom: 8px;
-        background: transparent;
-        color: #94a3b8;
-        border: none;
-        border-radius: 10px;
-        text-align: left;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .theme-btn:hover {
-        background: #334155;
-        color: #f1f5f9;
-    }
-    .theme-btn.active {
-        background: #3b82f6;
-        color: white;
-        font-weight: bold;
-    }
-    .sidebar .refresh-btn {
-        margin-top: auto;
-        padding: 12px;
-        background: #334155;
-        border: none;
-        border-radius: 10px;
-        color: #e2e8f0;
-        font-size: 14px;
-        cursor: pointer;
-    }
-    .sidebar .refresh-btn:hover {
-        background: #475569;
-    }
-    .content {
-        flex: 1;
-        padding: 40px 50px;
-        overflow-y: auto;
-        background: #0f172a;
-    }
-    .content h1 {
-        font-size: 28px;
-        color: #f1f5f9;
-        margin-bottom: 10px;
-    }
-    .content .subtitle {
-        color: #94a3b8;
-        margin-bottom: 30px;
-        font-size: 16px;
-    }
-    .template-card {
-        background: #1e293b;
-        border-left: 5px solid #3b82f6;
-        padding: 20px 25px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    .template-text {
-        font-size: 15px;
-        line-height: 1.6;
-        color: #e2e8f0;
-        white-space: pre-wrap;
-        flex: 1;
-    }
-    .copy-btn {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        padding: 8px 18px;
-        border-radius: 20px;
-        font-size: 14px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: 0.2s;
-        height: 36px;
-    }
-    .copy-btn:hover {
-        background: #2563eb;
-    }
-    .copy-btn.copied {
-        background: #22c55e;
-    }
-    .empty-state {
-        color: #64748b;
-        font-size: 18px;
-        margin-top: 50px;
-        text-align: center;
-    }
-    .loading {
-        text-align: center;
-        padding: 50px;
-        font-size: 18px;
-        color: #94a3b8;
-    }
-    .error {
-        background: #7f1d1d;
-        color: #fca5a5;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 20px 0;
-    }
-    @media (max-width: 700px) {
-        body { flex-direction: column; }
-        .sidebar { width: 100%; height: auto; }
-        .content { padding: 20px; }
-    }
-</style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f7fc;
+            height: 100vh;
+            display: flex;
+        }
+        .sidebar {
+            width: 280px;
+            background: #1e293b;
+            color: white;
+            padding: 30px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 15px;
+        }
+        /* Стили для поля поиска */
+        #searchInput {
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #334155;
+            color: #e2e8f0;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+            margin-bottom: 15px;
+        }
+        #searchInput::placeholder {
+            color: #94a3b8;
+        }
+        #searchInput:focus {
+            background: #475569;
+        }
+        .theme-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            background: transparent;
+            color: #cbd5e1;
+            border: none;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .theme-btn:hover {
+            background: #334155;
+            color: white;
+        }
+        .theme-btn.active {
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+        }
+        .sidebar .refresh-btn {
+            margin-top: auto;
+            padding: 12px;
+            background: #334155;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .sidebar .refresh-btn:hover {
+            background: #475569;
+        }
+        .content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+            background: white;
+        }
+        .content h1 {
+            font-size: 28px;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+        .content .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .template-card {
+            background: #f8fafc;
+            border-left: 5px solid #3b82f6;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .template-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1e293b;
+            white-space: pre-wrap;
+            flex: 1;
+        }
+        .template-text strong {
+            color: #3b82f6;
+        }
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            height: 36px;
+        }
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+        .copy-btn.copied {
+            background: #22c55e;
+        }
+        .empty-state {
+            color: #94a3b8;
+            font-size: 18px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #64748b;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        @media (max-width: 700px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; }
+            .content { padding: 20px; }
+        }
+    </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>📂 Темы</h2>
+        <!-- ПОЛЕ ПОИСКА -->
+        <input type="text" id="searchInput" placeholder="🔍 Поиск по шаблонам...">
         <div id="themeList">
             <div style="color:#94a3b8;padding:10px;">Загрузка...</div>
         </div>
@@ -163,17 +185,19 @@
             <div class="subtitle" id="themeDesc">Подождите, идёт загрузка данных</div>
         </div>
         <div id="templatesContainer">
-            <div class="loading">⏳ Загрузка шаблонов из Google Таблицы...</div>
+            <div class="loading">⏳ Загрузка шаблонов...</div>
         </div>
     </div>
 
     <script>
-        // ВАША ССЫЛКА НА APPS SCRIPT
+        // ====== ССЫЛКА НА ТВОЙ APP SCRIPT ======
         const API_URL = 'https://script.google.com/macros/s/AKfycbynFsvoNtkTVPF15uX4nOZlIYppMTmBsrv17F1GqTsTHvJli5sv13sRWBUmrWJJrkO6XA/exec?callback=?';
 
         let currentTheme = null;
         let allData = {};
+        let searchQuery = '';
 
+        // ====== ЗАГРУЗКА ДАННЫХ ИЗ GOOGLE TABLICY ======
         async function loadData() {
             const themeList = document.getElementById('themeList');
             const container = document.getElementById('templatesContainer');
@@ -186,17 +210,14 @@
             desc.textContent = 'Подождите, идёт загрузка данных';
 
             try {
-                // 1. Запрашиваем данные
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error('Ошибка загрузки: ' + response.status);
-                const data = await response.json(); // ← читаем JSON
+                const data = await response.json();
 
-                // 2. Проверяем, что данные есть
                 if (!data || data.length === 0) {
                     throw new Error('В таблице нет данных');
                 }
 
-                // 3. Группируем по темам
                 const newData = {};
                 data.forEach(row => {
                     const topic = row.topic || 'Без темы';
@@ -229,17 +250,16 @@
                 themeList.innerHTML = `<div style="color:#ef4444;padding:10px;">❌ Ошибка</div>`;
                 container.innerHTML = `
                     <div class="error">
-                        ❌ Не удалось загрузить данные из Google Таблицы.<br>
-                        Проверьте, что ссылка правильная, и таблица опубликована.<br>
-                        <br><b>Подробности:</b> ${error.message}
-                        <br><br>🔄 Нажмите кнопку «Обновить данные» внизу слева.
+                        ❌ Не удалось загрузить данные.<br>
+                        <b>Ошибка:</b> ${error.message}
                     </div>
                 `;
                 title.textContent = 'Ошибка';
-                desc.textContent = 'Проверьте подключение и ссылку на таблицу';
+                desc.textContent = 'Проверьте подключение';
             }
         }
 
+        // ====== ОТРИСОВКА БОКОВОГО МЕНЮ ======
         function renderSidebar() {
             const container = document.getElementById('themeList');
             container.innerHTML = '';
@@ -255,6 +275,8 @@
                 btn.dataset.theme = key;
                 btn.addEventListener('click', function() {
                     currentTheme = this.dataset.theme;
+                    searchQuery = '';
+                    document.getElementById('searchInput').value = '';
                     renderSidebar();
                     renderContent();
                 });
@@ -262,11 +284,78 @@
             });
         }
 
+        // ====== ОТРИСОВКА ШАБЛОНОВ (С ПОДДЕРЖКОЙ ПОИСКА) ======
         function renderContent() {
             const container = document.getElementById('templatesContainer');
             const title = document.getElementById('themeTitle');
             const desc = document.getElementById('themeDesc');
 
+            // --- РЕЖИМ ПОИСКА ---
+            if (searchQuery) {
+                let allTemplates = [];
+                const themeKeys = Object.keys(allData);
+                themeKeys.forEach(themeKey => {
+                    const theme = allData[themeKey];
+                    if (theme && theme.templates) {
+                        theme.templates.forEach(text => {
+                            allTemplates.push({
+                                theme: themeKey,
+                                text: text,
+                                desc: theme.desc || ''
+                            });
+                        });
+                    }
+                });
+
+                const filtered = allTemplates.filter(item =>
+                    item.text.toLowerCase().includes(searchQuery) ||
+                    item.theme.toLowerCase().includes(searchQuery) ||
+                    item.desc.toLowerCase().includes(searchQuery)
+                );
+
+                if (filtered.length === 0) {
+                    title.textContent = '🔍 Результаты поиска';
+                    desc.textContent = 'Ничего не найдено';
+                    container.innerHTML = '<div class="empty-state">😕 По вашему запросу ничего не найдено</div>';
+                    return;
+                }
+
+                title.textContent = '🔍 Результаты поиска';
+                desc.textContent = `Найдено ${filtered.length} шаблонов`;
+
+                container.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'template-text';
+                    textDiv.innerHTML = `<strong>${item.theme}</strong><br>${item.text}`;
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Копировать';
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(item.text).then(() => {
+                            this.textContent = '✅ Скопировано!';
+                            this.classList.add('copied');
+                            setTimeout(() => {
+                                this.textContent = '📋 Копировать';
+                                this.classList.remove('copied');
+                            }, 2000);
+                        }).catch(() => {
+                            alert('Не удалось скопировать текст.');
+                        });
+                    });
+
+                    card.appendChild(textDiv);
+                    card.appendChild(copyBtn);
+                    container.appendChild(card);
+                });
+                return;
+            }
+
+            // --- ОБЫЧНЫЙ РЕЖИМ (ПОКАЗ ТЕКУЩЕЙ ТЕМЫ) ---
             if (!currentTheme || !allData[currentTheme]) {
                 const keys = Object.keys(allData);
                 if (keys.length > 0) {
@@ -284,36 +373,51 @@
             desc.textContent = theme.desc || 'Шаблоны ответов';
 
             container.innerHTML = '';
-            theme.templates.forEach((text) => {
-                const card = document.createElement('div');
-                card.className = 'template-card';
+            if (theme && theme.templates) {
+                theme.templates.forEach((text) => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
 
-                const textDiv = document.createElement('div');
-                textDiv.className = 'template-text';
-                textDiv.textContent = text;
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'template-text';
+                    textDiv.textContent = text;
 
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.textContent = '📋 Копировать';
-                copyBtn.addEventListener('click', function() {
-                    navigator.clipboard.writeText(text).then(() => {
-                        this.textContent = '✅ Скопировано!';
-                        this.classList.add('copied');
-                        setTimeout(() => {
-                            this.textContent = '📋 Копировать';
-                            this.classList.remove('copied');
-                        }, 2000);
-                    }).catch(() => {
-                        alert('Не удалось скопировать текст.');
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Копировать';
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(text).then(() => {
+                            this.textContent = '✅ Скопировано!';
+                            this.classList.add('copied');
+                            setTimeout(() => {
+                                this.textContent = '📋 Копировать';
+                                this.classList.remove('copied');
+                            }, 2000);
+                        }).catch(() => {
+                            alert('Не удалось скопировать текст.');
+                        });
                     });
-                });
 
-                card.appendChild(textDiv);
-                card.appendChild(copyBtn);
-                container.appendChild(card);
-            });
+                    card.appendChild(textDiv);
+                    card.appendChild(copyBtn);
+                    container.appendChild(card);
+                });
+            }
         }
 
+        // ====== ОБРАБОТЧИК ПОИСКА ======
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchQuery = this.value.toLowerCase().trim();
+            // Сбрасываем активную тему, если поиск не пустой
+            if (searchQuery) {
+                document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            } else {
+                renderSidebar();
+            }
+            renderContent();
+        });
+
+        // ====== ОБНОВЛЕНИЕ ПО КНОПКЕ ======
         document.getElementById('refreshBtn').addEventListener('click', function() {
             this.textContent = '⏳ Загрузка...';
             loadData().finally(() => {
@@ -321,6 +425,7 @@
             });
         });
 
+        // ====== ПЕРВАЯ ЗАГРУЗКА ======
         loadData();
     </script>
 
