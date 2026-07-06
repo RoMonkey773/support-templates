@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAGE — Карточная битва</title>
     <style>
-        /* ----- ОБЩИЕ СТИЛИ ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #0a0a12;
@@ -21,19 +16,13 @@
             align-items: center;
             padding: 20px;
         }
-        .game-container {
-            max-width: 1100px;
-            width: 100%;
-        }
-
-        /* ----- ЭКРАН ВЫБОРА КЛАНА ----- */
+        .game-container { max-width: 1100px; width: 100%; }
         .clan-select-screen {
             background: #14141f;
             border-radius: 24px;
             padding: 50px 30px;
             text-align: center;
             border: 1px solid #2d2d4a;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
         }
         .clan-select-screen h1 {
             font-size: 72px;
@@ -73,85 +62,16 @@
         .clan-card .name { font-size: 24px; font-weight: bold; color: #e2e8f0; }
         .clan-card .desc { font-size: 14px; color: #94a3b8; margin-top: 8px; }
         .clan-card .bonus { font-size: 13px; color: #7c3aed; margin-top: 12px; font-weight: 500; }
-
-        /* ----- БОЕВОЙ ЭКРАН ----- */
-        .battle-screen {
-            display: none;
-            background: #14141f;
-            border-radius: 24px;
-            padding: 30px;
-            border: 1px solid #2d2d4a;
-        }
-        .battle-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .battle-header .clan-badge {
-            background: #2d2d4a;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #c4b5fd;
-        }
-        .health-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .health-box {
-            flex: 1;
-            background: #1e1e32;
-            padding: 14px 18px;
-            border-radius: 12px;
-            border: 1px solid #2d2d4a;
-        }
-        .health-box .label {
-            font-size: 14px;
-            color: #94a3b8;
-            margin-bottom: 4px;
-        }
-        .health-box .hp-text {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .health-box .hp-bar {
-            height: 8px;
-            background: #2d2d4a;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .health-box .hp-bar .fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
+        .battle-screen { display: none; background: #14141f; border-radius: 24px; padding: 30px; border: 1px solid #2d2d4a; }
+        .health-container { display: flex; gap: 20px; margin-bottom: 20px; }
+        .health-box { flex: 1; background: #1e1e32; padding: 14px 18px; border-radius: 12px; border: 1px solid #2d2d4a; }
+        .health-box .hp-text { font-size: 20px; font-weight: bold; }
+        .health-box .hp-bar { height: 8px; background: #2d2d4a; border-radius: 10px; overflow: hidden; margin-top: 6px; }
+        .health-box .hp-bar .fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
         .health-box .hp-bar .fill.player { background: #22c55e; }
         .health-box .hp-bar .fill.enemy { background: #ef4444; }
-        .health-box .energy {
-            font-size: 18px;
-            font-weight: bold;
-            color: #c4b5fd;
-        }
-        .shield-indicator {
-            font-size: 14px;
-            color: #38bdf8;
-            margin-left: 8px;
-        }
-
-        /* ----- РУКА КАРТ ----- */
-        .hand {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 20px 0;
-            min-height: 150px;
-        }
+        .health-box .energy { font-size: 18px; font-weight: bold; color: #c4b5fd; }
+        .hand { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0; min-height: 150px; }
         .card {
             background: #1e1e32;
             border: 2px solid #2d2d4a;
@@ -161,134 +81,22 @@
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            position: relative;
-            display: flex;
-            flex-direction: column;
         }
-        .card:hover:not(.disabled) {
-            border-color: #7c3aed;
-            transform: scale(1.05);
-            background: #28284a;
-        }
+        .card:hover:not(.disabled) { border-color: #7c3aed; transform: scale(1.05); background: #28284a; }
         .card .card-name { font-weight: bold; font-size: 14px; }
-        .card .card-cost {
-            display: inline-block;
-            background: #2d2d4a;
-            padding: 0 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-top: 4px;
-            color: #c4b5fd;
-            align-self: center;
-        }
-        .card .card-effect {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 6px;
-            flex: 1;
-        }
-        .card .card-clan {
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-        .card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .card .card-rarity {
-            font-size: 10px;
-            margin-top: 4px;
-        }
-
-        /* ----- ЛОГ И КНОПКИ ----- */
-        .battle-log {
-            background: #0a0a12;
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-top: 15px;
-            max-height: 120px;
-            overflow-y: auto;
-            font-size: 14px;
-            border: 1px solid #1e1e32;
-        }
-        .battle-log .log-entry {
-            padding: 4px 0;
-            border-bottom: 1px solid #1e1e32;
-            color: #cbd5e1;
-        }
-        .battle-log .log-entry .highlight { color: #c4b5fd; font-weight: bold; }
-        .battle-log .log-entry .dmg { color: #ef4444; }
-        .battle-log .log-entry .heal { color: #22c55e; }
-        .battle-log .log-entry .stun { color: #fbbf24; }
-        .battle-log .log-entry .shield { color: #38bdf8; }
-
-        .btn {
-            padding: 10px 28px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: bold;
-        }
-        .btn-primary {
-            background: #7c3aed;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #6d28d9;
-            transform: scale(1.03);
-        }
-        .btn-end-turn {
-            background: #2d2d4a;
-            color: #e2e8f0;
-            padding: 12px 50px;
-            font-size: 18px;
-        }
-        .btn-end-turn:hover {
-            background: #3d3d5a;
-        }
-        .btn-restart {
-            background: #2d2d4a;
-            color: #e2e8f0;
-        }
-        .btn-restart:hover {
-            background: #3d3d5a;
-        }
-
-        .status-text {
-            text-align: center;
-            font-size: 18px;
-            color: #c4b5fd;
-            margin: 10px 0;
-        }
-
-        .game-over-overlay {
-            text-align: center;
-            padding: 20px;
-            background: #1e1e32;
-            border-radius: 16px;
-            margin-top: 20px;
-            border: 1px solid #7c3aed;
-        }
-        .game-over-overlay .result {
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .game-over-overlay .result.win { color: #22c55e; }
-        .game-over-overlay .result.lose { color: #ef4444; }
-
-        /* ----- АДАПТИВНОСТЬ ----- */
+        .card .card-cost { display: inline-block; background: #2d2d4a; padding: 0 8px; border-radius: 10px; font-size: 12px; margin-top: 4px; color: #c4b5fd; }
+        .card .card-effect { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+        .card.disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .btn-end-turn { background: #2d2d4a; color: #e2e8f0; padding: 12px 50px; font-size: 18px; border: none; border-radius: 10px; cursor: pointer; }
+        .btn-end-turn:hover { background: #3d3d5a; }
+        .battle-log { background: #0a0a12; border-radius: 10px; padding: 12px 16px; margin-top: 15px; max-height: 120px; overflow-y: auto; font-size: 14px; border: 1px solid #1e1e32; }
+        .battle-log .log-entry { padding: 4px 0; border-bottom: 1px solid #1e1e32; color: #cbd5e1; }
+        .status-text { text-align: center; font-size: 18px; color: #c4b5fd; margin: 10px 0; }
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
-            .hand { gap: 8px; }
             .card { width: 110px; padding: 10px 12px; }
-            .card .card-name { font-size: 12px; }
             .health-container { flex-direction: column; }
-            .battle-screen { padding: 16px; }
             .clan-select-screen h1 { font-size: 48px; letter-spacing: 6px; }
         }
     </style>
@@ -302,51 +110,41 @@
         <h1>KAGE</h1>
         <p class="subtitle">Выбери свой клан и начни битву теней</p>
         <div class="clan-grid" id="clanGrid">
-            <!-- Кланы генерируются из JS -->
+            <!-- Кланы появятся из JavaScript -->
         </div>
     </div>
 
     <!-- БОЕВОЙ ЭКРАН -->
     <div id="battleScreen" class="battle-screen">
-        <div class="battle-header">
-            <span class="clan-badge" id="playerClanBadge">⚔️ Клан: Тени</span>
-            <span style="color:#94a3b8;" id="turnIndicator">⚔️ Ход игрока</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <span id="playerClanBadge">⚔️ Клан: Тени</span>
+            <span id="turnIndicator">⚔️ Ход игрока</span>
         </div>
 
         <div class="health-container">
             <div class="health-box">
-                <div class="label">🧑 Игрок</div>
-                <div>
-                    <span class="hp-text" id="playerHP">30 / 30</span>
-                    <span class="shield-indicator" id="playerShieldText">🛡️ 0</span>
-                </div>
+                <div>🧑 Игрок</div>
+                <div><span class="hp-text" id="playerHP">30 / 30</span> <span id="playerShieldText">🛡️ 0</span></div>
                 <div class="hp-bar"><div class="fill player" id="playerHPFill" style="width:100%"></div></div>
-                <div style="margin-top:6px;">⚡ Энергия: <span class="energy" id="playerEnergy">3</span></div>
-                <div style="font-size:13px;color:#94a3b8;" id="playerStatus"></div>
+                <div>⚡ Энергия: <span class="energy" id="playerEnergy">3</span></div>
             </div>
             <div class="health-box">
-                <div class="label">👹 Враг</div>
-                <div>
-                    <span class="hp-text" id="enemyHP">30 / 30</span>
-                    <span class="shield-indicator" id="enemyShieldText">🛡️ 0</span>
-                </div>
+                <div>👹 Враг</div>
+                <div><span class="hp-text" id="enemyHP">30 / 30</span> <span id="enemyShieldText">🛡️ 0</span></div>
                 <div class="hp-bar"><div class="fill enemy" id="enemyHPFill" style="width:100%"></div></div>
-                <div style="margin-top:6px;">⚡ Энергия: <span class="energy" id="enemyEnergy">3</span></div>
-                <div style="font-size:13px;color:#94a3b8;" id="enemyStatus"></div>
+                <div>⚡ Энергия: <span class="energy" id="enemyEnergy">3</span></div>
             </div>
         </div>
 
         <div class="status-text" id="statusText">Твой ход. Выбери карту.</div>
 
         <div class="hand" id="handContainer">
-            <!-- Карты генерируются из JS -->
+            <!-- Карты появятся из JavaScript -->
         </div>
 
         <div style="text-align:center;margin-top:10px;">
-            <button class="btn btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
+            <button class="btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
         </div>
-
-        <div id="gameOverContainer"></div>
 
         <div class="battle-log" id="battleLog">
             <div class="log-entry">⚔️ Битва начинается!</div>
@@ -357,15 +155,47 @@
 
 <script>
     // =======================================================
-    // KAGE — ПОЛНАЯ ИГРА
+    // KAGE — ПОЛНАЯ ИГРА (ВСТРОЕННЫЕ КАРТЫ)
     // =======================================================
 
-    // ---------- ССЫЛКА НА ТАБЛИЦУ (ТВОЯ) ----------
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRE4ZeyzZYDCYG-5EMX9oZWxWXTbN2-ifgyYyJsZuGjIgeHj7b6zX_yzK2TJ2XYlPzKpa68L3noflT/pub?output=csv';
+    // ---------- ДАННЫЕ КЛАНОВ И КАРТ (ВСТРОЕННЫЕ) ----------
+    const CLAN_DATA = {
+        'Тени': {
+            icon: '🌑',
+            bonus: 'Оглушение длится на 1 ход дольше',
+            cards: [
+                { name: 'Удар Тени', dmg: 3, stun: 1, cost: 3, rarity: 'Обычная' },
+                { name: 'Кинжал теней', dmg: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Страх', stun: 2, cost: 2, rarity: 'Необычная' },
+                { name: 'Скрытность', energyPlus: 2, cost: 1, rarity: 'Обычная' },
+                { name: 'Теневая ловушка', dmg: 2, stun: 1, stealEnergy: 1, cost: 3, rarity: 'Редкая' }
+            ]
+        },
+        'Тернии': {
+            icon: '🌿',
+            bonus: 'При получении урона враг получает 1 урон ядом',
+            cards: [
+                { name: 'Шипованая лоза', shield: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Ядовитое семя', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
+                { name: 'Колючая броня', shield: 3, poison: 2, cost: 3, rarity: 'Редкая' },
+                { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Терновый шип', dmg: 1, shield: 4, poison: 1, cost: 2, rarity: 'Необычная' }
+            ]
+        },
+        'Ярость': {
+            icon: '⚡',
+            bonus: 'Урон всех карт увеличен на 1',
+            cards: [
+                { name: 'Яростный удар', dmg: 6, cost: 3, rarity: 'Обычная' },
+                { name: 'Двойной выпад', dmg: 4, cost: 3, rarity: 'Необычная' },
+                { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'Необычная' },
+                { name: 'Удар зверя', dmg: 8, cost: 3, rarity: 'Редкая' },
+                { name: 'Ярость берсерка', dmg: 5, cost: 2, rarity: 'Обычная' }
+            ]
+        }
+    };
 
     // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
-    let allCards = [];
-    let clanData = {};
     let gameState = {};
 
     // ---------- ЭЛЕМЕНТЫ DOM ----------
@@ -381,142 +211,25 @@
     const enemyEnergy = document.getElementById('enemyEnergy');
     const playerShieldText = document.getElementById('playerShieldText');
     const enemyShieldText = document.getElementById('enemyShieldText');
-    const playerStatus = document.getElementById('playerStatus');
-    const enemyStatus = document.getElementById('enemyStatus');
     const statusText = document.getElementById('statusText');
     const battleLog = document.getElementById('battleLog');
     const endTurnBtn = document.getElementById('endTurnBtn');
     const playerClanBadge = document.getElementById('playerClanBadge');
     const turnIndicator = document.getElementById('turnIndicator');
-    const gameOverContainer = document.getElementById('gameOverContainer');
 
-    // ---------- ЗАГРУЗКА ДАННЫХ ИЗ CSV ----------
-    async function loadCards() {
-        try {
-            const response = await fetch(CSV_URL);
-            const csvText = await response.text();
-
-            // Парсим CSV в массив объектов
-            const lines = csvText.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) {
-                console.error('CSV пуст или повреждён');
-                return;
-            }
-
-            // Заголовки
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-
-            // Индексы колонок
-            const idx = {
-                name: headers.findIndex(h => h.includes('Название')),
-                clan: headers.findIndex(h => h.includes('Клан')),
-                type: headers.findIndex(h => h.includes('Тип')),
-                dmg: headers.findIndex(h => h.includes('Урон') && !h.includes('Яд')),
-                heal: headers.findIndex(h => h.includes('Лечение')),
-                shield: headers.findIndex(h => h.includes('Щит')),
-                poison: headers.findIndex(h => h.includes('Яд')),
-                stun: headers.findIndex(h => h.includes('Оглушение')),
-                steal: headers.findIndex(h => h.includes('Кража')),
-                energyPlus: headers.findIndex(h => h.includes('Энергия+')),
-                cost: headers.findIndex(h => h.includes('Стоимость')),
-                rarity: headers.findIndex(h => h.includes('Редкость'))
-            };
-
-            const cards = [];
-            const clans = new Set();
-
-            for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c => c.trim().replace(/"/g, ''));
-                if (cols.length < 3) continue;
-
-                const clanName = cols[idx.clan] || 'Без клана';
-                clans.add(clanName);
-
-                cards.push({
-                    name: cols[idx.name] || 'Без имени',
-                    clan: clanName,
-                    type: cols[idx.type] || 'Атака',
-                    dmg: parseInt(cols[idx.dmg]) || 0,
-                    heal: parseInt(cols[idx.heal]) || 0,
-                    shield: parseInt(cols[idx.shield]) || 0,
-                    poison: parseInt(cols[idx.poison]) || 0,
-                    stun: parseInt(cols[idx.stun]) || 0,
-                    stealEnergy: parseInt(cols[idx.steal]) || 0,
-                    energyPlus: parseInt(cols[idx.energyPlus]) || 0,
-                    cost: parseInt(cols[idx.cost]) || 0,
-                    rarity: cols[idx.rarity] || 'Обычная'
-                });
-            }
-
-            allCards = cards;
-
-            // Создаём данные кланов на основе уникальных значений
-            clanData = {};
-            clans.forEach(clan => {
-                const clanCards = cards.filter(c => c.clan === clan);
-                let bonusDesc = '';
-                let bonusType = '';
-                let bonusValue = 0;
-
-                // Определяем бонус по названию клана
-                if (clan.includes('Тен')) {
-                    bonusDesc = 'Оглушение длится на 1 ход дольше';
-                    bonusType = 'stun';
-                    bonusValue = 1;
-                } else if (clan.includes('Тер') || clan.includes('Шип')) {
-                    bonusDesc = 'При получении урона враг получает 1 урон ядом';
-                    bonusType = 'thorn';
-                    bonusValue = 1;
-                } else if (clan.includes('Яр') || clan.includes('Звер')) {
-                    bonusDesc = 'Урон всех карт увеличен на 1';
-                    bonusType = 'damage';
-                    bonusValue = 1;
-                } else {
-                    bonusDesc = 'Без бонуса';
-                    bonusType = 'none';
-                    bonusValue = 0;
-                }
-
-                clanData[clan] = {
-                    name: clan,
-                    bonusDesc: bonusDesc,
-                    bonusType: bonusType,
-                    bonusValue: bonusValue,
-                    cards: clanCards
-                };
-            });
-
-            renderClans();
-        } catch (error) {
-            console.error('Ошибка загрузки карт:', error);
-            document.querySelector('.subtitle').textContent = '❌ Не удалось загрузить карты. Проверь интернет и перезагрузи страницу.';
-        }
-    }
-
-    // ---------- РЕНДЕР КЛАНОВ ----------
+    // ---------- ОТРИСОВКА КЛАНОВ ----------
     function renderClans() {
         clanGrid.innerHTML = '';
-        const clanNames = Object.keys(clanData);
-        if (clanNames.length === 0) {
-            clanGrid.innerHTML = '<div style="color:#ef4444;">Нет данных о кланах. Проверь таблицу.</div>';
-            return;
-        }
-
-        const icons = {
-            'Тени': '🌑',
-            'Тернии': '🌿',
-            'Ярость': '⚡'
-        };
-
+        const clanNames = Object.keys(CLAN_DATA);
         clanNames.forEach(clan => {
-            const data = clanData[clan];
+            const data = CLAN_DATA[clan];
             const card = document.createElement('div');
             card.className = 'clan-card';
             card.innerHTML = `
-                <span class="icon">${icons[clan] || '⚔️'}</span>
+                <span class="icon">${data.icon}</span>
                 <div class="name">${clan}</div>
                 <div class="desc">${data.cards.length} карт в колоде</div>
-                <div class="bonus">🎯 ${data.bonusDesc}</div>
+                <div class="bonus">🎯 ${data.bonus}</div>
             `;
             card.addEventListener('click', () => startGame(clan));
             clanGrid.appendChild(card);
@@ -525,17 +238,25 @@
 
     // ---------- СТАРТ ИГРЫ ----------
     function startGame(playerClanName) {
-        const playerClanData = clanData[playerClanName];
-        if (!playerClanData) return;
+        const playerData = CLAN_DATA[playerClanName];
+        const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== playerClanName)[0];
+        const enemyData = CLAN_DATA[enemyClanName];
 
-        // Враг — случайный другой клан
-        const enemyClanName = Object.keys(clanData).filter(c => c !== playerClanName)[Math.floor(Math.random() * (Object.keys(clanData).length - 1))];
-        const enemyClanData = clanData[enemyClanName];
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
 
-        // Инициализация состояния
+        const playerCards = shuffle([...playerData.cards]);
+        const enemyCards = shuffle([...enemyData.cards]);
+
         gameState = {
-            playerClan: playerClanData,
-            enemyClan: enemyClanData,
+            playerClan: playerClanName,
+            enemyClan: enemyClanName,
             playerHP: 30,
             playerMaxHP: 30,
             playerEnergy: 3,
@@ -553,32 +274,13 @@
             isPlayerTurn: true,
             gameOver: false,
             turnCount: 0,
-            log: [],
-            playerDeck: [],
-            enemyDeck: [],
-            playerHand: [],
-            enemyHand: [],
+            playerDeck: playerCards,
+            enemyDeck: enemyCards,
+            playerHand: playerCards.splice(0, 4),
+            enemyHand: enemyCards.splice(0, 4),
+            log: []
         };
 
-        // Создаём колоды и руки
-        function shuffle(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
-        const playerCards = shuffle([...playerClanData.cards]);
-        const enemyCards = shuffle([...enemyClanData.cards]);
-
-        gameState.playerDeck = playerCards;
-        gameState.enemyDeck = enemyCards;
-        gameState.playerHand = gameState.playerDeck.splice(0, 5);
-        gameState.enemyHand = gameState.enemyDeck.splice(0, 5);
-
-        // Переключаем экраны
         clanSelectScreen.style.display = 'none';
         battleScreen.style.display = 'block';
 
@@ -587,8 +289,6 @@
 
         updateUI();
         renderHand();
-        checkGameOver();
-        renderGameOver();
     }
 
     // ---------- ДОБАВИТЬ В ЛОГ ----------
@@ -596,7 +296,7 @@
         gameState.log.push(text);
         const entry = document.createElement('div');
         entry.className = 'log-entry';
-        entry.innerHTML = text;
+        entry.textContent = text;
         battleLog.appendChild(entry);
         battleLog.scrollTop = battleLog.scrollHeight;
     }
@@ -610,20 +310,8 @@
         enemyHPFill.style.width = `${Math.max(0, (p.enemyHP / p.enemyMaxHP) * 100)}%`;
         playerEnergy.textContent = p.playerEnergy;
         enemyEnergy.textContent = p.enemyEnergy;
-
         playerShieldText.textContent = `🛡️ ${p.playerShield}`;
         enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
-
-        let pStatus = '';
-        if (p.playerStun > 0) pStatus += `💫 Оглушён (${p.playerStun}) `;
-        if (p.playerPoison > 0) pStatus += `☠️ Яд (${p.playerPoison}) `;
-        playerStatus.textContent = pStatus;
-
-        let eStatus = '';
-        if (p.enemyStun > 0) eStatus += `💫 Оглушён (${p.enemyStun}) `;
-        if (p.enemyPoison > 0) eStatus += `☠️ Яд (${p.enemyPoison}) `;
-        enemyStatus.textContent = eStatus;
-
         turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
         statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
     }
@@ -631,38 +319,32 @@
     // ---------- РЕНДЕР РУКИ ----------
     function renderHand() {
         handContainer.innerHTML = '';
-        if (gameState.gameOver) {
-            handContainer.innerHTML = '<div style="color:#94a3b8;">Игра окончена</div>';
-            return;
-        }
+        if (gameState.gameOver) return;
 
         const p = gameState;
         p.playerHand.forEach((card, index) => {
             const cardEl = document.createElement('div');
             cardEl.className = 'card';
-
             const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && p.playerStun === 0 && !p.gameOver;
             if (!canPlay) cardEl.classList.add('disabled');
+
+            let effects = [];
+            if (card.dmg) effects.push(`⚔️ ${card.dmg}`);
+            if (card.heal) effects.push(`❤️ +${card.heal}`);
+            if (card.shield) effects.push(`🛡️ ${card.shield}`);
+            if (card.poison) effects.push(`☠️ ${card.poison}`);
+            if (card.stun) effects.push(`💫 оглуш. ${card.stun}`);
+            if (card.stealEnergy) effects.push(`⚡ кража ${card.stealEnergy}`);
+            if (card.energyPlus) effects.push(`⚡ +${card.energyPlus}`);
 
             let rarityColor = '#94a3b8';
             if (card.rarity === 'Необычная') rarityColor = '#22d3ee';
             if (card.rarity === 'Редкая') rarityColor = '#c084fc';
 
-            let effects = [];
-            if (card.dmg > 0) effects.push(`⚔️ ${card.dmg}`);
-            if (card.heal > 0) effects.push(`❤️ +${card.heal}`);
-            if (card.shield > 0) effects.push(`🛡️ ${card.shield}`);
-            if (card.poison > 0) effects.push(`☠️ ${card.poison}`);
-            if (card.stun > 0) effects.push(`💫 оглуш. ${card.stun}`);
-            if (card.stealEnergy > 0) effects.push(`⚡ кража ${card.stealEnergy}`);
-            if (card.energyPlus > 0) effects.push(`⚡ +${card.energyPlus}`);
-
             cardEl.innerHTML = `
                 <div class="card-name" style="color:${rarityColor};">${card.name}</div>
                 <div class="card-effect">${effects.join(' ')}</div>
                 <div class="card-cost">⚡ ${card.cost}</div>
-                <div class="card-clan">${card.clan}</div>
-                <div class="card-rarity" style="color:${rarityColor};">${card.rarity}</div>
             `;
 
             cardEl.addEventListener('click', () => {
@@ -684,10 +366,7 @@
             return;
         }
 
-        // Применяем эффекты
         applyCardEffects(card, 'player');
-
-        // Убираем карту из руки
         p.playerHand.splice(index, 1);
         p.playerEnergy -= card.cost;
 
@@ -696,29 +375,24 @@
 
         if (checkGameOver()) return;
 
-        // Переход хода к врагу
-        if (!p.gameOver) {
-            p.isPlayerTurn = false;
-            updateUI();
-            setTimeout(() => enemyTurn(), 1000);
-        }
+        p.isPlayerTurn = false;
+        updateUI();
+        setTimeout(() => enemyTurn(), 1000);
     }
 
     // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ ----------
     function applyCardEffects(card, target) {
         const p = gameState;
         const isPlayer = target === 'player';
-        const source = isPlayer ? 'player' : 'enemy';
         const enemy = isPlayer ? 'enemy' : 'player';
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
-        // Урон с бонусом Ярости
+        // Урон
         let dmg = card.dmg || 0;
-        const clanBonus = isPlayer ? p.playerClan.bonusType : p.enemyClan.bonusType;
-        if (clanBonus === 'damage') dmg += 1;
+        if (isPlayer && p.playerClan === 'Ярость') dmg += 1;
+        if (!isPlayer && p.enemyClan === 'Ярость') dmg += 1;
 
-        // Нанесение урона с учётом щита
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
             let actualDmg = dmg;
@@ -775,8 +449,8 @@
 
         // Оглушение с бонусом Теней
         let stun = card.stun || 0;
-        const stunBonus = isPlayer ? p.playerClan.bonusType : p.enemyClan.bonusType;
-        if (stunBonus === 'stun') stun += 1;
+        if (isPlayer && p.playerClan === 'Тени') stun += 1;
+        if (!isPlayer && p.enemyClan === 'Тени') stun += 1;
 
         if (stun > 0) {
             if (isPlayer) {
@@ -814,21 +488,27 @@
             }
         }
 
-        // Бонус Терний: при получении урона враг получает яд
-        if (clanBonus === 'thorn') {
-            if (dmg > 0) {
-                if (isPlayer) {
-                    p.enemyPoison += 1;
-                    logMsg += `, тернии отравили врага (+1 яд)`;
-                } else {
-                    p.playerPoison += 1;
-                    logMsg += `, тернии отравили игрока (+1 яд)`;
-                }
-            }
+        // Бонус Терний
+        if (isPlayer && p.playerClan === 'Тернии' && dmg > 0) {
+            p.enemyPoison += 1;
+            logMsg += `, тернии отравили врага (+1 яд)`;
+        }
+        if (!isPlayer && p.enemyClan === 'Тернии' && dmg > 0) {
+            p.playerPoison += 1;
+            logMsg += `, тернии отравили игрока (+1 яд)`;
         }
 
-        // Применяем яд в конце хода
-        applyPoison(target);
+        // Применяем яд
+        if (p.enemyPoison > 0 && isPlayer) {
+            p.enemyHP -= p.enemyPoison;
+            if (p.enemyHP < 0) p.enemyHP = 0;
+            logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
+        }
+        if (p.playerPoison > 0 && !isPlayer) {
+            p.playerHP -= p.playerPoison;
+            if (p.playerHP < 0) p.playerHP = 0;
+            logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
+        }
 
         addLog(logMsg);
         updateUI();
@@ -836,11 +516,92 @@
         checkGameOver();
     }
 
-    // ---------- ПРИМЕНИТЬ ЯД ----------
-    function applyPoison(target) {
+    // ---------- ХОД ВРАГА ----------
+    function enemyTurn() {
+        if (gameState.gameOver) return;
         const p = gameState;
-        const isPlayer = target === 'player';
-        if (isPlayer && p.enemyPoison > 0) {
-            p.enemyHP -= p.enemyPoison;
-            if (p.enemyHP < 0) p.enemyHP = 0;
-            addLog(`☠️ Враг получи
+
+        // Проверка оглушения врага
+        if (p.enemyStun > 0) {
+            p.enemyStun -= 1;
+            addLog(`💫 Враг оглушён и пропускает ход`);
+            p.isPlayerTurn = true;
+            p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
+            updateUI();
+            renderHand();
+            checkGameOver();
+            return;
+        }
+
+        // Враг играет случайную карту
+        if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
+            const card = p.enemyHand[0];
+            if (p.enemyEnergy >= card.cost) {
+                applyCardEffects(card, 'enemy');
+                p.enemyHand.splice(0, 1);
+                p.enemyEnergy -= card.cost;
+                if (checkGameOver()) return;
+            } else {
+                addLog('⏳ Враг копит энергию...');
+            }
+        }
+
+        // Переход хода к игроку
+        p.isPlayerTurn = true;
+        p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
+        updateUI();
+        renderHand();
+        checkGameOver();
+        addLog('⚔️ Твой ход!');
+    }
+
+    // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
+    function checkGameOver() {
+        const p = gameState;
+        if (p.playerHP <= 0) {
+            p.playerHP = 0;
+            p.gameOver = true;
+            addLog('💀 Ты проиграл!');
+            statusText.textContent = '💀 Ты проиграл!';
+            endTurnBtn.disabled = true;
+            renderHand();
+            return true;
+        }
+        if (p.enemyHP <= 0) {
+            p.enemyHP = 0;
+            p.gameOver = true;
+            addLog('🏆 Ты победил!');
+            statusText.textContent = '🏆 Ты победил!';
+            endTurnBtn.disabled = true;
+            renderHand();
+            return true;
+        }
+        return false;
+    }
+
+    // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
+    endTurnBtn.addEventListener('click', function() {
+        if (gameState.gameOver || !gameState.isPlayerTurn) return;
+        const p = gameState;
+
+        // Проверка оглушения игрока
+        if (p.playerStun > 0) {
+            p.playerStun -= 1;
+            addLog(`💫 Ты оглушён и пропускаешь ход`);
+            p.isPlayerTurn = false;
+            updateUI();
+            setTimeout(() => enemyTurn(), 800);
+            return;
+        }
+
+        p.isPlayerTurn = false;
+        updateUI();
+        setTimeout(() => enemyTurn(), 800);
+    });
+
+    // ---------- ЗАПУСК ----------
+    renderClans();
+</script>
+
+</body>
+</html>
