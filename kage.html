@@ -167,10 +167,10 @@
 
 <script>
     // =======================================================
-    // KAGE — РАСШИРЕННАЯ ВЕРСИЯ (8 КАРТ НА КЛАН)
+    // KAGE — ФИНАЛЬНАЯ ВЕРСИЯ (ИСПРАВЛЕННАЯ)
     // =======================================================
 
-    // ---------- ДАННЫЕ КЛАНОВ И КАРТ (РАСШИРЕННЫЕ) ----------
+    // ---------- ДАННЫЕ КЛАНОВ И КАРТ ----------
     const CLAN_DATA = {
         'Тени': {
             icon: '🌑',
@@ -335,7 +335,7 @@
         renderHand();
     }
 
-    // ---------- ВЗЯТЬ КАРТУ (БЕСКОНЕЧНАЯ КОЛОДА) ----------
+    // ---------- ВЗЯТЬ КАРТУ ----------
     function drawCard(target) {
         const isPlayer = target === 'player';
         const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
@@ -610,79 +610,56 @@
         checkGameOver();
     }
 
-// ---------- ХОД ВРАГА (С ВОССТАНОВЛЕНИЕМ ЭНЕРГИИ) ----------
-function enemyTurn() {
-    if (!gameState || gameState.gameOver) return;
-    const p = gameState;
+    // ---------- ХОД ВРАГА (С ВОССТАНОВЛЕНИЕМ ЭНЕРГИИ) ----------
+    function enemyTurn() {
+        if (!gameState || gameState.gameOver) return;
+        const p = gameState;
 
-    // --- ВОССТАНОВЛЕНИЕ ЭНЕРГИИ ВРАГА ---
-    p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
-    addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy}/${p.enemyMaxEnergy})`, true);
+        // --- ВОССТАНОВЛЕНИЕ ЭНЕРГИИ ВРАГА ---
+        p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
+        addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy}/${p.enemyMaxEnergy})`, true);
 
-    // --- ПРОВЕРКА ОГЛУШЕНИЯ ---
-    if (p.enemyStun > 0) {
-        p.enemyStun -= 1;
-        addLog(`💫 Враг оглушён и пропускает ход`, true);
-        p.isPlayerTurn = true;
-        p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
-        updateUI();
-        renderHand();
-        if (!checkGameOver()) {
-            addLog(`⚔️ Твой ход!`);
+        // --- ПРОВЕРКА ОГЛУШЕНИЯ ---
+        if (p.enemyStun > 0) {
+            p.enemyStun -= 1;
+            addLog(`💫 Враг оглушён и пропускает ход`, true);
+            p.isPlayerTurn = true;
+            p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
+            updateUI();
+            renderHand();
+            if (!checkGameOver()) {
+                addLog(`⚔️ Твой ход!`);
+            }
+            return;
         }
-        return;
-    }
 
-    // --- ДОБОР КАРТ ДО 4 В РУКЕ ---
-    while (p.enemyHand.length < 4) {
-        drawCard('enemy');
-    }
+        // --- ДОБОР КАРТ ДО 4 В РУКЕ ---
+        while (p.enemyHand.length < 4) {
+            drawCard('enemy');
+        }
 
-    // --- ПОИСК КАРТЫ ДЛЯ РОЗЫГРЫША ---
-    let cardPlayed = false;
-    if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
-        // Сортируем карты по стоимости (дешёвые сначала) и по урону (приоритет атаке)
-        const sortedHand = [...p.enemyHand].sort((a, b) => {
-            if (a.cost !== b.cost) return a.cost - b.cost;
-            return (b.dmg || 0) - (a.dmg || 0);
-        });
+        // --- ПОИСК КАРТЫ ДЛЯ РОЗЫГРЫША ---
+        let cardPlayed = false;
+        if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
+            const sortedHand = [...p.enemyHand].sort((a, b) => {
+                if (a.cost !== b.cost) return a.cost - b.cost;
+                return (b.dmg || 0) - (a.dmg || 0);
+            });
 
-        for (let i = 0; i < sortedHand.length; i++) {
-            const card = sortedHand[i];
-            const originalIndex = p.enemyHand.indexOf(card);
-            if (originalIndex === -1) continue;
+            for (let i = 0; i < sortedHand.length; i++) {
+                const card = sortedHand[i];
+                const originalIndex = p.enemyHand.indexOf(card);
+                if (originalIndex === -1) continue;
 
-            if (p.enemyEnergy >= card.cost) {
-                // Разыгрываем карту
-                applyCardEffects(card, 'enemy');
-                p.enemyHand.splice(originalIndex, 1);
-                p.enemyEnergy -= card.cost;
-                cardPlayed = true;
-                break;
+                if (p.enemyEnergy >= card.cost) {
+                    applyCardEffects(card, 'enemy');
+                    p.enemyHand.splice(originalIndex, 1);
+                    p.enemyEnergy -= card.cost;
+                    cardPlayed = true;
+                    break;
+                }
             }
         }
-    }
-
-    if (!cardPlayed) {
-        if (p.enemyEnergy < 1) {
-            addLog(`⏳ Враг копит энергию...`, true);
-        } else {
-            addLog(`⏳ Враг не нашёл подходящей карты`, true);
-        }
-    }
-
-    // --- ПРОВЕРКА КОНЦА ИГРЫ ---
-    if (checkGameOver()) return;
-
-    // --- ПЕРЕХОД ХОДА К ИГРОКУ ---
-    p.isPlayerTurn = true;
-    p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
-    updateUI();
-    renderHand();
-    if (!checkGameOver()) {
-        addLog(`⚔️ Твой ход!`);
-    }
-}
 
         if (!cardPlayed) {
             if (p.enemyEnergy < 1) {
@@ -692,8 +669,10 @@ function enemyTurn() {
             }
         }
 
+        // --- ПРОВЕРКА КОНЦА ИГРЫ ---
         if (checkGameOver()) return;
 
+        // --- ПЕРЕХОД ХОДА К ИГРОКУ ---
         p.isPlayerTurn = true;
         p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
         updateUI();
