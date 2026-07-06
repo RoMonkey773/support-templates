@@ -89,9 +89,14 @@
         .card.disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
         .btn-end-turn { background: #2d2d4a; color: #e2e8f0; padding: 12px 50px; font-size: 18px; border: none; border-radius: 10px; cursor: pointer; }
         .btn-end-turn:hover { background: #3d3d5a; }
+        .btn-end-turn:disabled { opacity: 0.5; cursor: not-allowed; }
         .battle-log { background: #0a0a12; border-radius: 10px; padding: 12px 16px; margin-top: 15px; max-height: 120px; overflow-y: auto; font-size: 14px; border: 1px solid #1e1e32; }
         .battle-log .log-entry { padding: 4px 0; border-bottom: 1px solid #1e1e32; color: #cbd5e1; }
         .status-text { text-align: center; font-size: 18px; color: #c4b5fd; margin: 10px 0; }
+        .game-over-overlay { text-align: center; padding: 20px; background: #1e1e32; border-radius: 16px; margin-top: 20px; border: 1px solid #7c3aed; }
+        .game-over-overlay .result { font-size: 28px; font-weight: bold; }
+        .game-over-overlay .result.win { color: #22c55e; }
+        .game-over-overlay .result.lose { color: #ef4444; }
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
@@ -116,7 +121,7 @@
 
     <!-- БОЕВОЙ ЭКРАН -->
     <div id="battleScreen" class="battle-screen">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
             <span id="playerClanBadge">⚔️ Клан: Тени</span>
             <span id="turnIndicator">⚔️ Ход игрока</span>
         </div>
@@ -127,12 +132,14 @@
                 <div><span class="hp-text" id="playerHP">30 / 30</span> <span id="playerShieldText">🛡️ 0</span></div>
                 <div class="hp-bar"><div class="fill player" id="playerHPFill" style="width:100%"></div></div>
                 <div>⚡ Энергия: <span class="energy" id="playerEnergy">3</span></div>
+                <div id="playerStatus" style="font-size:13px;color:#94a3b8;"></div>
             </div>
             <div class="health-box">
                 <div>👹 Враг</div>
                 <div><span class="hp-text" id="enemyHP">30 / 30</span> <span id="enemyShieldText">🛡️ 0</span></div>
                 <div class="hp-bar"><div class="fill enemy" id="enemyHPFill" style="width:100%"></div></div>
                 <div>⚡ Энергия: <span class="energy" id="enemyEnergy">3</span></div>
+                <div id="enemyStatus" style="font-size:13px;color:#94a3b8;"></div>
             </div>
         </div>
 
@@ -146,6 +153,8 @@
             <button class="btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
         </div>
 
+        <div id="gameOverContainer"></div>
+
         <div class="battle-log" id="battleLog">
             <div class="log-entry">⚔️ Битва начинается!</div>
         </div>
@@ -155,7 +164,7 @@
 
 <script>
     // =======================================================
-    // KAGE — ПОЛНАЯ ИГРА (ВСТРОЕННЫЕ КАРТЫ)
+    // KAGE — С БЕСКОНЕЧНОЙ КОЛОДОЙ И УМНЫМ ВРАГОМ
     // =======================================================
 
     // ---------- ДАННЫЕ КЛАНОВ И КАРТ (ВСТРОЕННЫЕ) ----------
@@ -211,11 +220,28 @@
     const enemyEnergy = document.getElementById('enemyEnergy');
     const playerShieldText = document.getElementById('playerShieldText');
     const enemyShieldText = document.getElementById('enemyShieldText');
+    const playerStatus = document.getElementById('playerStatus');
+    const enemyStatus = document.getElementById('enemyStatus');
     const statusText = document.getElementById('statusText');
     const battleLog = document.getElementById('battleLog');
     const endTurnBtn = document.getElementById('endTurnBtn');
     const playerClanBadge = document.getElementById('playerClanBadge');
     const turnIndicator = document.getElementById('turnIndicator');
+    const gameOverContainer = document.getElementById('gameOverContainer');
+
+    // ---------- УТИЛИТЫ ----------
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function cloneCard(card) {
+        return { ...card };
+    }
 
     // ---------- ОТРИСОВКА КЛАНОВ ----------
     function renderClans() {
@@ -242,17 +268,9 @@
         const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== playerClanName)[0];
         const enemyData = CLAN_DATA[enemyClanName];
 
-        function shuffle(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
-        const playerCards = shuffle([...playerData.cards]);
-        const enemyCards = shuffle([...enemyData.cards]);
+        // Создаём бесконечные колоды (копии карт)
+        const playerDeck = playerData.cards.map(c => cloneCard(c));
+        const enemyDeck = enemyData.cards.map(c => cloneCard(c));
 
         gameState = {
             playerClan: playerClanName,
@@ -274,21 +292,49 @@
             isPlayerTurn: true,
             gameOver: false,
             turnCount: 0,
-            playerDeck: playerCards,
-            enemyDeck: enemyCards,
-            playerHand: playerCards.splice(0, 4),
-            enemyHand: enemyCards.splice(0, 4),
+            playerDeck: shuffle(playerDeck),
+            enemyDeck: shuffle(enemyDeck),
+            playerHand: [],
+            enemyHand: [],
             log: []
         };
 
+        // Начальная раздача (по 4 карты)
+        for (let i = 0; i < 4; i++) {
+            drawCard('player');
+            drawCard('enemy');
+        }
+
         clanSelectScreen.style.display = 'none';
         battleScreen.style.display = 'block';
+        gameOverContainer.innerHTML = '';
 
         playerClanBadge.textContent = `⚔️ Клан: ${playerClanName}`;
         addLog(`⚔️ Битва начинается! Ты — ${playerClanName}, враг — ${enemyClanName}`);
 
         updateUI();
         renderHand();
+        endTurnBtn.disabled = false;
+    }
+
+    // ---------- ВЗЯТЬ КАРТУ (С ВОЗВРАТОМ В КОЛОДУ) ----------
+    function drawCard(target) {
+        const isPlayer = target === 'player';
+        const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
+        const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
+
+        // Если колода пуста — пересоздаём её из клонов карт клана
+        if (deck.length === 0) {
+            const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
+            const clanData = CLAN_DATA[clanName];
+            const newDeck = clanData.cards.map(c => cloneCard(c));
+            gameState[isPlayer ? 'playerDeck' : 'enemyDeck'] = shuffle(newDeck);
+            addLog(`🔄 ${isPlayer ? 'Игрок' : 'Враг'} перетасовал колоду`);
+        }
+
+        const card = deck.pop();
+        hand.push(card);
+        return card;
     }
 
     // ---------- ДОБАВИТЬ В ЛОГ ----------
@@ -299,6 +345,10 @@
         entry.textContent = text;
         battleLog.appendChild(entry);
         battleLog.scrollTop = battleLog.scrollHeight;
+        // Ограничиваем лог 100 сообщениями
+        while (battleLog.children.length > 100) {
+            battleLog.removeChild(battleLog.firstChild);
+        }
     }
 
     // ---------- ОБНОВИТЬ UI ----------
@@ -312,6 +362,17 @@
         enemyEnergy.textContent = p.enemyEnergy;
         playerShieldText.textContent = `🛡️ ${p.playerShield}`;
         enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
+
+        let pStatus = '';
+        if (p.playerStun > 0) pStatus += `💫 Оглушён (${p.playerStun}) `;
+        if (p.playerPoison > 0) pStatus += `☠️ Яд (${p.playerPoison}) `;
+        playerStatus.textContent = pStatus;
+
+        let eStatus = '';
+        if (p.enemyStun > 0) eStatus += `💫 Оглушён (${p.enemyStun}) `;
+        if (p.enemyPoison > 0) eStatus += `☠️ Яд (${p.enemyPoison}) `;
+        enemyStatus.textContent = eStatus;
+
         turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
         statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
     }
@@ -319,7 +380,10 @@
     // ---------- РЕНДЕР РУКИ ----------
     function renderHand() {
         handContainer.innerHTML = '';
-        if (gameState.gameOver) return;
+        if (gameState.gameOver) {
+            handContainer.innerHTML = '<div style="color:#94a3b8;">Игра окончена</div>';
+            return;
+        }
 
         const p = gameState;
         p.playerHand.forEach((card, index) => {
@@ -366,18 +430,31 @@
             return;
         }
 
+        // Применяем эффекты
         applyCardEffects(card, 'player');
+
+        // Убираем карту из руки, тратим энергию
         p.playerHand.splice(index, 1);
         p.playerEnergy -= card.cost;
+
+        // Карта возвращается в колоду (перемешивается)
+        p.playerDeck.push(cloneCard(card));
+        p.playerDeck = shuffle(p.playerDeck);
+
+        // Добираем карту до 4 в руке
+        while (p.playerHand.length < 4) {
+            drawCard('player');
+        }
 
         updateUI();
         renderHand();
 
         if (checkGameOver()) return;
 
+        // Переход хода к врагу
         p.isPlayerTurn = false;
         updateUI();
-        setTimeout(() => enemyTurn(), 1000);
+        setTimeout(() => enemyTurn(), 800);
     }
 
     // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ ----------
@@ -388,7 +465,7 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
-        // Урон
+        // Урон с бонусом Ярости
         let dmg = card.dmg || 0;
         if (isPlayer && p.playerClan === 'Ярость') dmg += 1;
         if (!isPlayer && p.enemyClan === 'Ярость') dmg += 1;
@@ -396,22 +473,25 @@
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
             let actualDmg = dmg;
+            let absorbed = 0;
             if (shield > 0) {
-                const absorbed = Math.min(shield, dmg);
+                absorbed = Math.min(shield, dmg);
                 actualDmg -= absorbed;
                 if (isPlayer) p.enemyShield -= absorbed;
                 else p.playerShield -= absorbed;
                 if (p.enemyShield < 0) p.enemyShield = 0;
                 if (p.playerShield < 0) p.playerShield = 0;
-                logMsg += `, щит поглотил ${absorbed} урона`;
             }
             if (actualDmg > 0) {
                 if (isPlayer) p.enemyHP -= actualDmg;
                 else p.playerHP -= actualDmg;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                if (p.playerHP < 0) p.playerHP = 0;
                 logMsg += `, нанёс ${actualDmg} урона`;
             }
-            if (p.enemyHP < 0) p.enemyHP = 0;
-            if (p.playerHP < 0) p.playerHP = 0;
+            if (absorbed > 0) {
+                logMsg += `, щит поглотил ${absorbed} урона`;
+            }
         }
 
         // Лечение
@@ -489,25 +569,30 @@
         }
 
         // Бонус Терний
-        if (isPlayer && p.playerClan === 'Тернии' && dmg > 0) {
-            p.enemyPoison += 1;
-            logMsg += `, тернии отравили врага (+1 яд)`;
-        }
-        if (!isPlayer && p.enemyClan === 'Тернии' && dmg > 0) {
-            p.playerPoison += 1;
-            logMsg += `, тернии отравили игрока (+1 яд)`;
+        if (dmg > 0) {
+            if (isPlayer && p.playerClan === 'Тернии') {
+                p.enemyPoison += 1;
+                logMsg += `, тернии отравили врага (+1 яд)`;
+            }
+            if (!isPlayer && p.enemyClan === 'Тернии') {
+                p.playerPoison += 1;
+                logMsg += `, тернии отравили игрока (+1 яд)`;
+            }
         }
 
-        // Применяем яд
-        if (p.enemyPoison > 0 && isPlayer) {
-            p.enemyHP -= p.enemyPoison;
-            if (p.enemyHP < 0) p.enemyHP = 0;
-            logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
-        }
-        if (p.playerPoison > 0 && !isPlayer) {
-            p.playerHP -= p.playerPoison;
-            if (p.playerHP < 0) p.playerHP = 0;
-            logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
+        // Применяем яд (в конце хода)
+        if (isPlayer) {
+            if (p.enemyPoison > 0) {
+                p.enemyHP -= p.enemyPoison;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
+            }
+        } else {
+            if (p.playerPoison > 0) {
+                p.playerHP -= p.playerPoison;
+                if (p.playerHP < 0) p.playerHP = 0;
+                logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
+            }
         }
 
         addLog(logMsg);
@@ -516,7 +601,7 @@
         checkGameOver();
     }
 
-    // ---------- ХОД ВРАГА ----------
+    // ---------- ХОД ВРАГА (С РАЗЫГРЫВАНИЕМ КАРТ) ----------
     function enemyTurn() {
         if (gameState.gameOver) return;
         const p = gameState;
@@ -529,30 +614,51 @@
             p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
             updateUI();
             renderHand();
-            checkGameOver();
+            if (!checkGameOver()) {
+                addLog('⚔️ Твой ход!');
+            }
             return;
         }
 
-        // Враг играет случайную карту
+        // Враг разыгрывает карту
+        let cardPlayed = false;
         if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
-            const card = p.enemyHand[0];
-            if (p.enemyEnergy >= card.cost) {
-                applyCardEffects(card, 'enemy');
-                p.enemyHand.splice(0, 1);
-                p.enemyEnergy -= card.cost;
-                if (checkGameOver()) return;
-            } else {
-                addLog('⏳ Враг копит энергию...');
+            // Находим первую карту, которую враг может сыграть
+            for (let i = 0; i < p.enemyHand.length; i++) {
+                const card = p.enemyHand[i];
+                if (p.enemyEnergy >= card.cost) {
+                    // Разыгрываем карту
+                    applyCardEffects(card, 'enemy');
+                    p.enemyHand.splice(i, 1);
+                    p.enemyEnergy -= card.cost;
+                    // Возвращаем карту в колоду
+                    p.enemyDeck.push(cloneCard(card));
+                    p.enemyDeck = shuffle(p.enemyDeck);
+                    // Добираем карту до 4
+                    while (p.enemyHand.length < 4) {
+                        drawCard('enemy');
+                    }
+                    cardPlayed = true;
+                    break;
+                }
             }
         }
+
+        if (!cardPlayed) {
+            addLog('⏳ Враг копит энергию...');
+        }
+
+        // Проверка конца игры после хода врага
+        if (checkGameOver()) return;
 
         // Переход хода к игроку
         p.isPlayerTurn = true;
         p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
         updateUI();
         renderHand();
-        checkGameOver();
-        addLog('⚔️ Твой ход!');
+        if (!checkGameOver()) {
+            addLog('⚔️ Твой ход!');
+        }
     }
 
     // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
@@ -565,6 +671,7 @@
             statusText.textContent = '💀 Ты проиграл!';
             endTurnBtn.disabled = true;
             renderHand();
+            showGameOver(false);
             return true;
         }
         if (p.enemyHP <= 0) {
@@ -574,34 +681,31 @@
             statusText.textContent = '🏆 Ты победил!';
             endTurnBtn.disabled = true;
             renderHand();
+            showGameOver(true);
             return true;
         }
         return false;
     }
 
+    // ---------- ЭКРАН КОНЦА ИГРЫ ----------
+    function showGameOver(win) {
+        gameOverContainer.innerHTML = `
+            <div class="game-over-overlay">
+                <div class="result ${win ? 'win' : 'lose'}">${win ? '🏆 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}</div>
+                <button class="btn-end-turn" style="margin-top:15px;" onclick="restartGame()">🔄 Играть снова</button>
+            </div>
+        `;
+    }
+
+    // ---------- ПЕРЕЗАПУСК ----------
+    function restartGame() {
+        gameOverContainer.innerHTML = '';
+        battleScreen.style.display = 'none';
+        clanSelectScreen.style.display = 'block';
+        renderClans();
+    }
+
     // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
     endTurnBtn.addEventListener('click', function() {
         if (gameState.gameOver || !gameState.isPlayerTurn) return;
-        const p = gameState;
-
-        // Проверка оглушения игрока
-        if (p.playerStun > 0) {
-            p.playerStun -= 1;
-            addLog(`💫 Ты оглушён и пропускаешь ход`);
-            p.isPlayerTurn = false;
-            updateUI();
-            setTimeout(() => enemyTurn(), 800);
-            return;
-        }
-
-        p.isPlayerTurn = false;
-        updateUI();
-        setTimeout(() => enemyTurn(), 800);
-    });
-
-    // ---------- ЗАПУСК ----------
-    renderClans();
-</script>
-
-</body>
-</html>
+       
