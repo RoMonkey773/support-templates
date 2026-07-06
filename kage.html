@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Карточная битва</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,6 +15,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            padding-bottom: 80px;
         }
         .game-container { max-width: 1100px; width: 100%; }
         .clan-select-screen {
@@ -166,10 +167,10 @@
 
 <script>
     // =======================================================
-    // KAGE — СБАЛАНСИРОВАННАЯ ВЕРСИЯ (ЦЕНЫ 1-3)
+    // KAGE — РАСШИРЕННАЯ ВЕРСИЯ (8 КАРТ НА КЛАН)
     // =======================================================
 
-    // ---------- ДАННЫЕ КЛАНОВ И КАРТ (НОВЫЙ БАЛАНС) ----------
+    // ---------- ДАННЫЕ КЛАНОВ И КАРТ (РАСШИРЕННЫЕ) ----------
     const CLAN_DATA = {
         'Тени': {
             icon: '🌑',
@@ -179,7 +180,10 @@
                 { name: 'Кинжал теней', dmg: 4, cost: 2, rarity: 'Обычная' },
                 { name: 'Страх', stun: 2, cost: 3, rarity: 'Необычная' },
                 { name: 'Скрытность', energyPlus: 2, cost: 1, rarity: 'Обычная' },
-                { name: 'Теневая ловушка', dmg: 1, stun: 2, stealEnergy: 1, cost: 3, rarity: 'Редкая' }
+                { name: 'Теневая ловушка', dmg: 1, stun: 2, stealEnergy: 1, cost: 3, rarity: 'Редкая' },
+                { name: 'Ночной кошмар', dmg: 3, stun: 2, cost: 4, rarity: 'Редкая' },
+                { name: 'Иллюзия', stun: 1, energyPlus: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Удар из тени', dmg: 5, cost: 3, rarity: 'Обычная' }
             ]
         },
         'Тернии': {
@@ -190,7 +194,10 @@
                 { name: 'Ядовитое семя', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
                 { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Терновый шип', dmg: 2, shield: 3, poison: 1, cost: 2, rarity: 'Необычная' }
+                { name: 'Терновый шип', dmg: 2, shield: 3, poison: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Корни', dmg: 1, shield: 4, cost: 2, rarity: 'Обычная' },
+                { name: 'Ядовитый туман', dmg: 1, poison: 3, cost: 3, rarity: 'Редкая' },
+                { name: 'Живая изгородь', shield: 6, poison: 1, cost: 3, rarity: 'Необычная' }
             ]
         },
         'Ярость': {
@@ -201,7 +208,10 @@
                 { name: 'Двойной выпад', dmg: 4, cost: 2, rarity: 'Необычная' },
                 { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'Необычная' },
                 { name: 'Удар зверя', dmg: 7, cost: 3, rarity: 'Редкая' },
-                { name: 'Ярость берсерка', dmg: 4, cost: 2, rarity: 'Обычная' }
+                { name: 'Ярость берсерка', dmg: 4, cost: 2, rarity: 'Обычная' },
+                { name: 'Мощный выпад', dmg: 6, cost: 3, rarity: 'Необычная' },
+                { name: 'Яростный рывок', dmg: 3, energyPlus: 1, cost: 2, rarity: 'Обычная' },
+                { name: 'Удар в спину', dmg: 8, cost: 4, rarity: 'Редкая' }
             ]
         }
     };
@@ -270,7 +280,6 @@
         const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== playerClanName)[0];
         const enemyData = CLAN_DATA[enemyClanName];
 
-        // Создаём бесконечные колоды
         function createInfiniteDeck(clanName) {
             const baseCards = CLAN_DATA[clanName].cards;
             const deck = [];
@@ -308,7 +317,6 @@
             enemyHand: [],
         };
 
-        // Начальная раздача
         for (let i = 0; i < 4; i++) {
             drawCard('player');
             drawCard('enemy');
@@ -465,7 +473,7 @@
         setTimeout(() => enemyTurn(), 600);
     }
 
-    // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ (С УЧЁТОМ НОВОГО БАЛАНСА) ----------
+    // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ ----------
     function applyCardEffects(card, target) {
         const p = gameState;
         if (!p) return;
@@ -475,7 +483,6 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
-        // Урон с бонусом Ярости (+1)
         let dmg = card.dmg || 0;
         if (isPlayer && p.playerClan === 'Ярость') dmg += 1;
         if (!isPlayer && p.enemyClan === 'Ярость') dmg += 1;
@@ -504,7 +511,6 @@
             }
         }
 
-        // Лечение
         if (card.heal > 0) {
             if (isPlayer) {
                 p.playerHP = Math.min(p.playerHP + card.heal, p.playerMaxHP);
@@ -515,7 +521,6 @@
             }
         }
 
-        // Щит
         if (card.shield > 0) {
             if (isPlayer) {
                 p.playerShield += card.shield;
@@ -526,7 +531,6 @@
             }
         }
 
-        // Яд
         if (card.poison > 0) {
             if (isPlayer) {
                 p.enemyPoison += card.poison;
@@ -537,7 +541,6 @@
             }
         }
 
-        // Оглушение с бонусом Теней
         let stun = card.stun || 0;
         if (isPlayer && p.playerClan === 'Тени') stun += 1;
         if (!isPlayer && p.enemyClan === 'Тени') stun += 1;
@@ -552,7 +555,6 @@
             }
         }
 
-        // Кража энергии
         if (card.stealEnergy > 0) {
             if (isPlayer) {
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
@@ -567,7 +569,6 @@
             }
         }
 
-        // Энергия+
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
@@ -578,7 +579,6 @@
             }
         }
 
-        // Бонус Терний (1 урон ядом)
         if (dmg > 0) {
             if (isPlayer && p.playerClan === 'Тернии') {
                 p.enemyPoison += 1;
@@ -590,7 +590,6 @@
             }
         }
 
-        // Применяем яд
         if (isPlayer) {
             if (p.enemyPoison > 0) {
                 p.enemyHP -= p.enemyPoison;
@@ -635,7 +634,6 @@
 
         let cardPlayed = false;
         if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
-            // Сортируем карты по стоимости (дешёвые сначала) и по урону (приоритет атаке)
             const sortedHand = [...p.enemyHand].sort((a, b) => {
                 if (a.cost !== b.cost) return a.cost - b.cost;
                 return (b.dmg || 0) - (a.dmg || 0);
