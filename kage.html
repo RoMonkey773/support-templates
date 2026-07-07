@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAGE — Карточная битва</title>
+    <title>SHARD — Карточная битва</title>
     <style>
-        /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -55,8 +54,6 @@
             position: relative;
             z-index: 1;
         }
-
-        /* ---------- КАСТОМНЫЙ СКРОЛЛБАР ---------- */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: rgba(30,20,18,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
@@ -122,7 +119,7 @@
         }
         .save-indicator.show { opacity: 1; }
 
-        /* ---------- ВЫБОР КЛАНА ---------- */
+        /* ---------- ВЫБОР КЛАССА ---------- */
         .clan-select-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -205,7 +202,7 @@
         .map-node .label { font-size: 12px; color: #a08078; }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
-        /* ---------- БОЕВОЙ ЭКРАН (МОБИЛЬНЫЙ) ---------- */
+        /* ---------- БОЕВОЙ ЭКРАН ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
@@ -223,7 +220,7 @@
             min-height: 400px;
         }
 
-        /* ВРАГ (сверху) */
+        /* ВРАГ */
         .battle-enemy {
             background: rgba(30,20,18,0.5);
             border-radius: 12px;
@@ -242,7 +239,7 @@
         .battle-enemy .shield-text { color: #38bdf8; font-size: 13px; }
         .battle-enemy .status-text { font-size: 12px; color: #a08078; }
 
-        /* ПОЛЕ БОЯ (центр) */
+        /* ПОЛЕ БОЯ */
         .battle-field {
             background: rgba(30,20,18,0.2);
             border-radius: 12px;
@@ -258,7 +255,7 @@
         .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
         .battle-field .battle-status { font-size: 12px; color: #a08078; }
 
-        /* ЛОГ (сворачиваемый) */
+        /* ЛОГ */
         .log-toggle {
             background: rgba(30,20,18,0.4);
             border: 1px solid rgba(180,80,30,0.1);
@@ -292,7 +289,7 @@
         .battle-log-container .log-entry.player-turn { color: #c4b5fd; border-left: 2px solid #c4b5fd; padding-left: 6px; }
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
 
-        /* ПАНЕЛЬ ИГРОКА + КНОПКА */
+        /* ПАНЕЛЬ ИГРОКА */
         .battle-actions {
             display: flex;
             gap: 8px;
@@ -306,14 +303,63 @@
         .player-status {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 14px;
             font-weight: 600;
+            flex-wrap: wrap;
         }
         .player-status .hp-text { color: #22c55e; }
         .player-status .energy-text { color: #e2b8a0; }
         .player-status .shield-text { color: #38bdf8; font-size: 13px; }
-        .player-status .status-icon { font-size: 13px; color: #a08078; }
+        .player-status .status-icon {
+            font-size: 13px;
+            color: #a08078;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+            padding: 0 2px;
+        }
+        .player-status .status-icon:hover { transform: scale(1.1); }
+
+        /* ПОДСКАЗКИ */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            background: rgba(40,25,20,0.95);
+            border: 1px solid rgba(180,80,30,0.3);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #e2d5d0;
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 50;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            min-width: 120px;
+            text-align: center;
+        }
+        .tooltip-text.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(40,25,20,0.95);
+        }
 
         .btn-end-turn {
             background: rgba(40,25,20,0.8);
@@ -334,7 +380,7 @@
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-end-turn.waiting { color: #94a3b8; border-color: rgba(100,60,40,0.2); }
 
-        /* РУКА КАРТ (сжатая) */
+        /* РУКА КАРТ */
         .battle-hand {
             display: flex;
             gap: 6px;
@@ -414,7 +460,7 @@
             padding: 12px;
         }
 
-        /* ОВЕРЛЕЙ КОНЦА ИГРЫ */
+        /* ОВЕРЛЕЙ */
         .game-over-overlay {
             position: absolute;
             inset: 0;
@@ -446,7 +492,6 @@
         }
         .game-over-overlay .btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
-        /* ---------- АДАПТИВ (ТЕЛЕФОН) ---------- */
         @media (max-width: 480px) {
             .menu-btn { width: 200px; font-size: 15px; padding: 12px 20px; }
             .clan-card { width: 130px; padding: 14px 12px; }
@@ -478,8 +523,8 @@
 <div class="game-container">
 
     <div id="menuScreen" class="menu-screen">
-        <h1 class="ember-text">KAGE</h1>
-        <p class="subtitle">Выбери свой путь и начни битву теней</p>
+        <h1 class="ember-text">SHARD</h1>
+        <p class="subtitle">Выбери свой Осколок и начни битву</p>
         <div class="menu-buttons">
             <button class="menu-btn continue" id="continueBtn" style="display:none;">▶️ Продолжить</button>
             <button class="menu-btn ember-glow" id="newGameBtn">🔄 Новая игра</button>
@@ -498,8 +543,8 @@
 
     <div id="clanSelectScreen" class="clan-select-screen">
         <button class="back-btn" id="backFromClans">⬅️ Назад</button>
-        <h2>Выбери клан</h2>
-        <p class="subtitle">Каждый клан даёт уникальный бонус</p>
+        <h2>Выбери класс</h2>
+        <p class="subtitle">Каждый Осколок даёт уникальную силу</p>
         <div class="clan-grid" id="clanGrid"></div>
     </div>
 
@@ -516,7 +561,7 @@
     </div>
 
     <div id="battleScreen" class="battle-screen">
-        <div class="battle-container" id="battleContainer">
+        <div class="battle-container">
             <!-- Враг -->
             <div class="battle-enemy">
                 <div class="info">
@@ -530,11 +575,11 @@
 
             <!-- Поле боя -->
             <div class="battle-field">
-                <div class="turn-indicator" id="turnIndicator">⚔️ Ход игрока</div>
+                <div class="turn-indicator" id="turnIndicator">⚔️ Твой ход</div>
                 <div class="battle-status" id="battleStatus">Выбери карту</div>
             </div>
 
-            <!-- Лог (сворачиваемый) -->
+            <!-- Лог -->
             <div class="log-toggle" id="logToggle">📜 Лог боя</div>
             <div class="battle-log-container" id="battleLog">
                 <div class="log-entry">⚔️ Битва начинается!</div>
@@ -546,7 +591,7 @@
                     <span class="hp-text" id="playerHP">30</span>
                     <span class="shield-text" id="playerShieldText">🛡️0</span>
                     <span class="energy-text">⚡<span id="playerEnergy">3</span></span>
-                    <span class="status-icon" id="playerStatus"></span>
+                    <span class="status-icon" id="playerStatus" data-tooltip="Статусы: 💫-оглушение, ☠️-яд">📊</span>
                 </div>
                 <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
             </div>
@@ -556,7 +601,7 @@
                 <div class="empty-hand">Загрузка...</div>
             </div>
 
-            <!-- Оверлей конца игры -->
+            <!-- Оверлей -->
             <div id="gameOverContainer" style="display:none; position:absolute; inset:0; z-index:20;"></div>
         </div>
     </div>
@@ -565,9 +610,34 @@
 
 <script>
     // =======================================================
-    // KAGE — МОБИЛЬНАЯ ВЕРСИЯ
+    // SHARD — НОВАЯ ВЕРСИЯ (БЕЗ ТЕНЕЙ, С ПОДСКАЗКАМИ)
     // =======================================================
 
+    // ---------- ПОДСКАЗКИ ----------
+    function initTooltips() {
+        document.querySelectorAll('[data-tooltip]').forEach(el => {
+            const tooltip = document.createElement('span');
+            tooltip.className = 'tooltip-text';
+            tooltip.textContent = el.dataset.tooltip;
+            el.style.position = 'relative';
+            el.appendChild(tooltip);
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = tooltip.classList.contains('show');
+                // Закрываем все другие подсказки
+                document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
+                if (!isOpen) {
+                    tooltip.classList.add('show');
+                }
+            });
+        });
+        // Закрываем подсказки при клике вне их
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
+        });
+    }
+
+    // ---------- ЛЕПЕСТКИ ----------
     function createSakura() {
         const container = document.getElementById('sakura-container');
         for (let i = 0; i < 50; i++) {
@@ -584,26 +654,27 @@
     }
     createSakura();
 
+    // ---------- НОВЫЕ ДАННЫЕ (БЕЗ ТЕНЕЙ) ----------
     const CLAN_DATA = {
-        'Тени': {
-            icon: '🌑',
-            bonus: 'Оглушение длится на 1 ход дольше',
+        'Ассасин': {
+            icon: '🗡️',
+            bonus: 'Критический удар +2, оглушение',
             cards: [
-                { name: 'Удар Тени', dmg: 2, stun: 1, cost: 2, rarity: 'Обычная' },
-                { name: 'Кинжал теней', dmg: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Страх', stun: 2, cost: 3, rarity: 'Необычная' },
+                { name: 'Удар в спину', dmg: 4, cost: 2, rarity: 'Обычная' },
                 { name: 'Скрытность', energyPlus: 2, cost: 1, rarity: 'Обычная' },
-                { name: 'Теневая ловушка', dmg: 1, stun: 2, stealEnergy: 1, cost: 3, rarity: 'Редкая' },
-                { name: 'Ночной кошмар', dmg: 3, stun: 2, cost: 4, rarity: 'Редкая' },
+                { name: 'Отравленный клинок', dmg: 2, poison: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Оглушающий удар', dmg: 3, stun: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Ночной кошмар', dmg: 5, stun: 1, cost: 3, rarity: 'Редкая' },
+                { name: 'Теневая ловушка', dmg: 2, stun: 1, stealEnergy: 1, cost: 3, rarity: 'Редкая' },
                 { name: 'Иллюзия', stun: 1, energyPlus: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Удар из тени', dmg: 5, cost: 3, rarity: 'Обычная' }
+                { name: 'Кинжал теней', dmg: 6, cost: 3, rarity: 'Обычная' }
             ]
         },
-        'Тернии': {
-            icon: '🌿',
+        'Страж': {
+            icon: '🛡️',
             bonus: 'При получении урона враг получает 1 урон ядом',
             cards: [
-                { name: 'Шипованая лоза', shield: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Щит', shield: 5, cost: 2, rarity: 'Обычная' },
                 { name: 'Ядовитое семя', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
                 { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
@@ -613,7 +684,7 @@
                 { name: 'Живая изгородь', shield: 6, poison: 1, cost: 3, rarity: 'Необычная' }
             ]
         },
-        'Ярость': {
+        'Берсерк': {
             icon: '⚡',
             bonus: 'Урон всех карт увеличен на 1',
             cards: [
@@ -668,7 +739,7 @@
     const saveIndicator = document.getElementById('saveIndicator');
     const logToggle = document.getElementById('logToggle');
 
-    // Лог (сворачивание)
+    // Лог
     let logOpen = false;
     logToggle.addEventListener('click', () => {
         logOpen = !logOpen;
@@ -710,12 +781,12 @@
             } : null,
             timestamp: Date.now()
         };
-        localStorage.setItem('kage_save', JSON.stringify(saveData));
+        localStorage.setItem('shard_save', JSON.stringify(saveData));
         showSaveIndicator();
     }
 
     function loadGame() {
-        const raw = localStorage.getItem('kage_save');
+        const raw = localStorage.getItem('shard_save');
         if (!raw) return null;
         try { return JSON.parse(raw); } catch (e) { return null; }
     }
@@ -725,7 +796,7 @@
         setTimeout(() => { saveIndicator.classList.remove('show'); }, 1500);
     }
 
-    function deleteSave() { localStorage.removeItem('kage_save'); }
+    function deleteSave() { localStorage.removeItem('shard_save'); }
 
     function checkContinueButton() {
         const save = loadGame();
@@ -736,6 +807,9 @@
         [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen].forEach(s => s.style.display = 'none');
         screen.style.display = 'block';
         checkContinueButton();
+        if (screen === menuScreen || screen === battleScreen) {
+            initTooltips();
+        }
     }
 
     // Навигация
@@ -800,7 +874,7 @@
                 node.classList.add(nodeType);
                 const nodeData = { type: nodeType, completed: false };
                 if (isEnemy) {
-                    const enemyClan = ['Тени', 'Тернии', 'Ярость'][Math.floor(Math.random() * 3)];
+                    const enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
                     node.dataset.enemyClan = enemyClan;
                     nodeData.enemyClan = enemyClan;
                     node.innerHTML = `<span class="icon">❓</span><div class="label">⚔️ Враг</div>`;
@@ -828,7 +902,7 @@
                 node.className = 'map-node';
                 node.classList.add(nodeData.type);
                 if (nodeData.type === 'enemy') {
-                    node.dataset.enemyClan = nodeData.enemyClan || 'Тени';
+                    node.dataset.enemyClan = nodeData.enemyClan || 'Ассасин';
                     node.innerHTML = `<span class="icon">❓</span><div class="label">⚔️ Враг</div>`;
                 } else {
                     node.innerHTML = `<span class="icon">🛒</span><div class="label">❤️ +10 HP</div>`;
@@ -856,8 +930,8 @@
 
         if (node.classList.contains('enemy')) {
             const enemyClan = node.dataset.enemyClan;
-            const enemyName = enemyClan || 'Тени';
-            mapStatus.textContent = `⚔️ Битва с кланом ${enemyName}!`;
+            const enemyName = enemyClan || 'Ассасин';
+            mapStatus.textContent = `⚔️ Битва с ${enemyName}!`;
             startBattle(enemyName);
         } else if (node.classList.contains('merchant')) {
             if (gameState) {
@@ -877,7 +951,7 @@
                     }
                 }, 1000);
             } else {
-                mapStatus.textContent = '❌ Сначала выбери клан!';
+                mapStatus.textContent = '❌ Сначала выбери класс!';
             }
         }
     }
@@ -965,7 +1039,6 @@
         while (battleLog.children.length > 30) {
             battleLog.removeChild(battleLog.firstChild);
         }
-        // Автоматически открываем лог при новом сообщении, если он свёрнут
         if (!logOpen && battleLog.children.length > 2) {
             logOpen = true;
             battleLog.classList.add('open');
@@ -987,7 +1060,16 @@
         let pStatus = '';
         if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
         if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
-        playerStatus.textContent = pStatus;
+        playerStatus.textContent = pStatus ? '📊' : '📊';
+        // Обновляем подсказку для статуса
+        const tooltip = playerStatus.querySelector('.tooltip-text');
+        if (tooltip) {
+            let text = 'Статусы: ';
+            if (p.playerStun > 0) text += `💫 оглушение (${p.playerStun}) `;
+            if (p.playerPoison > 0) text += `☠️ яд (${p.playerPoison}) `;
+            if (p.playerStun === 0 && p.playerPoison === 0) text = 'Нет активных статусов';
+            tooltip.textContent = text;
+        }
 
         let eStatus = '';
         if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
@@ -1217,8 +1299,8 @@
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
         let dmg = card.dmg || 0;
-        if (isPlayer && p.playerClan === 'Ярость') dmg += 1;
-        if (!isPlayer && p.enemyClan === 'Ярость') dmg += 1;
+        if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
+        if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
 
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
@@ -1247,7 +1329,7 @@
         if (card.heal > 0) {
             let healAmount = card.heal;
             let selfDamage = 0;
-            if (card.name === 'Жертвенный рывок' && isPlayer && p.playerClan === 'Ярость') {
+            if (card.name === 'Жертвенный рывок' && isPlayer && p.playerClan === 'Берсерк') {
                 selfDamage = 2;
                 p.playerHP -= selfDamage;
                 if (p.playerHP < 0) p.playerHP = 0;
@@ -1283,8 +1365,8 @@
         }
 
         let stun = card.stun || 0;
-        if (isPlayer && p.playerClan === 'Тени') stun += 1;
-        if (!isPlayer && p.enemyClan === 'Тени') stun += 1;
+        if (isPlayer && p.playerClan === 'Ассасин') stun += 1;
+        if (!isPlayer && p.enemyClan === 'Ассасин') stun += 1;
 
         if (stun > 0) {
             if (isPlayer) {
@@ -1321,11 +1403,11 @@
         }
 
         if (dmg > 0) {
-            if (isPlayer && p.playerClan === 'Тернии') {
+            if (isPlayer && p.playerClan === 'Страж') {
                 p.enemyPoison += 1;
                 logMsg += `, яд +1`;
             }
-            if (!isPlayer && p.enemyClan === 'Тернии') {
+            if (!isPlayer && p.enemyClan === 'Страж') {
                 p.playerPoison += 1;
                 logMsg += `, яд +1`;
             }
@@ -1511,6 +1593,7 @@
     // ---------- ЗАПУСК ----------
     checkContinueButton();
     showScreen(menuScreen);
+    initTooltips();
 </script>
 </body>
 </html>
