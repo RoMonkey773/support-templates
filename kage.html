@@ -6,16 +6,18 @@
     <title>SHARD — Карточная битва</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #0d0a0a;
             color: #e2d5d0;
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 6px;
-            overflow-x: hidden;
             position: relative;
         }
         #sakura-container {
@@ -51,8 +53,13 @@
         .game-container {
             max-width: 500px;
             width: 100%;
+            height: 100vh;
+            max-height: 100vh;
             position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 6px 6px 0 6px;
         }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: rgba(30,20,18,0.2); border-radius: 10px; }
@@ -66,6 +73,10 @@
             padding: 30px 20px;
             text-align: center;
             border: 1px solid rgba(180,80,30,0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .menu-screen h1 {
             font-size: 48px;
@@ -126,6 +137,10 @@
             padding: 20px;
             border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .clan-select-screen h2 { font-size: 24px; color: #e2b8a0; margin-bottom: 6px; }
         .clan-select-screen .subtitle { color: #a08078; font-size: 14px; margin-bottom: 20px; }
@@ -163,6 +178,10 @@
             padding: 16px;
             border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .map-screen h2 { font-size: 22px; color: #e2b8a0; margin-bottom: 6px; }
         .map-screen .info {
@@ -199,28 +218,28 @@
         .map-node .label { font-size: 12px; color: #a08078; }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
-        /* ---------- НОВЫЙ БОЕВОЙ ЭКРАН (ВРАГ СВЕРХУ, КАРТЫ СНИЗУ) ---------- */
+        /* ---------- НОВЫЙ БОЕВОЙ ЭКРАН — ВЕСЬ ЭКРАН ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
             backdrop-filter: blur(8px);
             border-radius: 16px;
-            padding: 8px 10px;
             border: 1px solid rgba(180,80,30,0.2);
-            min-height: 500px;
+            height: 100%;
             position: relative;
             display: flex;
             flex-direction: column;
+            padding: 6px;
         }
         .battle-container {
             display: flex;
             flex-direction: column;
             flex: 1;
-            gap: 6px;
-            min-height: 500px;
+            height: 100%;
+            gap: 4px;
         }
 
-        /* ВРАГ — сверху */
+        /* ВРАГ — ПРИЖАТ К ВЕРХУ */
         .battle-enemy {
             background: rgba(30,20,18,0.6);
             border-radius: 12px;
@@ -233,6 +252,7 @@
             gap: 4px;
             font-size: 14px;
             flex-shrink: 0;
+            min-height: 60px;
         }
         .battle-enemy .info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .battle-enemy .hp-text { font-size: 20px; font-weight: 700; color: #ef4444; }
@@ -241,19 +261,19 @@
         .battle-enemy .status-text { font-size: 13px; color: #a08078; }
         .battle-enemy .clan-badge { font-weight: 700; color: #e2b8a0; font-size: 14px; }
 
-        /* ПОЛЕ БОЯ — центр (для анимаций) */
+        /* ПОЛЕ БОЯ — ЗАНИМАЕТ ВСЁ СВОБОДНОЕ МЕСТО ПО ЦЕНТРУ */
         .battle-field {
             flex: 1;
             background: rgba(30,20,18,0.15);
             border-radius: 12px;
             border: 1px dashed rgba(180,80,30,0.08);
-            min-height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             gap: 4px;
             padding: 8px;
+            min-height: 80px;
         }
         .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
         .battle-field .battle-status { font-size: 12px; color: #a08078; }
@@ -295,7 +315,7 @@
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
         .battle-log-container .log-entry.poison { color: #6a9a6a; border-left: 2px solid #6a9a6a; padding-left: 6px; }
 
-        /* ПАНЕЛЬ ИГРОКА + КНОПКА — внизу */
+        /* ПАНЕЛЬ ИГРОКА + КНОПКА — ПРИЖАТЫ К НИЗУ */
         .battle-actions {
             display: flex;
             gap: 6px;
@@ -306,6 +326,7 @@
             padding: 6px 10px;
             border: 1px solid rgba(180,80,30,0.08);
             flex-shrink: 0;
+            min-height: 44px;
         }
         .player-status {
             display: flex;
@@ -339,13 +360,13 @@
         .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.25); border-color: #c07040; }
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* РУКА КАРТ — в самом низу */
+        /* РУКА КАРТ — ПРИЖАТА К САМОМУ НИЗУ */
         .battle-hand {
             display: flex;
             gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 6px 0;
+            padding: 4px 0;
             min-height: 80px;
             background: rgba(10,8,8,0.2);
             border-radius: 10px;
@@ -357,15 +378,15 @@
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
             border-radius: 10px;
-            padding: 8px 10px;
-            width: 96px;
+            padding: 6px 8px;
+            width: 80px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             position: relative;
             flex-shrink: 0;
-            min-height: 80px;
+            min-height: 70px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -385,8 +406,8 @@
         }
         .battle-hand .card .card-name {
             font-weight: 700;
-            font-size: 11px;
-            line-height: 1.2;
+            font-size: 10px;
+            line-height: 1.1;
             word-break: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
@@ -396,20 +417,20 @@
         .battle-hand .card .card-cost {
             display: inline-block;
             background: rgba(40,25,20,0.8);
-            padding: 0 8px;
+            padding: 0 6px;
             border-radius: 8px;
-            font-size: 10px;
-            margin-top: 3px;
+            font-size: 9px;
+            margin-top: 2px;
             color: #e2b8a0;
             border: 1px solid rgba(180,80,30,0.1);
             position: relative;
             z-index: 1;
         }
         .battle-hand .card .card-effect {
-            font-size: 10px;
+            font-size: 9px;
             color: #a08078;
-            margin-top: 3px;
-            line-height: 1.2;
+            margin-top: 2px;
+            line-height: 1.1;
             word-break: break-word;
             position: relative;
             z-index: 1;
@@ -495,27 +516,30 @@
         }
         .game-over-overlay .btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
+        /* ---------- АДАПТИВ ---------- */
         @media (max-width: 480px) {
             .menu-btn { width: 180px; font-size: 14px; padding: 12px 16px; }
             .clan-card { width: 120px; padding: 12px 10px; }
             .clan-card .icon { font-size: 28px; }
             .clan-card .name { font-size: 14px; }
-            .battle-hand .card { width: 82px; padding: 6px 8px; min-height: 70px; }
-            .battle-hand .card .card-name { font-size: 10px; }
-            .battle-hand .card .card-effect { font-size: 9px; }
-            .battle-hand .card .card-cost { font-size: 9px; }
-            .map-node { min-width: 70px; max-width: 100px; padding: 10px 12px; }
-            .map-node .icon { font-size: 20px; }
-            .game-container { max-width: 100%; }
-            .btn-end-turn { font-size: 13px; padding: 6px 12px; min-width: 70px; }
-            .player-status { font-size: 12px; }
-            .battle-enemy .hp-text { font-size: 16px; }
-        }
-        @media (max-width: 380px) {
-            .battle-hand .card { width: 72px; padding: 4px 6px; min-height: 60px; }
+            .battle-hand .card { width: 70px; padding: 5px 6px; min-height: 60px; }
             .battle-hand .card .card-name { font-size: 9px; }
             .battle-hand .card .card-effect { font-size: 8px; }
             .battle-hand .card .card-cost { font-size: 8px; }
+            .map-node { min-width: 70px; max-width: 100px; padding: 10px 12px; }
+            .map-node .icon { font-size: 20px; }
+            .game-container { max-width: 100%; padding: 4px 4px 0 4px; }
+            .btn-end-turn { font-size: 13px; padding: 6px 12px; min-width: 70px; }
+            .player-status { font-size: 12px; }
+            .battle-enemy .hp-text { font-size: 16px; }
+            .battle-enemy { min-height: 50px; padding: 6px 10px; }
+            .battle-field { min-height: 60px; }
+        }
+        @media (max-width: 380px) {
+            .battle-hand .card { width: 60px; padding: 4px 5px; min-height: 50px; }
+            .battle-hand .card .card-name { font-size: 8px; }
+            .battle-hand .card .card-effect { font-size: 7px; }
+            .battle-hand .card .card-cost { font-size: 7px; }
             .btn-end-turn { font-size: 11px; padding: 5px 10px; min-width: 60px; }
             .player-status { font-size: 11px; gap: 4px; }
             .battle-enemy .hp-text { font-size: 14px; }
@@ -549,14 +573,14 @@
         </div>
     </div>
 
-    <div id="clanSelectScreen" class="clan-select-screen">
+    <div id="clanSelectScreen" class="clan-select-screen" style="display:none;">
         <button class="back-btn" id="backFromClans">⬅️ Назад</button>
         <h2>Выбери класс</h2>
         <p class="subtitle">Каждый Осколок даёт уникальную силу</p>
         <div class="clan-grid" id="clanGrid"></div>
     </div>
 
-    <div id="mapScreen" class="map-screen">
+    <div id="mapScreen" class="map-screen" style="display:none;">
         <button class="back-btn" id="backFromMap">⬅️ Назад</button>
         <h2 class="ember-text">🗺️ Карта</h2>
         <div class="info">
@@ -568,8 +592,8 @@
         <div id="mapStatus" style="margin-top:8px; color:#a08078; font-size:13px;"></div>
     </div>
 
-    <!-- НОВЫЙ БОЕВОЙ ЭКРАН -->
-    <div id="battleScreen" class="battle-screen">
+    <!-- БОЕВОЙ ЭКРАН -->
+    <div id="battleScreen" class="battle-screen" style="display:none;">
         <div class="battle-container">
             <!-- ВРАГ — СВЕРХУ -->
             <div class="battle-enemy">
@@ -618,7 +642,7 @@
 
 <script>
     // =======================================================
-    // SHARD — 11 КАРТ У КАЖДОГО, НОВЫЙ ИНТЕРФЕЙС
+    // SHARD — НОВЫЙ ИНТЕРФЕЙС (ВРАГ СВЕРХУ, КАРТЫ СНИЗУ)
     // =======================================================
 
     function createSakura() {
@@ -793,8 +817,10 @@
     }
 
     function showScreen(screen) {
-        [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen].forEach(s => s.style.display = 'none');
-        screen.style.display = 'block';
+        // Все экраны имеют display:flex, поэтому скрываем через display:none
+        const screens = [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen];
+        screens.forEach(s => s.style.display = 'none');
+        screen.style.display = 'flex';
         checkContinueButton();
     }
 
@@ -1587,6 +1613,7 @@
         saveGame();
     });
 
+    // ---------- ЗАПУСК ----------
     checkContinueButton();
     showScreen(menuScreen);
 </script>
