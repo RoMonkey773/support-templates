@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Карточная битва</title>
     <style>
-        /* ---------- БАЗОВЫЕ СТИЛИ (ТЁМНОЕ ФЭНТЕЗИ) ---------- */
+        /* ---------- СТИЛИ (ТЕ ЖЕ, ЧТО В ПРЕДЫДУЩЕЙ ВЕРСИИ) ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -20,7 +20,6 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* ---------- ФОН С ЛЕПЕСТКАМИ (ТЁМНЫЕ) ---------- */
         #sakura-container {
             position: fixed;
             top: 0;
@@ -57,15 +56,12 @@
             0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.5; }
             100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
         }
-
         .game-container {
             max-width: 1100px;
             width: 100%;
             position: relative;
             z-index: 1;
         }
-
-        /* ---------- СВЕЧЕНИЕ УГЛЕЙ (ТЁПЛОЕ) ---------- */
         .ember-glow {
             box-shadow: 0 0 20px rgba(180, 80, 30, 0.3), 0 0 60px rgba(180, 80, 30, 0.08);
             transition: box-shadow 0.3s ease;
@@ -76,8 +72,6 @@
         .ember-text {
             text-shadow: 0 0 20px rgba(180, 80, 30, 0.3), 0 0 40px rgba(180, 80, 30, 0.1);
         }
-
-        /* ---------- ГЛАВНОЕ МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18, 12, 12, 0.9);
             backdrop-filter: blur(8px);
@@ -100,6 +94,12 @@
             font-size: 18px;
             margin-bottom: 40px;
             letter-spacing: 2px;
+        }
+        .menu-screen .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
         .menu-btn {
             background: rgba(40, 25, 20, 0.8);
@@ -135,8 +135,34 @@
             background: rgba(180, 80, 30, 0.2);
             border-color: #c07040;
         }
+        .menu-btn.continue {
+            border-color: #5a8a5a;
+            box-shadow: 0 0 20px rgba(60, 160, 80, 0.1);
+        }
+        .menu-btn.continue:hover {
+            background: rgba(60, 160, 80, 0.2);
+            border-color: #6aaa6a;
+        }
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(40, 25, 20, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #a08078;
+            border: 1px solid rgba(180, 80, 30, 0.15);
+            transition: opacity 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .save-indicator.show {
+            opacity: 1;
+        }
 
-        /* ---------- КАРТА ---------- */
+        /* ---------- ОСТАЛЬНЫЕ СТИЛИ (КАРТА, БОЙ, КАРТЫ) ---------- */
         .map-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -190,7 +216,6 @@
         .map-node.merchant { border-color: rgba(60, 140, 80, 0.4); }
         .map-node.merchant:hover { border-color: #5a9a6a; box-shadow: 0 0 30px rgba(60, 140, 80, 0.12); }
 
-        /* ---------- БОЕВОЙ ЭКРАН ---------- */
         .battle-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -216,7 +241,6 @@
         .health-box .hp-bar .fill.enemy { background: #9a4a3a; box-shadow: 0 0 15px rgba(180, 60, 40, 0.2); }
         .health-box .energy { font-size: 18px; font-weight: 700; color: #e2b8a0; }
 
-        /* ---------- КАРТЫ (ПЕРГАМЕНТ + ТЁМНАЯ ОКАНТОВКА) ---------- */
         .card {
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
@@ -277,8 +301,6 @@
             transform: none !important;
             filter: grayscale(0.6);
         }
-
-        /* ---------- РЕДКОСТИ (ЗОЛОТО/СЕРЕБРО НА ТЁМНОМ) ---------- */
         .card.rare {
             border-color: #c09050;
             box-shadow: 0 0 25px rgba(200, 150, 60, 0.1), inset 0 0 20px rgba(200, 150, 60, 0.03);
@@ -298,7 +320,6 @@
             text-shadow: 0 0 10px rgba(200, 150, 60, 0.3);
             z-index: 2;
         }
-
         .card.uncommon {
             border-color: #5a7a7a;
             box-shadow: 0 0 20px rgba(60, 150, 150, 0.06), inset 0 0 15px rgba(60, 150, 150, 0.02);
@@ -319,7 +340,6 @@
             z-index: 2;
         }
 
-        /* ---------- КНОПКА ЗАВЕРШИТЬ ХОД ---------- */
         .btn-end-turn {
             background: rgba(40, 25, 20, 0.8);
             backdrop-filter: blur(4px);
@@ -345,7 +365,6 @@
             cursor: not-allowed;
         }
 
-        /* ---------- ЛОГ БОЯ ---------- */
         .battle-log {
             background: rgba(10, 8, 8, 0.9);
             border-radius: 10px;
@@ -361,7 +380,78 @@
         .battle-log .log-entry.enemy-turn { color: #c08060; border-left: 3px solid #c08060; padding-left: 10px; }
         .battle-log .log-entry.player-turn { color: #e2b8a0; border-left: 3px solid #e2b8a0; padding-left: 10px; }
 
-        /* ---------- АДАПТИВ ---------- */
+        .clan-select-screen {
+            display: none;
+            background: rgba(18, 12, 12, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(180, 80, 30, 0.25);
+            text-align: center;
+        }
+        .clan-select-screen h2 {
+            font-size: 32px;
+            color: #e2b8a0;
+            text-shadow: 0 0 20px rgba(180, 80, 30, 0.2);
+            margin-bottom: 10px;
+        }
+        .clan-select-screen .subtitle {
+            color: #a08078;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #a08078;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            color: #e2d5d0;
+        }
+        .clan-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .clan-card {
+            background: rgba(30, 20, 18, 0.7);
+            border: 1px solid rgba(60, 40, 30, 0.4);
+            border-radius: 16px;
+            padding: 30px 25px;
+            width: 220px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+        .clan-card:hover {
+            border-color: #c07040;
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(180, 80, 30, 0.12);
+        }
+        .clan-card .icon { font-size: 52px; display: block; margin-bottom: 12px; }
+        .clan-card .name { font-size: 24px; font-weight: 700; color: #e2d5d0; }
+        .clan-card .desc { font-size: 14px; color: #a08078; margin-top: 8px; }
+        .clan-card .bonus { font-size: 13px; color: #c07040; margin-top: 12px; font-weight: 500; }
+
+        .game-over-overlay {
+            text-align: center;
+            padding: 20px;
+            background: rgba(30, 20, 18, 0.9);
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 1px solid rgba(180, 80, 30, 0.25);
+            box-shadow: 0 0 40px rgba(180, 80, 30, 0.08);
+        }
+        .game-over-overlay .result { font-size: 28px; font-weight: 700; }
+        .game-over-overlay .result.win { color: #6a9a7a; }
+        .game-over-overlay .result.lose { color: #9a4a3a; }
+
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
@@ -381,6 +471,9 @@
 <!-- КОНТЕЙНЕР ДЛЯ ЛЕПЕСТКОВ -->
 <div id="sakura-container"></div>
 
+<!-- ИНДИКАТОР СОХРАНЕНИЯ -->
+<div id="saveIndicator" class="save-indicator">💾 Сохранено</div>
+
 <div class="game-container">
 
     <!-- ГЛАВНОЕ МЕНЮ -->
@@ -388,7 +481,8 @@
         <h1 class="ember-text">KAGE</h1>
         <p class="subtitle">Выбери свой путь и начни битву теней</p>
         <div class="menu-buttons">
-            <button class="menu-btn ember-glow" id="playBtn">⚔️ Играть</button>
+            <button class="menu-btn continue" id="continueBtn" style="display:none;">▶️ Продолжить</button>
+            <button class="menu-btn ember-glow" id="newGameBtn">🔄 Новая игра</button>
             <button class="menu-btn small" id="settingsBtn">⚙️ Настройки</button>
         </div>
     </div>
@@ -404,25 +498,25 @@
     </div>
 
     <!-- ЭКРАН ВЫБОРА КЛАНА -->
-    <div id="clanSelectScreen" class="clan-select-screen" style="display:none; background:rgba(18,12,12,0.9); backdrop-filter:blur(8px); border-radius:24px; padding:30px; border:1px solid rgba(180,80,30,0.25); text-align:center;">
-        <button class="back-btn" id="backFromClans" style="background:transparent; border:none; color:#a08078; font-size:16px; cursor:pointer; margin-bottom:20px;">⬅️ Назад</button>
-        <h2 style="font-size:32px; color:#e2b8a0; text-shadow:0 0 20px rgba(180,80,30,0.2);">Выбери клан</h2>
-        <p class="subtitle" style="color:#a08078; font-size:16px; margin-bottom:30px;">Каждый клан даёт уникальный бонус</p>
-        <div class="clan-grid" id="clanGrid" style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+    <div id="clanSelectScreen" class="clan-select-screen">
+        <button class="back-btn" id="backFromClans">⬅️ Назад</button>
+        <h2>Выбери клан</h2>
+        <p class="subtitle">Каждый клан даёт уникальный бонус</p>
+        <div class="clan-grid" id="clanGrid">
             <!-- Кланы появятся из JavaScript -->
         </div>
     </div>
 
     <!-- КАРТА -->
     <div id="mapScreen" class="map-screen">
-        <button class="back-btn" id="backFromMap" style="background:transparent; border:none; color:#a08078; font-size:16px; cursor:pointer; margin-bottom:20px;">⬅️ Назад</button>
+        <button class="back-btn" id="backFromMap">⬅️ Назад</button>
         <h2 class="ember-text">🗺️ Карта</h2>
         <div class="info">
             <span>❤️ HP: <span id="mapHP">30</span></span>
             <span>⚔️ Победы: <span id="mapWins">0</span></span>
             <span>🪙 Монеты: <span id="mapCoins">0</span></span>
         </div>
-        <div class="map-grid" id="mapGrid" style="display:flex; flex-direction:column; gap:15px; align-items:center; margin:20px 0;">
+        <div class="map-grid" id="mapGrid">
             <!-- Узлы появятся из JavaScript -->
         </div>
         <div id="mapStatus" style="margin-top:15px; color:#a08078;"></div>
@@ -454,7 +548,7 @@
 
         <div class="status-text" id="statusText" style="text-align:center; font-size:18px; color:#e2b8a0; margin:10px 0;">Твой ход. Выбери карту.</div>
 
-        <div class="hand" id="handContainer" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:20px 0; min-height:150px;">
+        <div class="hand" id="handContainer">
             <!-- Карты появятся из JavaScript -->
         </div>
 
@@ -473,7 +567,7 @@
 
 <script>
     // =======================================================
-    // KAGE — ТЁМНОЕ ФЭНТЕЗИ + ИСПРАВЛЕННЫЙ ЯД
+    // KAGE — С СИСТЕМОЙ СОХРАНЕНИЯ (LOCALSTORAGE)
     // =======================================================
 
     // ---------- ЛЕПЕСТКИ ----------
@@ -547,6 +641,7 @@
     let playerClanName = null;
     let mapWins = 0;
     let mapCoins = 0;
+    let mapNodes = [];
 
     // ---------- ЭЛЕМЕНТЫ DOM ----------
     const menuScreen = document.getElementById('menuScreen');
@@ -577,82 +672,159 @@
     const playerClanBadge = document.getElementById('playerClanBadge');
     const turnIndicator = document.getElementById('turnIndicator');
     const gameOverContainer = document.getElementById('gameOverContainer');
+    const continueBtn = document.getElementById('continueBtn');
+    const saveIndicator = document.getElementById('saveIndicator');
+
+    // ---------- СИСТЕМА СОХРАНЕНИЯ ----------
+    function saveGame() {
+        if (!gameState && !playerClanName) return;
+        const saveData = {
+            playerClanName: playerClanName,
+            mapWins: mapWins,
+            mapCoins: mapCoins,
+            mapNodes: mapNodes,
+            gameState: gameState ? {
+                playerClan: gameState.playerClan,
+                enemyClan: gameState.enemyClan,
+                playerHP: gameState.playerHP,
+                playerMaxHP: gameState.playerMaxHP,
+                playerEnergy: gameState.playerEnergy,
+                playerMaxEnergy: gameState.playerMaxEnergy,
+                enemyHP: gameState.enemyHP,
+                enemyMaxHP: gameState.enemyMaxHP,
+                enemyEnergy: gameState.enemyEnergy,
+                enemyMaxEnergy: gameState.enemyMaxEnergy,
+                playerShield: gameState.playerShield,
+                enemyShield: gameState.enemyShield,
+                playerStun: gameState.playerStun,
+                enemyStun: gameState.enemyStun,
+                playerPoison: gameState.playerPoison,
+                enemyPoison: gameState.enemyPoison,
+                isPlayerTurn: gameState.isPlayerTurn,
+                gameOver: gameState.gameOver,
+                playerDeck: gameState.playerDeck,
+                enemyDeck: gameState.enemyDeck,
+                playerHand: gameState.playerHand,
+                enemyHand: gameState.enemyHand,
+            } : null,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('kage_save', JSON.stringify(saveData));
+        showSaveIndicator();
+    }
+
+    function loadGame() {
+        const raw = localStorage.getItem('kage_save');
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function showSaveIndicator() {
+        saveIndicator.classList.add('show');
+        setTimeout(() => {
+            saveIndicator.classList.remove('show');
+        }, 1500);
+    }
+
+    function deleteSave() {
+        localStorage.removeItem('kage_save');
+    }
+
+    // ---------- ПРОВЕРКА ССЫЛКИ ----------
+    function checkContinueButton() {
+        const save = loadGame();
+        if (save) {
+            continueBtn.style.display = 'block';
+        } else {
+            continueBtn.style.display = 'none';
+        }
+    }
 
     // ---------- НАВИГАЦИЯ ----------
     function showScreen(screen) {
         [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen].forEach(s => s.style.display = 'none');
         screen.style.display = 'block';
+        checkContinueButton();
     }
 
-    document.getElementById('playBtn').addEventListener('click', () => {
+    // ---------- КНОПКА ПРОДОЛЖИТЬ ----------
+    continueBtn.addEventListener('click', () => {
+        const save = loadGame();
+        if (!save) return;
+        playerClanName = save.playerClanName;
+        mapWins = save.mapWins || 0;
+        mapCoins = save.mapCoins || 0;
+        mapNodes = save.mapNodes || [];
+
+        if (save.gameState) {
+            // Восстанавливаем бой
+            gameState = save.gameState;
+            showScreen(battleScreen);
+            battleLog.innerHTML = '<div class="log-entry">⚔️ Битва продолжается!</div>';
+            addLog('⚔️ Битва продолжается!');
+            playerClanBadge.textContent = `⚔️ Клан: ${gameState.playerClan}`;
+            endTurnBtn.disabled = false;
+            updateUI();
+            renderHand();
+        } else {
+            // Восстанавливаем карту
+            gameState = null;
+            showScreen(mapScreen);
+            updateMapUI();
+            restoreMap();
+        }
+    });
+
+    // ---------- НОВАЯ ИГРА ----------
+    document.getElementById('newGameBtn').addEventListener('click', () => {
+        deleteSave();
         showScreen(clanSelectScreen);
         renderClans();
     });
 
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-        showScreen(settingsScreen);
-    });
+    // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+    function restoreMap() {
+        mapGrid.innerHTML = '';
+        mapStatus.textContent = 'Выбери свой путь...';
+        mapNodes.forEach((nodeData, index) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'map-row';
+            rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap;';
 
-    document.getElementById('backFromSettings').addEventListener('click', () => {
-        showScreen(menuScreen);
-    });
-
-    document.getElementById('backFromClans').addEventListener('click', () => {
-        showScreen(menuScreen);
-    });
-
-    document.getElementById('backFromMap').addEventListener('click', () => {
-        showScreen(menuScreen);
-    });
-
-    document.getElementById('soundToggle').addEventListener('click', function() {
-        soundEnabled = !soundEnabled;
-        this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
-    });
-
-    // ---------- УТИЛИТЫ ----------
-    function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
-
-    function cloneCard(card) {
-        return { ...card };
-    }
-
-    // ---------- ОТРИСОВКА КЛАНОВ ----------
-    function renderClans() {
-        clanGrid.innerHTML = '';
-        const clanNames = Object.keys(CLAN_DATA);
-        clanNames.forEach(clan => {
-            const data = CLAN_DATA[clan];
-            const card = document.createElement('div');
-            card.className = 'clan-card';
-            card.style.cssText = 'background:rgba(30,20,18,0.7); border:1px solid rgba(60,40,30,0.4); border-radius:16px; padding:30px 25px; width:220px; cursor:pointer; transition:all 0.3s; text-align:center; backdrop-filter:blur(4px);';
-            card.innerHTML = `
-                <span class="icon" style="font-size:52px; display:block; margin-bottom:12px;">${data.icon}</span>
-                <div class="name" style="font-size:24px; font-weight:700; color:#e2d5d0;">${clan}</div>
-                <div class="desc" style="font-size:14px; color:#a08078; margin-top:8px;">${data.cards.length} карт в колоде</div>
-                <div class="bonus" style="font-size:13px; color:#c07040; margin-top:12px; font-weight:500;">🎯 ${data.bonus}</div>
-            `;
-            card.addEventListener('click', () => {
-                playerClanName = clan;
-                mapWins = 0;
-                mapCoins = 0;
-                generateMap();
-                showScreen(mapScreen);
-                updateMapUI();
-            });
-            clanGrid.appendChild(card);
+            const node = document.createElement('div');
+            node.className = 'map-node';
+            node.classList.add(nodeData.type);
+            if (nodeData.type === 'enemy') {
+                node.dataset.enemyClan = nodeData.enemyClan || 'Тени';
+                node.innerHTML = `
+                    <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">❓</span>
+                    <div class="label" style="font-size:14px; color:#a08078;">⚔️ Враг</div>
+                `;
+            } else {
+                node.innerHTML = `
+                    <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">🛒</span>
+                    <div class="label" style="font-size:14px; color:#a08078;">❤️ +10 HP</div>
+                `;
+            }
+            if (nodeData.completed) {
+                node.style.opacity = '0.4';
+                node.style.cursor = 'default';
+                node.onclick = null;
+            } else {
+                node.addEventListener('click', () => onNodeClick(node));
+            }
+            rowDiv.appendChild(node);
+            mapGrid.appendChild(rowDiv);
         });
     }
 
     // ---------- ГЕНЕРАЦИЯ КАРТЫ ----------
     function generateMap() {
+        mapNodes = [];
         mapGrid.innerHTML = '';
         mapStatus.textContent = 'Выбери свой путь...';
 
@@ -672,9 +844,11 @@
                 const nodeType = isEnemy ? 'enemy' : 'merchant';
                 node.classList.add(nodeType);
 
+                const nodeData = { type: nodeType, completed: false };
                 if (isEnemy) {
                     const enemyClan = ['Тени', 'Тернии', 'Ярость'][Math.floor(Math.random() * 3)];
                     node.dataset.enemyClan = enemyClan;
+                    nodeData.enemyClan = enemyClan;
                     node.innerHTML = `
                         <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">❓</span>
                         <div class="label" style="font-size:14px; color:#a08078;">⚔️ Враг</div>
@@ -688,21 +862,22 @@
 
                 node.addEventListener('click', () => onNodeClick(node));
                 rowDiv.appendChild(node);
+                mapNodes.push(nodeData);
             }
 
             mapGrid.appendChild(rowDiv);
         }
-    }
-
-    // ---------- ОБНОВЛЕНИЕ КАРТЫ ----------
-    function updateMapUI() {
-        mapHP.textContent = gameState ? gameState.playerHP : 30;
-        mapWinsEl.textContent = mapWins;
-        mapCoinsEl.textContent = mapCoins;
+        saveGame();
     }
 
     // ---------- КЛИК ПО УЗЛУ ----------
     function onNodeClick(node) {
+        const index = Array.from(node.parentElement.children).indexOf(node);
+        const rowIndex = Array.from(mapGrid.children).indexOf(node.parentElement);
+        const nodeIndex = rowIndex * 2 + index;
+
+        if (mapNodes[nodeIndex] && mapNodes[nodeIndex].completed) return;
+
         if (node.classList.contains('enemy')) {
             const enemyClan = node.dataset.enemyClan;
             const enemyName = enemyClan || 'Тени';
@@ -713,10 +888,12 @@
                 const healed = Math.min(10, gameState.playerMaxHP - gameState.playerHP);
                 gameState.playerHP += healed;
                 mapStatus.textContent = `❤️ Восстановлено ${healed} HP!`;
-                updateMapUI();
+                mapNodes[nodeIndex].completed = true;
                 node.style.opacity = '0.4';
                 node.style.cursor = 'default';
                 node.onclick = null;
+                updateMapUI();
+                saveGame();
                 setTimeout(() => {
                     if (!gameState.gameOver) {
                         generateMap();
@@ -788,6 +965,7 @@
         endTurnBtn.disabled = false;
         updateUI();
         renderHand();
+        saveGame();
     }
 
     // ---------- ВЗЯТЬ КАРТУ ----------
@@ -818,6 +996,61 @@
         return card;
     }
 
+    // ---------- ОСТАЛЬНЫЕ ФУНКЦИИ ----------
+    // (они такие же, как в предыдущей версии, с добавлением saveGame() в ключевых местах)
+    // Для краткости я оставлю их как есть, но в финальном коде они будут полными.
+
+    // ---------- УТИЛИТЫ ----------
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function cloneCard(card) {
+        return { ...card };
+    }
+
+    // ---------- ОТРИСОВКА КЛАНОВ ----------
+    function renderClans() {
+        clanGrid.innerHTML = '';
+        const clanNames = Object.keys(CLAN_DATA);
+        clanNames.forEach(clan => {
+            const data = CLAN_DATA[clan];
+            const card = document.createElement('div');
+            card.className = 'clan-card';
+            card.innerHTML = `
+                <span class="icon">${data.icon}</span>
+                <div class="name">${clan}</div>
+                <div class="desc">${data.cards.length} карт в колоде</div>
+                <div class="bonus">🎯 ${data.bonus}</div>
+            `;
+            card.addEventListener('click', () => {
+                playerClanName = clan;
+                mapWins = 0;
+                mapCoins = 0;
+                mapNodes = [];
+                gameState = null;
+                deleteSave();
+                generateMap();
+                showScreen(mapScreen);
+                updateMapUI();
+            });
+            clanGrid.appendChild(card);
+        });
+    }
+
+    // ---------- ОБНОВЛЕНИЕ КАРТЫ ----------
+    function updateMapUI() {
+        mapHP.textContent = gameState ? gameState.playerHP : 30;
+        mapWinsEl.textContent = mapWins;
+        mapCoinsEl.textContent = mapCoins;
+        saveGame();
+    }
+
     // ---------- ЛОГ ----------
     function addLog(text, isEnemy = false) {
         const entry = document.createElement('div');
@@ -827,9 +1060,6 @@
         battleLog.scrollTop = battleLog.scrollHeight;
         while (battleLog.children.length > 100) {
             battleLog.removeChild(battleLog.firstChild);
-        }
-        if (soundEnabled) {
-            // Здесь позже добавим звуки
         }
     }
 
@@ -858,6 +1088,7 @@
 
         turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
         statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
+        saveGame();
     }
 
     // ---------- РЕНДЕР РУКИ ----------
@@ -932,9 +1163,10 @@
         p.isPlayerTurn = false;
         updateUI();
         setTimeout(() => enemyTurn(), 600);
+        saveGame();
     }
 
-    // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ (С ИСПРАВЛЕНИЕМ ЯДА) ----------
+    // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ ----------
     function applyCardEffects(card, target) {
         const p = gameState;
         if (!p) return;
@@ -1002,7 +1234,6 @@
             }
         }
 
-        // --- НАКЛАДЫВАЕМ ЯД ---
         if (card.poison > 0) {
             if (isPlayer) {
                 p.enemyPoison += card.poison;
@@ -1013,7 +1244,6 @@
             }
         }
 
-        // --- ОГЛУШЕНИЕ ---
         let stun = card.stun || 0;
         if (isPlayer && p.playerClan === 'Тени') stun += 1;
         if (!isPlayer && p.enemyClan === 'Тени') stun += 1;
@@ -1063,13 +1293,11 @@
             }
         }
 
-        // --- ЯД НАНОСИТ УРОН И УМЕНЬШАЕТСЯ ---
         if (isPlayer) {
             if (p.enemyPoison > 0) {
                 p.enemyHP -= p.enemyPoison;
                 if (p.enemyHP < 0) p.enemyHP = 0;
                 logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
-                // Уменьшаем яд на 1 (как оглушение)
                 p.enemyPoison -= 1;
                 if (p.enemyPoison < 0) p.enemyPoison = 0;
             }
@@ -1078,7 +1306,6 @@
                 p.playerHP -= p.playerPoison;
                 if (p.playerHP < 0) p.playerHP = 0;
                 logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
-                // Уменьшаем яд на 1 (как оглушение)
                 p.playerPoison -= 1;
                 if (p.playerPoison < 0) p.playerPoison = 0;
             }
@@ -1088,6 +1315,7 @@
         updateUI();
         renderHand();
         checkGameOver();
+        saveGame();
     }
 
     // ---------- ХОД ВРАГА ----------
@@ -1108,6 +1336,7 @@
             if (!checkGameOver()) {
                 addLog(`⚔️ Твой ход!`);
             }
+            saveGame();
             return;
         }
 
@@ -1154,6 +1383,7 @@
         if (!checkGameOver()) {
             addLog(`⚔️ Твой ход!`);
         }
+        saveGame();
     }
 
     // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
@@ -1168,6 +1398,7 @@
             endTurnBtn.disabled = true;
             renderHand();
             showGameOver(false);
+            deleteSave();
             return true;
         }
         if (p.enemyHP <= 0) {
@@ -1180,6 +1411,7 @@
             endTurnBtn.disabled = true;
             renderHand();
             showGameOver(true);
+            saveGame();
             return true;
         }
         return false;
@@ -1188,12 +1420,13 @@
     // ---------- ЭКРАН КОНЦА ИГРЫ ----------
     function showGameOver(win) {
         gameOverContainer.innerHTML = `
-            <div class="game-over-overlay" style="text-align:center; padding:20px; background:rgba(30,20,18,0.9); border-radius:16px; margin-top:20px; border:1px solid rgba(180,80,30,0.25); box-shadow:0 0 40px rgba(180,80,30,0.08);">
-                <div class="result ${win ? 'win' : 'lose'}" style="font-size:28px; font-weight:700; ${win ? 'color:#6a9a7a;' : 'color:#9a4a3a;'}">${win ? '🏆 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}</div>
+            <div class="game-over-overlay">
+                <div class="result ${win ? 'win' : 'lose'}">${win ? '🏆 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}</div>
                 <button class="btn-end-turn" style="margin-top:15px;" onclick="afterBattle()">🗺️ Вернуться на карту</button>
                 <button class="btn-end-turn" style="margin-top:10px; background:rgba(40,25,20,0.8);" onclick="goToMenu()">🏠 Меню</button>
             </div>
         `;
+        if (win) saveGame();
     }
 
     // ---------- ПОСЛЕ БИТВЫ ----------
@@ -1208,6 +1441,7 @@
         updateMapUI();
         generateMap();
         mapStatus.textContent = 'Выбери следующий путь...';
+        saveGame();
     }
 
     // ---------- ВЫХОД В МЕНЮ ----------
@@ -1216,6 +1450,7 @@
         battleScreen.style.display = 'none';
         showScreen(menuScreen);
         gameState = null;
+        saveGame();
     }
 
     // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
@@ -1229,15 +1464,40 @@
             p.isPlayerTurn = false;
             updateUI();
             setTimeout(() => enemyTurn(), 600);
+            saveGame();
             return;
         }
 
         p.isPlayerTurn = false;
         updateUI();
         setTimeout(() => enemyTurn(), 600);
+        saveGame();
+    });
+
+    // ---------- НАСТРОЙКИ ----------
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+        showScreen(settingsScreen);
+    });
+
+    document.getElementById('backFromSettings').addEventListener('click', () => {
+        showScreen(menuScreen);
+    });
+
+    document.getElementById('backFromClans').addEventListener('click', () => {
+        showScreen(menuScreen);
+    });
+
+    document.getElementById('backFromMap').addEventListener('click', () => {
+        showScreen(menuScreen);
+    });
+
+    document.getElementById('soundToggle').addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
     // ---------- ЗАПУСК ----------
+    checkContinueButton();
     showScreen(menuScreen);
 </script>
 
