@@ -66,7 +66,6 @@
         ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
         * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
-        /* ---------- МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
@@ -130,7 +129,6 @@
         }
         .save-indicator.show { opacity: 1; }
 
-        /* ---------- ВЫБОР КЛАССА ---------- */
         .clan-select-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -172,7 +170,6 @@
         .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
         .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
-        /* ---------- КАРТА (ГОРА) ---------- */
         .map-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -253,7 +250,6 @@
         }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; flex-shrink: 0; }
 
-        /* ---------- МАГАЗИН ---------- */
         .shop-screen {
             display: none;
             background: rgba(18,12,12,0.95);
@@ -304,11 +300,7 @@
         .shop-item .card-info .name { font-size: 14px; font-weight: 700; color: #e2b8a0; }
         .shop-item .card-info .effect { font-size: 11px; color: #a08078; }
         .shop-item .card-info .race { font-size: 10px; color: #c084fc; }
-        .shop-item .shop-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
+        .shop-item .shop-actions { display: flex; gap: 6px; flex-shrink: 0; }
         .shop-item .shop-actions button {
             padding: 4px 10px;
             border: none;
@@ -319,32 +311,13 @@
             transition: 0.2s;
             font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .shop-item .shop-actions .buy-btn {
-            background: #22c55e;
-            color: #0d0a0a;
-        }
+        .shop-item .shop-actions .buy-btn { background: #22c55e; color: #0d0a0a; }
         .shop-item .shop-actions .buy-btn:hover { background: #16a34a; transform: scale(1.03); }
-        .shop-item .shop-actions .buy-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .shop-item .shop-actions .remove-btn {
-            background: #ef4444;
-            color: white;
-        }
+        .shop-item .shop-actions .buy-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .shop-item .shop-actions .remove-btn { background: #ef4444; color: white; }
         .shop-item .shop-actions .remove-btn:hover { background: #dc2626; transform: scale(1.03); }
-        .shop-item .shop-actions .remove-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .shop-empty {
-            color: #a08078;
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-        }
+        .shop-item .shop-actions .remove-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .shop-empty { color: #a08078; text-align: center; padding: 20px; font-size: 14px; }
         .shop-back-btn {
             background: rgba(40,25,20,0.8);
             border: 1px solid rgba(180,80,30,0.25);
@@ -362,7 +335,6 @@
         }
         .shop-back-btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
-        /* ---------- БОЕВОЙ ЭКРАН ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
@@ -382,7 +354,6 @@
             height: 100%;
             gap: 4px;
         }
-
         .battle-enemy {
             background: rgba(30,20,18,0.6);
             border-radius: 12px;
@@ -684,7 +655,6 @@
 
 <div class="game-container">
 
-    <!-- МЕНЮ -->
     <div id="menuScreen" class="menu-screen">
         <h1 class="ember-text">SHARD</h1>
         <p class="subtitle">Выбери свой Осколок и начни битву</p>
@@ -695,7 +665,6 @@
         </div>
     </div>
 
-    <!-- НАСТРОЙКИ -->
     <div id="settingsScreen" class="menu-screen" style="display:none;">
         <h1 style="font-size:28px;" class="ember-text">⚙️ Настройки</h1>
         <p class="subtitle">Звук и управление (в разработке)</p>
@@ -705,7 +674,6 @@
         </div>
     </div>
 
-    <!-- ВЫБОР КЛАССА -->
     <div id="clanSelectScreen" class="clan-select-screen" style="display:none;">
         <button class="back-btn" id="backFromClans">⬅️ Назад</button>
         <h2>Выбери класс</h2>
@@ -713,7 +681,6 @@
         <div class="clan-grid" id="clanGrid"></div>
     </div>
 
-    <!-- КАРТА (ГОРА) -->
     <div id="mapScreen" class="map-screen" style="display:none;">
         <button class="back-btn" id="backFromMap">⬅️ Назад</button>
         <h2 class="ember-text">🗺️ Путь к боссу</h2>
@@ -727,7 +694,6 @@
         <div id="mapStatus" style="margin-top:8px; color:#a08078; font-size:13px;"></div>
     </div>
 
-    <!-- МАГАЗИН -->
     <div id="shopScreen" class="shop-screen" style="display:none;">
         <button class="back-btn" id="backFromShop">⬅️ Назад</button>
         <h2>🛒 Магазин</h2>
@@ -735,13 +701,10 @@
             <span>🪙 Монеты: <span id="shopCoins">0</span></span>
             <span id="shopSynergyDisplay" style="font-size:11px; color:#c084fc;">Синергии: </span>
         </div>
-        <div class="shop-grid" id="shopGrid">
-            <!-- Товары генерируются из JS -->
-        </div>
+        <div class="shop-grid" id="shopGrid"></div>
         <button class="shop-back-btn" id="shopBackBtn">⬅️ Вернуться на карту</button>
     </div>
 
-    <!-- БОЕВОЙ ЭКРАН -->
     <div id="battleScreen" class="battle-screen" style="display:none;">
         <div class="battle-container">
             <div class="battle-enemy">
@@ -786,7 +749,7 @@
 
 <script>
     // =======================================================
-    // SHARD — С МАГАЗИНОМ, РАСАМИ И СИНЕРГИЯМИ
+    // SHARD — ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =======================================================
 
     function createSakura() {
@@ -805,7 +768,7 @@
     }
     createSakura();
 
-    // ---------- БАЗОВЫЕ КАРТЫ КЛАССОВ (БЕЗ РАСЫ) ----------
+    // ---------- БАЗОВЫЕ КАРТЫ КЛАССОВ ----------
     const CLASS_CARDS = {
         'Алхимик': [
             { name: 'Кислотный плевок', dmg: 1, poison: 1, cost: 2, rarity: 'common' },
@@ -833,31 +796,26 @@
         ]
     };
 
-    // ---------- РАСОВЫЕ КАРТЫ (ПУЛ 16 ШТУК) ----------
+    // ---------- РАСОВЫЕ КАРТЫ ----------
     const RACE_CARDS_POOL = [
-        // Эльфы (4 карты)
         { name: 'Лесной лучник', dmg: 2, poison: 1, cost: 2, race: 'Эльфы', rarity: 'uncommon' },
         { name: 'Друид', dmg: 3, cost: 3, race: 'Эльфы', rarity: 'uncommon' },
         { name: 'Эльфийский стрелок', dmg: 4, cost: 3, race: 'Эльфы', rarity: 'rare' },
         { name: 'Хранитель леса', shield: 5, cost: 3, race: 'Эльфы', rarity: 'uncommon' },
-        // Орки (4 карты)
         { name: 'Орк-боец', dmg: 5, cost: 3, race: 'Орки', rarity: 'common' },
         { name: 'Орк-вождь', dmg: 6, cost: 3, race: 'Орки', rarity: 'rare' },
         { name: 'Орк-бронник', shield: 3, cost: 2, race: 'Орки', rarity: 'uncommon' },
         { name: 'Орк-шаман', shield: 2, energyPlus: 1, cost: 2, race: 'Орки', rarity: 'uncommon' },
-        // Звери (4 карты)
         { name: 'Волк', dmg: 3, cost: 2, race: 'Звери', rarity: 'common' },
         { name: 'Медведь', shield: 4, cost: 2, race: 'Звери', rarity: 'common' },
         { name: 'Тигр', dmg: 4, cost: 3, race: 'Звери', rarity: 'uncommon' },
         { name: 'Единорог', heal: 4, cost: 2, race: 'Звери', rarity: 'rare' },
-        // Феи (4 карты)
         { name: 'Фея-целительница', heal: 6, cost: 3, race: 'Феи', rarity: 'rare' },
         { name: 'Фея-защитница', shield: 4, cost: 2, race: 'Феи', rarity: 'uncommon' },
         { name: 'Фея-воин', dmg: 3, cost: 2, race: 'Феи', rarity: 'uncommon' },
         { name: 'Фея-энерджайзер', energyPlus: 2, cost: 1, race: 'Феи', rarity: 'rare' }
     ];
 
-    // ---------- СИНЕРГИИ РАС ----------
     const RACE_SYNERGIES = {
         'Эльфы': { 2: { shield: 1 }, 4: { shield: 2 } },
         'Орки': { 2: { dmg: 1 }, 4: { dmg: 2 } },
@@ -865,7 +823,6 @@
         'Феи': { 2: { energy: 1 }, 4: { energy: 2 } }
     };
 
-    // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
     let gameState = null;
     let soundEnabled = true;
     let playerClanName = null;
@@ -921,7 +878,7 @@
         logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
     });
 
-    // ---------- ФУНКЦИИ СИНЕРГИИ ----------
+    // ---------- СИНЕРГИИ ----------
     function calculateSynergies() {
         const counts = { 'Эльфы': 0, 'Орки': 0, 'Звери': 0, 'Феи': 0 };
         playerDeck.forEach(card => {
@@ -946,7 +903,6 @@
             }
         });
 
-        // Обновляем отображение
         let synText = 'Синергии: ';
         if (activeSynergies.dmg > 0) synText += `⚔+${activeSynergies.dmg} `;
         if (activeSynergies.shield > 0) synText += `🛡+${activeSynergies.shield} `;
@@ -1082,7 +1038,7 @@
         this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
-    // ---------- КАРТА (ГОРА) ----------
+    // ---------- КАРТА ----------
     function generateMap() {
         mapNodes = [];
         completedNodeIds = [];
@@ -1171,7 +1127,6 @@
             mapGrid.appendChild(rowDiv);
         }
 
-        // Если магазин не появился, добавляем его на уровень 2
         if (merchantCount === 0) {
             const level2Nodes = mapNodes.filter(n => n.level === 2);
             if (level2Nodes.length > 0) {
@@ -1194,6 +1149,7 @@
         saveGame();
     }
 
+    // ---------- ИСПРАВЛЕННАЯ ФУНКЦИЯ onNodeClick ----------
     function onNodeClick(node) {
         const nodeId = node.dataset.nodeId;
         const nodeData = mapNodes.find(n => n.id === nodeId);
@@ -1222,6 +1178,7 @@
             }
         }
 
+        // --- ОСНОВНАЯ ЛОГИКА ---
         if (nodeData.type === 'enemy' || nodeData.type === 'boss') {
             const enemyClan = nodeData.enemyClan || 'Алхимик';
             const isBoss = nodeData.type === 'boss';
@@ -1229,19 +1186,20 @@
             nodeData.completed = true;
             node.classList.add('disabled');
             saveGame();
+            // ВАЖНО: передаём правильные параметры
             startBattle(enemyClan, isBoss, nodeData);
         } else if (nodeData.type === 'shop') {
-            // Открываем магазин
             nodeData.completed = true;
             node.classList.add('disabled');
             saveGame();
             openShop();
+        } else {
+            mapStatus.textContent = '❌ Неизвестный тип узла';
         }
     }
 
     // ---------- МАГАЗИН ----------
     function openShop() {
-        // Генерируем 6 случайных карт (если ещё не сгенерированы)
         if (shopCards.length === 0) {
             const shuffled = [...RACE_CARDS_POOL].sort(() => Math.random() - 0.5);
             shopCards = shuffled.slice(0, 6);
@@ -1317,7 +1275,6 @@
         });
     }
 
-    // ---------- ОБНОВЛЕНИЕ UI ----------
     function updateUI() {
         mapHP.textContent = gameState ? gameState.playerHP : 30;
         mapWinsEl.textContent = mapWins;
@@ -1344,7 +1301,6 @@
             `;
             card.addEventListener('click', () => {
                 playerClanName = clan;
-                // Создаём начальную колоду из 6 карт класса
                 playerDeck = CLASS_CARDS[clan].map(c => ({ ...c }));
                 mapWins = 0;
                 mapCoins = 0;
@@ -1458,7 +1414,6 @@
             return;
         }
 
-        // Рассчитываем активные синергии для боя
         const synergies = calculateSynergies();
 
         p.playerHand.forEach((card, index) => {
@@ -1472,15 +1427,9 @@
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
-            let baseDmg = card.dmg || 0;
-            let baseShield = card.shield || 0;
-            let baseHeal = card.heal || 0;
-            let baseEnergy = 0;
-
-            // Применяем синергии к карте
-            let finalDmg = baseDmg + (card.race && synergies.dmg ? synergies.dmg : 0);
-            let finalShield = baseShield + (card.race && synergies.shield ? synergies.shield : 0);
-            let finalHeal = baseHeal + (card.race && synergies.heal ? synergies.heal : 0);
+            let finalDmg = (card.dmg || 0) + (card.race && synergies.dmg ? synergies.dmg : 0);
+            let finalShield = (card.shield || 0) + (card.race && synergies.shield ? synergies.shield : 0);
+            let finalHeal = (card.heal || 0) + (card.race && synergies.heal ? synergies.heal : 0);
             let finalEnergy = (card.energyPlus || 0) + (card.race && synergies.energy ? synergies.energy : 0);
 
             if (finalDmg) effects.push(`⚔${finalDmg}`);
@@ -1607,21 +1556,16 @@
     function startBattle(enemyClanName, isBoss, nodeData) {
         const synergies = calculateSynergies();
 
-        const playerData = CLASS_CARDS[playerClanName];
-        const enemyData = CLASS_CARDS[enemyClanName];
-
         function createInfiniteDeck(clanName) {
             const baseCards = CLASS_CARDS[clanName];
             const deck = [];
             for (let i = 0; i < 3; i++) {
                 baseCards.forEach(c => deck.push(cloneCard(c)));
             }
-            // Добавляем расовые карты из колоды игрока
             if (clanName === playerClanName) {
                 playerDeck.forEach(c => {
                     if (c.race) {
                         const cloned = cloneCard(c);
-                        // Применяем синергии к расовым картам при создании колоды
                         if (synergies.dmg) cloned.dmg = (cloned.dmg || 0) + synergies.dmg;
                         if (synergies.shield) cloned.shield = (cloned.shield || 0) + synergies.shield;
                         if (synergies.heal) cloned.heal = (cloned.heal || 0) + synergies.heal;
@@ -1743,8 +1687,6 @@
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
         let dmg = card.dmg || 0;
-        // Бонус Берсерка уже применён при создании колоды
-        // if (isPlayer && p.playerClan === 'Берсерк') dmg += 1; // Уже в колоде
 
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
@@ -1846,7 +1788,6 @@
             }
         }
 
-        // Бонус Стража
         if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
             logMsg += `, щит укреплён`;
         }
@@ -2052,7 +1993,6 @@
         saveGame();
     });
 
-    // ---------- ЗАПУСК ----------
     document.getElementById('backFromShop').addEventListener('click', () => {
         showScreen(mapScreen);
         updateUI();
