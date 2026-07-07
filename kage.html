@@ -98,6 +98,8 @@
             border-radius: 12px;
             margin-bottom: 20px;
             border: 1px solid #2d2d4a;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .map-screen .info span {
             font-size: 18px;
@@ -348,10 +350,10 @@
 
 <script>
     // =======================================================
-    // KAGE — С КАРТОЙ, ВРАГАМИ И ТОРГОВЦЕМ
+    // KAGE — С КАРТОЙ, ВРАГАМИ И ТОРГОВЦЕМ (ЯРОСТЬ С ЛЕЧЕНИЕМ)
     // =======================================================
 
-    // ---------- ДАННЫЕ КЛАНОВ ----------
+    // ---------- ДАННЫЕ КЛАНОВ (С НОВОЙ КАРТОЙ ДЛЯ ЯРОСТИ) ----------
     const CLAN_DATA = {
         'Тени': {
             icon: '🌑',
@@ -392,7 +394,9 @@
                 { name: 'Ярость берсерка', dmg: 4, cost: 2, rarity: 'Обычная' },
                 { name: 'Мощный выпад', dmg: 6, cost: 3, rarity: 'Необычная' },
                 { name: 'Яростный рывок', dmg: 3, energyPlus: 1, cost: 2, rarity: 'Обычная' },
-                { name: 'Удар в спину', dmg: 8, cost: 4, rarity: 'Редкая' }
+                { name: 'Удар в спину', dmg: 8, cost: 4, rarity: 'Редкая' },
+                // НОВАЯ КАРТА ДЛЯ ЯРОСТИ - Жертвенное лечение
+                { name: 'Жертвенный рывок', heal: 8, dmg: 2, cost: 2, rarity: 'Необычная' }
             ]
         }
     };
@@ -802,6 +806,7 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
+        // --- Урон ---
         let dmg = card.dmg || 0;
         if (isPlayer && p.playerClan === 'Ярость') dmg += 1;
         if (!isPlayer && p.enemyClan === 'Ярость') dmg += 1;
@@ -830,16 +835,29 @@
             }
         }
 
+        // --- Лечение (с учётом жертвенности для Ярости) ---
         if (card.heal > 0) {
+            let healAmount = card.heal;
+            let selfDamage = 0;
+
+            // Если это карта "Жертвенный рывок" и её играет игрок из клана Ярость
+            if (card.name === 'Жертвенный рывок' && isPlayer && p.playerClan === 'Ярость') {
+                selfDamage = 2; // Жертва
+                p.playerHP -= selfDamage;
+                if (p.playerHP < 0) p.playerHP = 0;
+                logMsg += `, жертвует ${selfDamage} HP`;
+            }
+
             if (isPlayer) {
-                p.playerHP = Math.min(p.playerHP + card.heal, p.playerMaxHP);
-                logMsg += `, восстановил ${card.heal} HP`;
+                p.playerHP = Math.min(p.playerHP + healAmount, p.playerMaxHP);
+                logMsg += `, восстановил ${healAmount} HP`;
             } else {
-                p.enemyHP = Math.min(p.enemyHP + card.heal, p.enemyMaxHP);
-                logMsg += `, восстановил врагу ${card.heal} HP`;
+                p.enemyHP = Math.min(p.enemyHP + healAmount, p.enemyMaxHP);
+                logMsg += `, восстановил врагу ${healAmount} HP`;
             }
         }
 
+        // --- Щит ---
         if (card.shield > 0) {
             if (isPlayer) {
                 p.playerShield += card.shield;
@@ -850,6 +868,7 @@
             }
         }
 
+        // --- Яд ---
         if (card.poison > 0) {
             if (isPlayer) {
                 p.enemyPoison += card.poison;
@@ -860,6 +879,7 @@
             }
         }
 
+        // --- Оглушение с бонусом Теней ---
         let stun = card.stun || 0;
         if (isPlayer && p.playerClan === 'Тени') stun += 1;
         if (!isPlayer && p.enemyClan === 'Тени') stun += 1;
@@ -874,6 +894,7 @@
             }
         }
 
+        // --- Кража энергии ---
         if (card.stealEnergy > 0) {
             if (isPlayer) {
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
@@ -888,6 +909,7 @@
             }
         }
 
+        // --- Энергия+ ---
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
@@ -898,6 +920,7 @@
             }
         }
 
+        // --- Бонус Терний (при уроне) ---
         if (dmg > 0) {
             if (isPlayer && p.playerClan === 'Тернии') {
                 p.enemyPoison += 1;
@@ -909,6 +932,7 @@
             }
         }
 
+        // --- Применяем яд ---
         if (isPlayer) {
             if (p.enemyPoison > 0) {
                 p.enemyHP -= p.enemyPoison;
