@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Карточная битва</title>
     <style>
-        /* ---------- СТИЛИ (ТЕ ЖЕ, ЧТО В ПРЕДЫДУЩЕЙ ВЕРСИИ) ---------- */
+        /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -162,7 +162,7 @@
             opacity: 1;
         }
 
-        /* ---------- ОСТАЛЬНЫЕ СТИЛИ (КАРТА, БОЙ, КАРТЫ) ---------- */
+        /* ---------- КАРТА (ИСПРАВЛЕННАЯ) ---------- */
         .map-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -194,13 +194,32 @@
             font-size: 18px;
             font-weight: 600;
         }
+        .map-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .map-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
         .map-node {
             background: rgba(30, 20, 18, 0.7);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(60, 40, 30, 0.5);
             border-radius: 16px;
             padding: 20px 25px;
-            width: 140px;
+            min-width: 130px;
+            flex: 1 0 auto;
+            max-width: 180px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
@@ -215,7 +234,10 @@
         .map-node.enemy:hover { border-color: #c06040; box-shadow: 0 0 30px rgba(180, 60, 40, 0.15); }
         .map-node.merchant { border-color: rgba(60, 140, 80, 0.4); }
         .map-node.merchant:hover { border-color: #5a9a6a; box-shadow: 0 0 30px rgba(60, 140, 80, 0.12); }
+        .map-node .icon { font-size: 40px; display: block; margin-bottom: 8px; }
+        .map-node .label { font-size: 14px; color: #a08078; }
 
+        /* ---------- ОСТАЛЬНЫЕ СТИЛИ (БОЙ, КАРТЫ) ---------- */
         .battle-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -452,6 +474,7 @@
         .game-over-overlay .result.win { color: #6a9a7a; }
         .game-over-overlay .result.lose { color: #9a4a3a; }
 
+        /* ---------- АДАПТИВ (УЛУЧШЕННЫЙ) ---------- */
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
@@ -461,8 +484,25 @@
             .health-container { flex-direction: column; }
             .menu-screen h1 { font-size: 48px; letter-spacing: 6px; }
             .menu-btn { width: 100%; max-width: 280px; }
-            .map-row { flex-direction: column; align-items: center; }
-            .map-node { width: 100%; max-width: 200px; }
+            .map-row { 
+                flex-direction: column; 
+                align-items: center;
+                gap: 12px;
+            }
+            .map-node {
+                width: 100%;
+                max-width: 200px;
+                min-width: unset;
+                flex: 0 1 auto;
+            }
+        }
+        @media (max-width: 500px) {
+            .map-node {
+                max-width: 160px;
+                padding: 15px 18px;
+            }
+            .map-node .icon { font-size: 32px; }
+            .map-node .label { font-size: 12px; }
         }
     </style>
 </head>
@@ -567,7 +607,7 @@
 
 <script>
     // =======================================================
-    // KAGE — С СИСТЕМОЙ СОХРАНЕНИЯ (LOCALSTORAGE)
+    // KAGE — С СОХРАНЕНИЕМ И ИСПРАВЛЕННОЙ КАРТОЙ
     // =======================================================
 
     // ---------- ЛЕПЕСТКИ ----------
@@ -793,7 +833,7 @@
         mapNodes.forEach((nodeData, index) => {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
-            rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap;';
+            rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap; width:100%; max-width:600px; margin:0 auto;';
 
             const node = document.createElement('div');
             node.className = 'map-node';
@@ -801,13 +841,13 @@
             if (nodeData.type === 'enemy') {
                 node.dataset.enemyClan = nodeData.enemyClan || 'Тени';
                 node.innerHTML = `
-                    <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">❓</span>
-                    <div class="label" style="font-size:14px; color:#a08078;">⚔️ Враг</div>
+                    <span class="icon">❓</span>
+                    <div class="label">⚔️ Враг</div>
                 `;
             } else {
                 node.innerHTML = `
-                    <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">🛒</span>
-                    <div class="label" style="font-size:14px; color:#a08078;">❤️ +10 HP</div>
+                    <span class="icon">🛒</span>
+                    <div class="label">❤️ +10 HP</div>
                 `;
             }
             if (nodeData.completed) {
@@ -834,7 +874,7 @@
         for (let row = 0; row < rows; row++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
-            rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap;';
+            rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap; width:100%; max-width:600px; margin:0 auto;';
 
             for (let col = 0; col < nodesPerRow; col++) {
                 const node = document.createElement('div');
@@ -850,13 +890,13 @@
                     node.dataset.enemyClan = enemyClan;
                     nodeData.enemyClan = enemyClan;
                     node.innerHTML = `
-                        <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">❓</span>
-                        <div class="label" style="font-size:14px; color:#a08078;">⚔️ Враг</div>
+                        <span class="icon">❓</span>
+                        <div class="label">⚔️ Враг</div>
                     `;
                 } else {
                     node.innerHTML = `
-                        <span class="icon" style="font-size:40px; display:block; margin-bottom:8px;">🛒</span>
-                        <div class="label" style="font-size:14px; color:#a08078;">❤️ +10 HP</div>
+                        <span class="icon">🛒</span>
+                        <div class="label">❤️ +10 HP</div>
                     `;
                 }
 
@@ -904,6 +944,14 @@
                 mapStatus.textContent = '❌ Сначала выбери клан!';
             }
         }
+    }
+
+    // ---------- ОБНОВЛЕНИЕ КАРТЫ ----------
+    function updateMapUI() {
+        mapHP.textContent = gameState ? gameState.playerHP : 30;
+        mapWinsEl.textContent = mapWins;
+        mapCoinsEl.textContent = mapCoins;
+        saveGame();
     }
 
     // ---------- СТАРТ БИТВЫ ----------
@@ -997,10 +1045,6 @@
     }
 
     // ---------- ОСТАЛЬНЫЕ ФУНКЦИИ ----------
-    // (они такие же, как в предыдущей версии, с добавлением saveGame() в ключевых местах)
-    // Для краткости я оставлю их как есть, но в финальном коде они будут полными.
-
-    // ---------- УТИЛИТЫ ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -1041,14 +1085,6 @@
             });
             clanGrid.appendChild(card);
         });
-    }
-
-    // ---------- ОБНОВЛЕНИЕ КАРТЫ ----------
-    function updateMapUI() {
-        mapHP.textContent = gameState ? gameState.playerHP : 30;
-        mapWinsEl.textContent = mapWins;
-        mapCoinsEl.textContent = mapCoins;
-        saveGame();
     }
 
     // ---------- ЛОГ ----------
