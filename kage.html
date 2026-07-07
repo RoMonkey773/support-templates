@@ -237,7 +237,7 @@
         .map-node .icon { font-size: 40px; display: block; margin-bottom: 8px; }
         .map-node .label { font-size: 14px; color: #a08078; }
 
-        /* ---------- ОСТАЛЬНЫЕ СТИЛИ (БОЙ, КАРТЫ) ---------- */
+        /* ---------- ОСТАЛЬНЫЕ СТИЛИ ---------- */
         .battle-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -474,7 +474,7 @@
         .game-over-overlay .result.win { color: #6a9a7a; }
         .game-over-overlay .result.lose { color: #9a4a3a; }
 
-        /* ---------- АДАПТИВ (УЛУЧШЕННЫЙ) ---------- */
+        /* ---------- АДАПТИВ ---------- */
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
@@ -607,7 +607,7 @@
 
 <script>
     // =======================================================
-    // KAGE — С СОХРАНЕНИЕМ И ИСПРАВЛЕННОЙ КАРТОЙ
+    // KAGE — С ИСПРАВЛЕННОЙ КАРТОЙ (3 РЯДА ПО 2 УЗЛА)
     // =======================================================
 
     // ---------- ЛЕПЕСТКИ ----------
@@ -774,7 +774,7 @@
         localStorage.removeItem('kage_save');
     }
 
-    // ---------- ПРОВЕРКА ССЫЛКИ ----------
+    // ---------- ПРОВЕРКА СОХРАНЕНИЯ ----------
     function checkContinueButton() {
         const save = loadGame();
         if (save) {
@@ -801,7 +801,6 @@
         mapNodes = save.mapNodes || [];
 
         if (save.gameState) {
-            // Восстанавливаем бой
             gameState = save.gameState;
             showScreen(battleScreen);
             battleLog.innerHTML = '<div class="log-entry">⚔️ Битва продолжается!</div>';
@@ -811,7 +810,6 @@
             updateUI();
             renderHand();
         } else {
-            // Восстанавливаем карту
             gameState = null;
             showScreen(mapScreen);
             updateMapUI();
@@ -826,43 +824,46 @@
         renderClans();
     });
 
-    // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+    // ---------- ВОССТАНОВЛЕНИЕ КАРТЫ ----------
     function restoreMap() {
         mapGrid.innerHTML = '';
         mapStatus.textContent = 'Выбери свой путь...';
-        mapNodes.forEach((nodeData, index) => {
+        // Разбиваем mapNodes на ряды по 2
+        for (let row = 0; row < mapNodes.length; row += 2) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
             rowDiv.style.cssText = 'display:flex; gap:20px; justify-content:center; flex-wrap:wrap; width:100%; max-width:600px; margin:0 auto;';
-
-            const node = document.createElement('div');
-            node.className = 'map-node';
-            node.classList.add(nodeData.type);
-            if (nodeData.type === 'enemy') {
-                node.dataset.enemyClan = nodeData.enemyClan || 'Тени';
-                node.innerHTML = `
-                    <span class="icon">❓</span>
-                    <div class="label">⚔️ Враг</div>
-                `;
-            } else {
-                node.innerHTML = `
-                    <span class="icon">🛒</span>
-                    <div class="label">❤️ +10 HP</div>
-                `;
-            }
-            if (nodeData.completed) {
-                node.style.opacity = '0.4';
-                node.style.cursor = 'default';
-                node.onclick = null;
-            } else {
-                node.addEventListener('click', () => onNodeClick(node));
-            }
-            rowDiv.appendChild(node);
+            const rowNodes = mapNodes.slice(row, row + 2);
+            rowNodes.forEach((nodeData) => {
+                const node = document.createElement('div');
+                node.className = 'map-node';
+                node.classList.add(nodeData.type);
+                if (nodeData.type === 'enemy') {
+                    node.dataset.enemyClan = nodeData.enemyClan || 'Тени';
+                    node.innerHTML = `
+                        <span class="icon">❓</span>
+                        <div class="label">⚔️ Враг</div>
+                    `;
+                } else {
+                    node.innerHTML = `
+                        <span class="icon">🛒</span>
+                        <div class="label">❤️ +10 HP</div>
+                    `;
+                }
+                if (nodeData.completed) {
+                    node.style.opacity = '0.4';
+                    node.style.cursor = 'default';
+                    node.onclick = null;
+                } else {
+                    node.addEventListener('click', () => onNodeClick(node));
+                }
+                rowDiv.appendChild(node);
+            });
             mapGrid.appendChild(rowDiv);
-        });
+        }
     }
 
-    // ---------- ГЕНЕРАЦИЯ КАРТЫ ----------
+    // ---------- ГЕНЕРАЦИЯ КАРТЫ (ИСПРАВЛЕННАЯ) ----------
     function generateMap() {
         mapNodes = [];
         mapGrid.innerHTML = '';
@@ -912,9 +913,10 @@
 
     // ---------- КЛИК ПО УЗЛУ ----------
     function onNodeClick(node) {
-        const index = Array.from(node.parentElement.children).indexOf(node);
-        const rowIndex = Array.from(mapGrid.children).indexOf(node.parentElement);
-        const nodeIndex = rowIndex * 2 + index;
+        const rowDiv = node.parentElement;
+        const rowIndex = Array.from(mapGrid.children).indexOf(rowDiv);
+        const indexInRow = Array.from(rowDiv.children).indexOf(node);
+        const nodeIndex = rowIndex * 2 + indexInRow;
 
         if (mapNodes[nodeIndex] && mapNodes[nodeIndex].completed) return;
 
@@ -1044,7 +1046,7 @@
         return card;
     }
 
-    // ---------- ОСТАЛЬНЫЕ ФУНКЦИИ ----------
+    // ---------- УТИЛИТЫ ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
