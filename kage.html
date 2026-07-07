@@ -218,7 +218,7 @@
         .map-node .label { font-size: 12px; color: #a08078; }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
-        /* ---------- НОВЫЙ БОЕВОЙ ЭКРАН — ВЕСЬ ЭКРАН ---------- */
+        /* ---------- БОЕВОЙ ЭКРАН ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
@@ -239,7 +239,7 @@
             gap: 4px;
         }
 
-        /* ВРАГ — ПРИЖАТ К ВЕРХУ */
+        /* ВРАГ */
         .battle-enemy {
             background: rgba(30,20,18,0.6);
             border-radius: 12px;
@@ -261,7 +261,7 @@
         .battle-enemy .status-text { font-size: 13px; color: #a08078; }
         .battle-enemy .clan-badge { font-weight: 700; color: #e2b8a0; font-size: 14px; }
 
-        /* ПОЛЕ БОЯ — ЗАНИМАЕТ ВСЁ СВОБОДНОЕ МЕСТО ПО ЦЕНТРУ */
+        /* ПОЛЕ БОЯ (для монетки и анимаций) */
         .battle-field {
             flex: 1;
             background: rgba(30,20,18,0.15);
@@ -274,11 +274,24 @@
             gap: 4px;
             padding: 8px;
             min-height: 80px;
+            position: relative;
         }
         .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
         .battle-field .battle-status { font-size: 12px; color: #a08078; }
 
-        /* ЛОГ — компактный */
+        /* МОНЕТКА */
+        .coin-flip {
+            font-size: 60px;
+            animation: coinSpin 0.6s ease-in-out;
+            display: inline-block;
+        }
+        @keyframes coinSpin {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(360deg) scale(1.2); }
+            100% { transform: rotateY(720deg) scale(1); }
+        }
+
+        /* ЛОГ */
         .log-toggle {
             background: rgba(30,20,18,0.3);
             border: 1px solid rgba(180,80,30,0.08);
@@ -315,7 +328,7 @@
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
         .battle-log-container .log-entry.poison { color: #6a9a6a; border-left: 2px solid #6a9a6a; padding-left: 6px; }
 
-        /* ПАНЕЛЬ ИГРОКА + КНОПКА — ПРИЖАТЫ К НИЗУ */
+        /* ПАНЕЛЬ ИГРОКА */
         .battle-actions {
             display: flex;
             gap: 6px;
@@ -360,14 +373,14 @@
         .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.25); border-color: #c07040; }
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* РУКА КАРТ — ПРИЖАТА К САМОМУ НИЗУ */
+        /* ---------- КАРТЫ (УВЕЛИЧЕНЫ НА 50%) ---------- */
         .battle-hand {
             display: flex;
             gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
             padding: 4px 0;
-            min-height: 80px;
+            min-height: 100px;
             background: rgba(10,8,8,0.2);
             border-radius: 10px;
             border: 1px solid rgba(180,80,30,0.05);
@@ -378,15 +391,15 @@
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
             border-radius: 10px;
-            padding: 6px 8px;
-            width: 80px;
+            padding: 8px 10px;
+            width: 110px; /* было 80, увеличено на 50% */
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             position: relative;
             flex-shrink: 0;
-            min-height: 70px;
+            min-height: 90px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -406,8 +419,8 @@
         }
         .battle-hand .card .card-name {
             font-weight: 700;
-            font-size: 10px;
-            line-height: 1.1;
+            font-size: 14px;
+            line-height: 1.2;
             word-break: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
@@ -417,20 +430,20 @@
         .battle-hand .card .card-cost {
             display: inline-block;
             background: rgba(40,25,20,0.8);
-            padding: 0 6px;
+            padding: 0 8px;
             border-radius: 8px;
-            font-size: 9px;
-            margin-top: 2px;
+            font-size: 12px;
+            margin-top: 3px;
             color: #e2b8a0;
             border: 1px solid rgba(180,80,30,0.1);
             position: relative;
             z-index: 1;
         }
         .battle-hand .card .card-effect {
-            font-size: 9px;
+            font-size: 12px;
             color: #a08078;
-            margin-top: 2px;
-            line-height: 1.1;
+            margin-top: 3px;
+            line-height: 1.2;
             word-break: break-word;
             position: relative;
             z-index: 1;
@@ -516,16 +529,15 @@
         }
         .game-over-overlay .btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
-        /* ---------- АДАПТИВ ---------- */
         @media (max-width: 480px) {
             .menu-btn { width: 180px; font-size: 14px; padding: 12px 16px; }
             .clan-card { width: 120px; padding: 12px 10px; }
             .clan-card .icon { font-size: 28px; }
             .clan-card .name { font-size: 14px; }
-            .battle-hand .card { width: 70px; padding: 5px 6px; min-height: 60px; }
-            .battle-hand .card .card-name { font-size: 9px; }
-            .battle-hand .card .card-effect { font-size: 8px; }
-            .battle-hand .card .card-cost { font-size: 8px; }
+            .battle-hand .card { width: 90px; padding: 6px 8px; min-height: 75px; }
+            .battle-hand .card .card-name { font-size: 12px; }
+            .battle-hand .card .card-effect { font-size: 11px; }
+            .battle-hand .card .card-cost { font-size: 11px; }
             .map-node { min-width: 70px; max-width: 100px; padding: 10px 12px; }
             .map-node .icon { font-size: 20px; }
             .game-container { max-width: 100%; padding: 4px 4px 0 4px; }
@@ -536,10 +548,10 @@
             .battle-field { min-height: 60px; }
         }
         @media (max-width: 380px) {
-            .battle-hand .card { width: 60px; padding: 4px 5px; min-height: 50px; }
-            .battle-hand .card .card-name { font-size: 8px; }
-            .battle-hand .card .card-effect { font-size: 7px; }
-            .battle-hand .card .card-cost { font-size: 7px; }
+            .battle-hand .card { width: 75px; padding: 5px 6px; min-height: 65px; }
+            .battle-hand .card .card-name { font-size: 10px; }
+            .battle-hand .card .card-effect { font-size: 9px; }
+            .battle-hand .card .card-cost { font-size: 9px; }
             .btn-end-turn { font-size: 11px; padding: 5px 10px; min-width: 60px; }
             .player-status { font-size: 11px; gap: 4px; }
             .battle-enemy .hp-text { font-size: 14px; }
@@ -595,7 +607,7 @@
     <!-- БОЕВОЙ ЭКРАН -->
     <div id="battleScreen" class="battle-screen" style="display:none;">
         <div class="battle-container">
-            <!-- ВРАГ — СВЕРХУ -->
+            <!-- ВРАГ -->
             <div class="battle-enemy">
                 <div class="info">
                     <span class="clan-badge">👹 <span id="enemyClanBadge">Враг</span></span>
@@ -606,10 +618,10 @@
                 <div class="status-text" id="enemyStatus"></div>
             </div>
 
-            <!-- ПОЛЕ БОЯ — ЦЕНТР -->
-            <div class="battle-field">
-                <div class="turn-indicator" id="turnIndicator">⚔️ Твой ход</div>
-                <div class="battle-status" id="battleStatus">Выбери карту</div>
+            <!-- ПОЛЕ БОЯ -->
+            <div class="battle-field" id="battleField">
+                <div class="turn-indicator" id="turnIndicator">⚔️ Подготовка...</div>
+                <div class="battle-status" id="battleStatus">Бросок монетки...</div>
             </div>
 
             <!-- ЛОГ -->
@@ -618,7 +630,7 @@
                 <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
 
-            <!-- ПАНЕЛЬ ИГРОКА + КНОПКА -->
+            <!-- ПАНЕЛЬ ИГРОКА -->
             <div class="battle-actions">
                 <div class="player-status">
                     <span class="hp-text" id="playerHP">30</span>
@@ -626,10 +638,10 @@
                     <span class="energy-text">⚡<span id="playerEnergy">3</span></span>
                     <span class="status-icon" id="playerStatus"></span>
                 </div>
-                <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
+                <button class="btn-end-turn" id="endTurnBtn" disabled>⏳ Ожидание...</button>
             </div>
 
-            <!-- РУКА КАРТ — ВНИЗУ -->
+            <!-- РУКА КАРТ -->
             <div class="battle-hand" id="handContainer">
                 <div class="empty-hand">Загрузка...</div>
             </div>
@@ -642,7 +654,7 @@
 
 <script>
     // =======================================================
-    // SHARD — НОВЫЙ ИНТЕРФЕЙС (ВРАГ СВЕРХУ, КАРТЫ СНИЗУ)
+    // SHARD — МОНЕТКА, НОВАЯ ЛОГИКА ХОДОВ
     // =======================================================
 
     function createSakura() {
@@ -661,7 +673,7 @@
     }
     createSakura();
 
-    // ---------- 11 КАРТ ДЛЯ КАЖДОГО КЛАССА ----------
+    // ---------- КАРТЫ (11 ШТУК НА КЛАСС) ----------
     const CLAN_DATA = {
         'Алхимик': {
             icon: '🧪',
@@ -752,6 +764,7 @@
     const continueBtn = document.getElementById('continueBtn');
     const saveIndicator = document.getElementById('saveIndicator');
     const logToggle = document.getElementById('logToggle');
+    const battleField = document.getElementById('battleField');
 
     let logOpen = false;
     logToggle.addEventListener('click', () => {
@@ -791,6 +804,9 @@
                 enemyDeck: gameState.enemyDeck,
                 playerHand: gameState.playerHand,
                 enemyHand: gameState.enemyHand,
+                turnPhase: gameState.turnPhase,
+                coinFlipDone: gameState.coinFlipDone,
+                playerStarted: gameState.playerStarted,
             } : null,
             timestamp: Date.now()
         };
@@ -817,7 +833,6 @@
     }
 
     function showScreen(screen) {
-        // Все экраны имеют display:flex, поэтому скрываем через display:none
         const screens = [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen];
         screens.forEach(s => s.style.display = 'none');
         screen.style.display = 'flex';
@@ -837,13 +852,16 @@
             showScreen(battleScreen);
             battleLog.innerHTML = '<div class="log-entry">⚔️ Битва продолжается!</div>';
             addLog('⚔️ Битва продолжается!', 'system');
-            endTurnBtn.disabled = false;
             updateBattleUI();
             renderHand();
-            if (gameState.isPlayerTurn) {
-                setTimeout(() => startPlayerTurn(), 500);
+            if (gameState.coinFlipDone) {
+                if (gameState.isPlayerTurn) {
+                    startPlayerTurn();
+                } else {
+                    enemyTurn();
+                }
             } else {
-                setTimeout(() => enemyTurn(), 500);
+                startCoinFlip();
             }
         } else {
             gameState = null;
@@ -1002,6 +1020,7 @@
         });
     }
 
+    // ---------- БОЕВАЯ СИСТЕМА ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -1078,9 +1097,10 @@
         if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
         enemyStatus.textContent = eStatus;
 
-        turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Твой ход' : '⏳ Ход врага';
-        battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту' : 'Враг думает...';
-        endTurnBtn.disabled = !p.isPlayerTurn || p.gameOver;
+        if (p.coinFlipDone) {
+            turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Твой ход' : '⏳ Ход врага';
+            battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту' : 'Враг думает...';
+        }
         saveGame();
     }
 
@@ -1104,7 +1124,7 @@
             else if (card.rarity === 'uncommon') cardEl.classList.add('uncommon');
             else cardEl.classList.add('common');
 
-            const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && p.playerStun === 0 && !p.gameOver;
+            const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && p.playerStun === 0 && !p.gameOver && p.coinFlipDone;
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
@@ -1140,24 +1160,69 @@
         });
     }
 
+    // ---------- МОНЕТКА ----------
+    function startCoinFlip() {
+        const p = gameState;
+        p.coinFlipDone = false;
+        endTurnBtn.disabled = true;
+        endTurnBtn.textContent = '⏳ Бросок...';
+
+        battleField.innerHTML = `
+            <div style="text-align:center;">
+                <div class="coin-flip">🪙</div>
+                <div style="margin-top:10px; font-size:16px; color:#e2b8a0;">Кто ходит первым?</div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const playerStarts = Math.random() > 0.5;
+            p.playerStarted = playerStarts;
+            p.isPlayerTurn = playerStarts;
+            p.coinFlipDone = true;
+
+            battleField.innerHTML = `
+                <div class="turn-indicator" id="turnIndicator">${playerStarts ? '⚔️ Твой ход' : '⏳ Ход врага'}</div>
+                <div class="battle-status" id="battleStatus">${playerStarts ? 'Выбери карту' : 'Враг думает...'}</div>
+            `;
+
+            if (playerStarts) {
+                addLog('🪙 Ты ходишь первым!', 'system');
+                endTurnBtn.textContent = '⚔️ Завершить ход';
+                endTurnBtn.disabled = false;
+                startPlayerTurn();
+            } else {
+                addLog('🪙 Враг ходит первым!', 'system');
+                endTurnBtn.textContent = '⏳ Ход врага...';
+                endTurnBtn.disabled = true;
+                enemyTurn();
+            }
+            saveGame();
+        }, 1500);
+    }
+
+    // ---------- НОВАЯ ЛОГИКА ХОДОВ ----------
     function startPlayerTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
 
+        // Если игрок в оглушении — пропускаем ход
         if (p.playerStun > 0) {
             p.playerStun -= 1;
-            addLog(`💫 Ты оглушён`, 'system');
+            addLog(`💫 Ты оглушён и пропускаешь ход`, 'system');
             p.isPlayerTurn = false;
             updateBattleUI();
             endTurnBtn.disabled = true;
-            endTurnBtn.textContent = '⏳ Ход врага';
+            endTurnBtn.textContent = '⏳ Ход врага...';
             setTimeout(() => enemyTurn(), 600);
+            saveGame();
             return;
         }
 
+        // Восстановление энергии
         p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
         addLog(`⚡ +1 энергия (${p.playerEnergy})`, 'player');
 
+        // Добор карты до 4
         while (p.playerHand.length < 4) {
             drawCard('player');
         }
@@ -1167,6 +1232,7 @@
         renderHand();
         saveGame();
 
+        // Проверка, есть ли что играть
         let canPlayAny = false;
         for (let card of p.playerHand) {
             if (p.playerEnergy >= card.cost) {
@@ -1176,7 +1242,7 @@
         }
 
         if (!canPlayAny) {
-            addLog('⏳ Нет доступных карт', 'system');
+            addLog('⏳ Нет доступных карт. Заверши ход.', 'system');
             endTurnBtn.textContent = '⏳ Завершить (нет карт)';
         } else {
             endTurnBtn.textContent = '⚔️ Завершить ход';
@@ -1219,12 +1285,15 @@
             enemyStun: 0,
             playerPoison: 0,
             enemyPoison: 0,
-            isPlayerTurn: true,
+            isPlayerTurn: false,
             gameOver: false,
             playerDeck: playerDeck,
             enemyDeck: enemyDeck,
             playerHand: [],
             enemyHand: [],
+            turnPhase: 'start',
+            coinFlipDone: false,
+            playerStarted: false,
         };
 
         for (let i = 0; i < 4; i++) {
@@ -1239,12 +1308,14 @@
         battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
         addLog(`⚔️ Ты — ${playerClanName}, враг — ${enemyClanName}`, 'system');
 
-        endTurnBtn.disabled = false;
+        endTurnBtn.disabled = true;
+        endTurnBtn.textContent = '⏳ Бросок...';
         updateBattleUI();
         renderHand();
         saveGame();
 
-        setTimeout(() => startPlayerTurn(), 500);
+        // Запускаем монетку
+        setTimeout(() => startCoinFlip(), 500);
     }
 
     function playCard(index) {
@@ -1270,6 +1341,7 @@
 
         if (checkGameOver()) return;
 
+        // Проверяем, можно ли ещё что-то сыграть
         let canPlayAny = false;
         for (let c of p.playerHand) {
             if (p.playerEnergy >= c.cost) {
@@ -1461,16 +1533,19 @@
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
 
+        // Враг восстанавливает энергию
         p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
         addLog(`⚡ Враг +1 энергия (${p.enemyEnergy})`, 'enemy');
 
+        // Враг добирает карты до 4
         while (p.enemyHand.length < 4) {
             drawCard('enemy');
         }
 
+        // Проверка оглушения врага
         if (p.enemyStun > 0) {
             p.enemyStun -= 1;
-            addLog(`💫 Враг оглушён`, 'enemy');
+            addLog(`💫 Враг оглушён и пропускает ход`, 'enemy');
             p.isPlayerTurn = true;
             updateBattleUI();
             renderHand();
@@ -1480,6 +1555,7 @@
             return;
         }
 
+        // Враг играет карты, пока есть энергия и карты
         let cardsPlayed = 0;
         while (p.enemyEnergy > 0 && p.enemyHand.length > 0) {
             let bestCard = null;
@@ -1518,8 +1594,10 @@
             addLog(`⚔️ Враг сыграл ${cardsPlayed} карт`, 'enemy');
         }
 
+        // Применяем яд врага
         applyPoisonAtEnd('enemy');
 
+        // Передаём ход игроку
         p.isPlayerTurn = true;
         updateBattleUI();
         renderHand();
@@ -1586,29 +1664,31 @@
         saveGame();
     }
 
+    // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
     endTurnBtn.addEventListener('click', function() {
         if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
         const p = gameState;
 
         if (p.playerStun > 0) {
             p.playerStun -= 1;
-            addLog(`💫 Ты оглушён`, 'system');
+            addLog(`💫 Ты оглушён и пропускаешь ход`, 'system');
             p.isPlayerTurn = false;
             updateBattleUI();
             endTurnBtn.disabled = true;
-            endTurnBtn.textContent = '⏳ Ход врага';
+            endTurnBtn.textContent = '⏳ Ход врага...';
             setTimeout(() => enemyTurn(), 600);
             saveGame();
             return;
         }
 
+        // Применяем яд игрока
         applyPoisonAtEnd('player');
 
         addLog(`⚔️ Ты завершил ход`, 'player');
         p.isPlayerTurn = false;
         updateBattleUI();
         endTurnBtn.disabled = true;
-        endTurnBtn.textContent = '⏳ Ход врага';
+        endTurnBtn.textContent = '⏳ Ход врага...';
         setTimeout(() => enemyTurn(), 600);
         saveGame();
     });
