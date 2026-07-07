@@ -20,7 +20,7 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* ---------- ФОН С ЛЕПЕСТКАМИ ---------- */
+        /* ---------- ФОН С ЛЕПЕСТКАМИ (70 ШТУК) ---------- */
         #sakura-container {
             position: fixed;
             top: 0;
@@ -42,7 +42,6 @@
             transform: rotate(0deg);
             animation: fall linear infinite;
             box-shadow: 0 0 12px rgba(252, 201, 209, 0.3);
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.0);
         }
         .sakura-petal::after {
             content: '';
@@ -57,15 +56,6 @@
         @keyframes fall {
             0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
             100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
-        }
-        /* Класс для порыва ветра */
-        .wind-gust {
-            animation: windGust 1.2s cubic-bezier(0.2, 0.8, 0.3, 1.0) forwards;
-        }
-        @keyframes windGust {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(150px, -30px) rotate(45deg); }
-            100% { transform: translate(300px, -60px) rotate(90deg) scale(0.5); opacity: 0.3; }
         }
 
         .game-container {
@@ -226,32 +216,108 @@
         .health-box .hp-bar .fill.enemy { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
         .health-box .energy { font-size: 18px; font-weight: 700; color: #c4b5fd; }
 
-        /* ---------- КАРТЫ В РУКЕ ---------- */
+        /* ---------- КАРТЫ В РУКЕ (НОВАЯ СТИЛИСТИКА) ---------- */
         .card {
-            background: rgba(30, 30, 50, 0.8);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(45, 45, 74, 0.5);
+            background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+            border: 2px solid #3d3d5a;
             border-radius: 12px;
             padding: 14px 16px;
             width: 135px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
         }
         .card:hover:not(.disabled) {
+            transform: translateY(-8px) scale(1.03);
             border-color: #7c3aed;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.3), inset 0 1px 0 rgba(124, 58, 237, 0.2);
         }
-        .card .card-name { font-weight: 700; font-size: 14px; }
-        .card .card-cost { display: inline-block; background: rgba(45, 45, 74, 0.7); padding: 0 8px; border-radius: 10px; font-size: 12px; margin-top: 4px; color: #c4b5fd; }
-        .card .card-effect { font-size: 12px; color: #94a3b8; margin-top: 6px; }
-        .card.disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; filter: grayscale(0.5); }
+        .card .card-name {
+            font-weight: 700;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        .card .card-cost {
+            display: inline-block;
+            background: rgba(45, 45, 74, 0.8);
+            padding: 0 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 4px;
+            color: #c4b5fd;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        .card .card-effect {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+            position: relative;
+            z-index: 1;
+        }
+        .card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            filter: grayscale(0.5);
+        }
 
-        /* ---------- РЕДКОСТИ КАРТ ---------- */
-        .card.rare { border-color: #c084fc; box-shadow: 0 0 20px rgba(192, 132, 252, 0.2); }
-        .card.uncommon { border-color: #22d3ee; box-shadow: 0 0 20px rgba(34, 211, 238, 0.15); }
+        /* ---------- РЕДКОСТИ КАРТ (ЗОЛОТО/СЕРЕБРО) ---------- */
+        .card.rare {
+            border-color: #c084fc;
+            box-shadow: 0 0 25px rgba(192, 132, 252, 0.15), inset 0 0 20px rgba(192, 132, 252, 0.05);
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3a);
+        }
+        .card.rare .card-name {
+            color: #c084fc;
+            text-shadow: 0 0 15px rgba(192, 132, 252, 0.2);
+        }
+        .card.rare::after {
+            content: '✦';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 16px;
+            color: #c084fc;
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.4);
+            z-index: 2;
+        }
+
+        .card.uncommon {
+            border-color: #22d3ee;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1), inset 0 0 15px rgba(34, 211, 238, 0.03);
+            background: linear-gradient(145deg, #1a1a2e, #1a2a3a);
+        }
+        .card.uncommon .card-name {
+            color: #22d3ee;
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.15);
+        }
+        .card.uncommon::after {
+            content: '◆';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 14px;
+            color: #22d3ee;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+            z-index: 2;
+        }
 
         /* ---------- КНОПКА ЗАВЕРШИТЬ ХОД ---------- */
         .btn-end-turn {
@@ -300,6 +366,8 @@
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
             .card { width: 110px; padding: 10px 12px; }
+            .card .card-name { font-size: 12px; }
+            .card .card-effect { font-size: 10px; }
             .health-container { flex-direction: column; }
             .menu-screen h1 { font-size: 48px; letter-spacing: 6px; }
             .menu-btn { width: 100%; max-width: 280px; }
@@ -310,7 +378,7 @@
 </head>
 <body>
 
-<!-- КОНТЕЙНЕР ДЛЯ ЛЕПЕСТКОВ -->
+<!-- КОНТЕЙНЕР ДЛЯ ЛЕПЕСТКОВ (70 ШТУК) -->
 <div id="sakura-container"></div>
 
 <div class="game-container">
@@ -405,19 +473,19 @@
 
 <script>
     // =======================================================
-    // KAGE — С ЛЕПЕСТКАМИ, ПОРЫВАМИ ВЕТРА И ИСПРАВЛЕННЫМ СЧЁТЧИКОМ
+    // KAGE — НОВАЯ СТИЛИСТИКА КАРТ, 70 ЛЕПЕСТКОВ
     // =======================================================
 
-    // ---------- ЛЕПЕСТКИ САКУРЫ ----------
+    // ---------- ЛЕПЕСТКИ САКУРЫ (70 ШТУК) ----------
     function createSakura() {
         const container = document.getElementById('sakura-container');
-        const petalCount = 35;
+        const petalCount = 70;
         for (let i = 0; i < petalCount; i++) {
             const petal = document.createElement('div');
             petal.className = 'sakura-petal';
             petal.style.left = Math.random() * 100 + '%';
             petal.style.animationDuration = (8 + Math.random() * 12) + 's';
-            petal.style.animationDelay = (Math.random() * 15) + 's';
+            petal.style.animationDelay = (Math.random() * 20) + 's';
             petal.style.width = (12 + Math.random() * 12) + 'px';
             petal.style.height = (8 + Math.random() * 8) + 'px';
             petal.style.opacity = 0.3 + Math.random() * 0.4;
@@ -425,63 +493,6 @@
         }
     }
     createSakura();
-
-    // ---------- ПОРЫВЫ ВЕТРА (РЕДКОЕ СОБЫТИЕ) ----------
-    function triggerWindGust() {
-        const petals = document.querySelectorAll('.sakura-petal');
-        // Выбираем случайный процент лепестков (30-60%)
-        const gustCount = Math.floor(petals.length * (0.3 + Math.random() * 0.3));
-        const selected = [];
-        const indices = [];
-        while (selected.length < gustCount) {
-            const idx = Math.floor(Math.random() * petals.length);
-            if (!indices.includes(idx)) {
-                indices.push(idx);
-                selected.push(petals[idx]);
-            }
-        }
-        selected.forEach(petal => {
-            petal.classList.remove('wind-gust');
-            // Сбрасываем анимацию, чтобы она сработала заново
-            void petal.offsetWidth;
-            petal.classList.add('wind-gust');
-            // Случайное направление (влево или вправо)
-            const direction = Math.random() > 0.5 ? 1 : -1;
-            const translateX = 100 + Math.random() * 200;
-            const translateY = -20 - Math.random() * 60;
-            const rotate = 30 + Math.random() * 60;
-            petal.style.setProperty('--tx', direction * translateX + 'px');
-            petal.style.setProperty('--ty', translateY + 'px');
-            petal.style.setProperty('--rot', rotate + 'deg');
-            // Добавляем динамический keyframe
-            const style = document.createElement('style');
-            const keyframe = `
-                @keyframes windGust_${Date.now()} {
-                    0% { transform: translate(0, 0) rotate(0deg); }
-                    50% { transform: translate(${direction * translateX}px, ${translateY}px) rotate(${rotate}deg); }
-                    100% { transform: translate(${direction * translateX * 0.5}px, ${-translateY}px) rotate(${rotate * 0.5}deg) scale(0.4); opacity: 0.1; }
-                }
-            `;
-            style.textContent = keyframe;
-            document.head.appendChild(style);
-            petal.style.animation = `windGust_${Date.now()} 1.2s cubic-bezier(0.2, 0.8, 0.3, 1.0) forwards`;
-            setTimeout(() => {
-                petal.style.animation = '';
-                petal.style.transform = '';
-                petal.style.opacity = '';
-            }, 1500);
-        });
-    }
-
-    // Запускаем порыв ветра случайно (каждые 10-25 секунд)
-    function scheduleWindGust() {
-        const delay = 10000 + Math.random() * 15000;
-        setTimeout(() => {
-            triggerWindGust();
-            scheduleWindGust();
-        }, delay);
-    }
-    scheduleWindGust();
 
     // ---------- ДАННЫЕ КЛАНОВ ----------
     const CLAN_DATA = {
@@ -849,7 +860,7 @@
         statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
     }
 
-    // ---------- РЕНДЕР РУКИ (С ДОБАВЛЕНИЕМ КЛАССОВ РЕДКОСТИ) ----------
+    // ---------- РЕНДЕР РУКИ (С НОВОЙ СТИЛИСТИКОЙ) ----------
     function renderHand() {
         handContainer.innerHTML = '';
         if (!gameState || gameState.gameOver) {
@@ -1153,7 +1164,6 @@
         if (p.enemyHP <= 0) {
             p.enemyHP = 0;
             p.gameOver = true;
-            // Исправление: прибавляем ровно 1 победу
             mapWins += 1;
             mapCoins += 5;
             addLog(`🏆 Ты победил! +5 монет`);
