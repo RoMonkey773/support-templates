@@ -14,7 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 8px;
+            padding: 6px;
             overflow-x: hidden;
             position: relative;
         }
@@ -32,7 +32,7 @@
             width: 14px; height: 10px;
             background: #7a4a4a;
             border-radius: 50% 50% 50% 0;
-            opacity: 0.25;
+            opacity: 0.2;
             animation: fall linear infinite;
         }
         .sakura-petal::after {
@@ -45,7 +45,7 @@
             opacity: 0.4;
         }
         @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.4; }
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.3; }
             100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
         }
         .game-container {
@@ -54,15 +54,12 @@
             position: relative;
             z-index: 1;
         }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: rgba(30,20,18,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
-        * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
+        /* ---------- МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 30px 20px;
             text-align: center;
             border: 1px solid rgba(180,80,30,0.2);
@@ -85,9 +82,9 @@
         .menu-btn {
             background: rgba(40,25,20,0.8);
             border: 1px solid rgba(180,80,30,0.3);
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 14px 30px;
-            width: 240px;
+            width: 220px;
             font-size: 17px;
             font-weight: 700;
             color: #e2d5d0;
@@ -122,7 +119,7 @@
             display: none;
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
             border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
@@ -142,16 +139,16 @@
         .clan-card {
             background: rgba(30,20,18,0.7);
             border: 1px solid rgba(60,40,30,0.4);
-            border-radius: 14px;
-            padding: 18px 16px;
-            width: 150px;
+            border-radius: 12px;
+            padding: 16px 14px;
+            width: 140px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
         }
         .clan-card:hover { border-color: #c07040; transform: translateY(-4px); }
-        .clan-card .icon { font-size: 36px; display: block; margin-bottom: 6px; }
-        .clan-card .name { font-size: 18px; font-weight: 700; color: #e2d5d0; }
+        .clan-card .icon { font-size: 32px; display: block; margin-bottom: 6px; }
+        .clan-card .name { font-size: 16px; font-weight: 700; color: #e2d5d0; }
         .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
         .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
@@ -159,7 +156,7 @@
             display: none;
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 16px;
             border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
@@ -181,11 +178,11 @@
         .map-node {
             background: rgba(30,20,18,0.7);
             border: 1px solid rgba(60,40,30,0.4);
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 14px 16px;
-            min-width: 100px;
+            min-width: 90px;
             flex: 1 0 auto;
-            max-width: 140px;
+            max-width: 130px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
@@ -195,17 +192,17 @@
         .map-node.enemy:hover { border-color: #c06040; }
         .map-node.merchant { border-color: rgba(60,140,80,0.3); }
         .map-node.merchant:hover { border-color: #5a9a6a; }
-        .map-node .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+        .map-node .icon { font-size: 24px; display: block; margin-bottom: 4px; }
         .map-node .label { font-size: 12px; color: #a08078; }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
-        /* ---------- БОЕВОЙ ЭКРАН ---------- */
+        /* ---------- НОВЫЙ БОЕВОЙ ИНТЕРФЕЙС ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
             backdrop-filter: blur(8px);
             border-radius: 16px;
-            padding: 10px 12px;
+            padding: 8px 10px;
             border: 1px solid rgba(180,80,30,0.2);
             min-height: 400px;
             position: relative;
@@ -217,10 +214,11 @@
             min-height: 400px;
         }
 
+        /* ВРАГ — одна строка */
         .battle-enemy {
             background: rgba(30,20,18,0.5);
-            border-radius: 12px;
-            padding: 8px 14px;
+            border-radius: 10px;
+            padding: 6px 12px;
             border: 1px solid rgba(180,80,30,0.1);
             display: flex;
             justify-content: space-between;
@@ -229,33 +227,36 @@
             gap: 4px;
             font-size: 14px;
         }
-        .battle-enemy .info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .battle-enemy .info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .battle-enemy .hp-text { font-size: 18px; font-weight: 700; color: #ef4444; }
         .battle-enemy .energy-text { font-size: 15px; font-weight: 700; color: #e2b8a0; }
         .battle-enemy .shield-text { color: #38bdf8; font-size: 13px; }
         .battle-enemy .status-text { font-size: 12px; color: #a08078; }
+        .battle-enemy .clan-badge { font-weight: 700; color: #e2b8a0; font-size: 13px; }
 
+        /* ПОЛЕ БОЯ — компактное */
         .battle-field {
-            background: rgba(30,20,18,0.2);
-            border-radius: 12px;
-            border: 1px dashed rgba(180,80,30,0.08);
-            min-height: 50px;
+            background: rgba(30,20,18,0.15);
+            border-radius: 10px;
+            border: 1px dashed rgba(180,80,30,0.06);
+            min-height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            gap: 4px;
-            padding: 8px;
+            gap: 2px;
+            padding: 6px;
         }
-        .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
-        .battle-field .battle-status { font-size: 12px; color: #a08078; }
+        .battle-field .turn-indicator { font-size: 15px; font-weight: 700; color: #e2b8a0; }
+        .battle-field .battle-status { font-size: 11px; color: #a08078; }
 
+        /* ЛОГ */
         .log-toggle {
-            background: rgba(30,20,18,0.4);
-            border: 1px solid rgba(180,80,30,0.1);
+            background: rgba(30,20,18,0.3);
+            border: 1px solid rgba(180,80,30,0.08);
             border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 12px;
+            padding: 3px 8px;
+            font-size: 11px;
             color: #a08078;
             cursor: pointer;
             text-align: center;
@@ -267,91 +268,49 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
-            background: rgba(10,8,8,0.6);
+            background: rgba(10,8,8,0.5);
             border-radius: 8px;
             border: 1px solid rgba(180,80,30,0.05);
             font-size: 11px;
         }
-        .battle-log-container.open { max-height: 120px; overflow-y: auto; padding: 6px 10px; }
+        .battle-log-container.open { max-height: 100px; overflow-y: auto; padding: 4px 8px; }
         .battle-log-container .log-entry {
             padding: 2px 0;
-            border-bottom: 1px solid rgba(60,40,30,0.2);
+            border-bottom: 1px solid rgba(60,40,30,0.15);
             color: #c0b0a8;
-            font-size: 11px;
+            font-size: 10px;
         }
         .battle-log-container .log-entry.enemy-turn { color: #fbbf24; border-left: 2px solid #fbbf24; padding-left: 6px; }
         .battle-log-container .log-entry.player-turn { color: #c4b5fd; border-left: 2px solid #c4b5fd; padding-left: 6px; }
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
         .battle-log-container .log-entry.poison { color: #6a9a6a; border-left: 2px solid #6a9a6a; padding-left: 6px; }
 
+        /* ПАНЕЛЬ ИГРОКА — одна строка + большая кнопка */
         .battle-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             justify-content: space-between;
             background: rgba(30,20,18,0.3);
             border-radius: 10px;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border: 1px solid rgba(180,80,30,0.08);
         }
         .player-status {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             font-size: 14px;
             font-weight: 600;
             flex-wrap: wrap;
         }
-        .player-status .hp-text { color: #22c55e; }
-        .player-status .energy-text { color: #e2b8a0; }
+        .player-status .hp-text { color: #22c55e; font-size: 16px; }
+        .player-status .energy-text { color: #e2b8a0; font-size: 14px; }
         .player-status .shield-text { color: #38bdf8; font-size: 13px; }
         .player-status .status-icon {
             font-size: 13px;
             color: #a08078;
-            cursor: pointer;
-            position: relative;
-            transition: 0.2s;
-            padding: 0 2px;
-        }
-        .player-status .status-icon:hover { transform: scale(1.1); }
-
-        .tooltip-container {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip-text {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-            background: rgba(40,25,20,0.95);
-            border: 1px solid rgba(180,80,30,0.3);
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 12px;
-            color: #e2d5d0;
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            z-index: 50;
-            pointer-events: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            min-width: 120px;
-            text-align: center;
-        }
-        .tooltip-text.show {
-            visibility: visible;
-            opacity: 1;
-        }
-        .tooltip-text::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: rgba(40,25,20,0.95);
+            font-weight: 400;
         }
 
         .btn-end-turn {
@@ -359,7 +318,7 @@
             border: 1px solid rgba(180,80,30,0.25);
             border-radius: 10px;
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #e2d5d0;
             cursor: pointer;
@@ -367,21 +326,22 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
             white-space: nowrap;
-            min-width: 80px;
+            min-width: 90px;
+            letter-spacing: 0.5px;
         }
-        .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.2); border-color: #c07040; }
+        .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.25); border-color: #c07040; }
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .btn-end-turn.waiting { color: #94a3b8; border-color: rgba(100,60,40,0.2); }
 
+        /* РУКА КАРТ */
         .battle-hand {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 6px 0;
-            min-height: 70px;
-            background: rgba(10,8,8,0.3);
-            border-radius: 12px;
+            padding: 4px 0;
+            min-height: 60px;
+            background: rgba(10,8,8,0.2);
+            border-radius: 10px;
             border: 1px solid rgba(180,80,30,0.05);
             align-items: center;
         }
@@ -389,15 +349,15 @@
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
             border-radius: 10px;
-            padding: 6px 8px;
-            width: 80px;
+            padding: 5px 7px;
+            width: 72px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             position: relative;
             flex-shrink: 0;
-            min-height: 70px;
+            min-height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -405,12 +365,12 @@
         .battle-hand .card:hover:not(.disabled) {
             transform: translateY(-6px) scale(1.04);
             border-color: #c07040;
-            box-shadow: 0 4px 20px rgba(180,80,30,0.2);
+            box-shadow: 0 4px 16px rgba(180,80,30,0.2);
         }
         .battle-hand .card .card-name {
             font-weight: 700;
-            font-size: 10px;
-            line-height: 1.2;
+            font-size: 9px;
+            line-height: 1.1;
             word-break: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
@@ -420,20 +380,20 @@
             background: rgba(40,25,20,0.8);
             padding: 0 6px;
             border-radius: 8px;
-            font-size: 10px;
+            font-size: 9px;
             margin-top: 2px;
             color: #e2b8a0;
             border: 1px solid rgba(180,80,30,0.1);
         }
         .battle-hand .card .card-effect {
-            font-size: 9px;
+            font-size: 8px;
             color: #a08078;
             margin-top: 2px;
-            line-height: 1.2;
+            line-height: 1.1;
             word-break: break-word;
         }
         .battle-hand .card.disabled {
-            opacity: 0.35;
+            opacity: 0.3;
             cursor: not-allowed;
             transform: none !important;
             filter: grayscale(0.5);
@@ -445,7 +405,7 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            font-size: 11px;
+            font-size: 10px;
             color: #d4a060;
         }
         .battle-hand .card.uncommon { border-color: #5a7a7a; }
@@ -455,13 +415,13 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            font-size: 10px;
+            font-size: 9px;
             color: #6a9a9a;
         }
         .battle-hand .empty-hand {
             color: #a08078;
-            font-size: 13px;
-            padding: 12px;
+            font-size: 12px;
+            padding: 10px;
         }
 
         .game-over-overlay {
@@ -477,7 +437,7 @@
             z-index: 10;
             padding: 20px;
         }
-        .game-over-overlay .result { font-size: 28px; font-weight: 900; }
+        .game-over-overlay .result { font-size: 26px; font-weight: 900; }
         .game-over-overlay .result.win { color: #22c55e; }
         .game-over-overlay .result.lose { color: #ef4444; }
         .game-over-overlay .btn {
@@ -491,30 +451,35 @@
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Segoe UI', Arial, sans-serif;
-            min-width: 120px;
+            min-width: 100px;
         }
         .game-over-overlay .btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
         @media (max-width: 480px) {
-            .menu-btn { width: 200px; font-size: 15px; padding: 12px 20px; }
-            .clan-card { width: 130px; padding: 14px 12px; }
-            .clan-card .icon { font-size: 30px; }
-            .clan-card .name { font-size: 16px; }
-            .battle-hand .card { width: 70px; padding: 5px 6px; min-height: 60px; }
-            .battle-hand .card .card-name { font-size: 9px; }
-            .battle-hand .card .card-effect { font-size: 8px; }
-            .battle-hand .card .card-cost { font-size: 9px; }
-            .map-node { min-width: 80px; max-width: 110px; padding: 10px 12px; }
-            .map-node .icon { font-size: 22px; }
-            .game-container { max-width: 100%; }
-        }
-        @media (max-width: 380px) {
-            .battle-hand .card { width: 60px; padding: 4px 5px; min-height: 50px; }
+            .menu-btn { width: 180px; font-size: 14px; padding: 12px 16px; }
+            .clan-card { width: 120px; padding: 12px 10px; }
+            .clan-card .icon { font-size: 28px; }
+            .clan-card .name { font-size: 14px; }
+            .battle-hand .card { width: 64px; padding: 4px 5px; min-height: 50px; }
             .battle-hand .card .card-name { font-size: 8px; }
             .battle-hand .card .card-effect { font-size: 7px; }
             .battle-hand .card .card-cost { font-size: 8px; }
-            .btn-end-turn { font-size: 12px; padding: 6px 12px; min-width: 60px; }
+            .map-node { min-width: 70px; max-width: 100px; padding: 10px 12px; }
+            .map-node .icon { font-size: 20px; }
+            .game-container { max-width: 100%; }
+            .btn-end-turn { font-size: 13px; padding: 6px 12px; min-width: 70px; }
             .player-status { font-size: 12px; }
+            .battle-enemy .hp-text { font-size: 16px; }
+        }
+        @media (max-width: 380px) {
+            .battle-hand .card { width: 56px; padding: 3px 4px; min-height: 44px; }
+            .battle-hand .card .card-name { font-size: 7px; }
+            .battle-hand .card .card-effect { font-size: 6px; }
+            .battle-hand .card .card-cost { font-size: 7px; }
+            .btn-end-turn { font-size: 11px; padding: 5px 10px; min-width: 60px; }
+            .player-status { font-size: 11px; gap: 4px; }
+            .battle-enemy .hp-text { font-size: 14px; }
+            .battle-enemy .energy-text { font-size: 13px; }
         }
     </style>
 </head>
@@ -565,9 +530,10 @@
 
     <div id="battleScreen" class="battle-screen">
         <div class="battle-container">
+            <!-- ВРАГ — компактная строка -->
             <div class="battle-enemy">
                 <div class="info">
-                    <span style="font-weight:700; color:#e2b8a0; font-size:13px;">👹 <span id="enemyClanBadge">Враг</span></span>
+                    <span class="clan-badge">👹 <span id="enemyClanBadge">Враг</span></span>
                     <span class="hp-text" id="enemyHP">30</span>
                     <span class="shield-text" id="enemyShieldText">🛡️0</span>
                     <span class="energy-text">⚡<span id="enemyEnergy">3</span></span>
@@ -575,26 +541,30 @@
                 <div class="status-text" id="enemyStatus"></div>
             </div>
 
+            <!-- ПОЛЕ БОЯ -->
             <div class="battle-field">
                 <div class="turn-indicator" id="turnIndicator">⚔️ Твой ход</div>
                 <div class="battle-status" id="battleStatus">Выбери карту</div>
             </div>
 
+            <!-- ЛОГ -->
             <div class="log-toggle" id="logToggle">📜 Лог боя</div>
             <div class="battle-log-container" id="battleLog">
                 <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
 
+            <!-- ИГРОК + КНОПКА -->
             <div class="battle-actions">
                 <div class="player-status">
                     <span class="hp-text" id="playerHP">30</span>
                     <span class="shield-text" id="playerShieldText">🛡️0</span>
                     <span class="energy-text">⚡<span id="playerEnergy">3</span></span>
-                    <span class="status-icon" id="playerStatus" data-tooltip="Статусы: 💫-оглушение, ☠️-яд">📊</span>
+                    <span class="status-icon" id="playerStatus"></span>
                 </div>
                 <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
             </div>
 
+            <!-- РУКА КАРТ -->
             <div class="battle-hand" id="handContainer">
                 <div class="empty-hand">Загрузка...</div>
             </div>
@@ -607,33 +577,12 @@
 
 <script>
     // =======================================================
-    // SHARD — ИСПРАВЛЕННЫЙ ЯД И ОТОБРАЖЕНИЕ
+    // SHARD — КОМПАКТНЫЙ ИНТЕРФЕЙС
     // =======================================================
-
-    function initTooltips() {
-        document.querySelectorAll('[data-tooltip]').forEach(el => {
-            const tooltip = document.createElement('span');
-            tooltip.className = 'tooltip-text';
-            tooltip.textContent = el.dataset.tooltip;
-            el.style.position = 'relative';
-            el.appendChild(tooltip);
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isOpen = tooltip.classList.contains('show');
-                document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
-                if (!isOpen) {
-                    tooltip.classList.add('show');
-                }
-            });
-        });
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
-        });
-    }
 
     function createSakura() {
         const container = document.getElementById('sakura-container');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 40; i++) {
             const petal = document.createElement('div');
             petal.className = 'sakura-petal';
             petal.style.left = Math.random() * 100 + '%';
@@ -641,7 +590,7 @@
             petal.style.animationDelay = (Math.random() * 20) + 's';
             petal.style.width = (10 + Math.random() * 10) + 'px';
             petal.style.height = (6 + Math.random() * 8) + 'px';
-            petal.style.opacity = 0.2 + Math.random() * 0.25;
+            petal.style.opacity = 0.2 + Math.random() * 0.2;
             container.appendChild(petal);
         }
     }
@@ -795,9 +744,6 @@
         [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen].forEach(s => s.style.display = 'none');
         screen.style.display = 'block';
         checkContinueButton();
-        if (screen === menuScreen || screen === battleScreen) {
-            initTooltips();
-        }
     }
 
     continueBtn.addEventListener('click', () => {
@@ -844,6 +790,7 @@
         this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
+    // ---------- КАРТА ----------
     function generateMap() {
         mapNodes = [];
         mapGrid.innerHTML = '';
@@ -977,6 +924,7 @@
         });
     }
 
+    // ---------- БОЕВАЯ СИСТЕМА ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -1043,26 +991,17 @@
         enemyShieldText.textContent = `🛡️${p.enemyShield}`;
         enemyClanBadge.textContent = p.enemyClan;
 
-        // --- ОТОБРАЖЕНИЕ СТАТУСОВ (ИСПРАВЛЕНО) ---
+        // Статусы игрока — иконками
         let pStatus = '';
         if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
         if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
-        playerStatus.textContent = pStatus || '📊';
+        playerStatus.textContent = pStatus || '';
 
+        // Статусы врага
         let eStatus = '';
         if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
         if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
         enemyStatus.textContent = eStatus;
-
-        // Обновляем подсказку для статуса игрока
-        const tooltip = playerStatus.querySelector('.tooltip-text');
-        if (tooltip) {
-            let text = 'Статусы: ';
-            if (p.playerStun > 0) text += `💫 оглушение (${p.playerStun}) `;
-            if (p.playerPoison > 0) text += `☠️ яд (${p.playerPoison}) `;
-            if (p.playerStun === 0 && p.playerPoison === 0) text = 'Нет активных статусов';
-            tooltip.textContent = text;
-        }
 
         turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Твой ход' : '⏳ Ход врага';
         battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту' : 'Враг думает...';
@@ -1113,7 +1052,7 @@
 
             cardEl.addEventListener('click', () => {
                 if (canPlay) {
-                    cardEl.style.transform = 'translateY(-12px) scale(1.06)';
+                    cardEl.style.transform = 'translateY(-10px) scale(1.05)';
                     cardEl.style.borderColor = '#c07040';
                     setTimeout(() => {
                         playCard(index);
@@ -1285,7 +1224,6 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
-        // --- Урон ---
         let dmg = card.dmg || 0;
         if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
         if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
@@ -1314,7 +1252,6 @@
             }
         }
 
-        // --- Лечение ---
         if (card.heal > 0) {
             let healAmount = card.heal;
             let selfDamage = 0;
@@ -1333,7 +1270,6 @@
             }
         }
 
-        // --- Щит ---
         if (card.shield > 0) {
             if (isPlayer) {
                 p.playerShield += card.shield;
@@ -1344,7 +1280,6 @@
             }
         }
 
-        // --- Яд ---
         if (card.poison > 0) {
             let poisonAmount = card.poison;
             if (isPlayer && p.playerClan === 'Алхимик') {
@@ -1362,7 +1297,6 @@
             }
         }
 
-        // --- Оглушение ---
         let stun = card.stun || 0;
         if (stun > 0) {
             if (isPlayer) {
@@ -1374,7 +1308,6 @@
             }
         }
 
-        // --- Кража энергии ---
         if (card.stealEnergy > 0) {
             if (isPlayer) {
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
@@ -1389,7 +1322,6 @@
             }
         }
 
-        // --- Энергия+ ---
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
@@ -1400,17 +1332,13 @@
             }
         }
 
-        // --- Бонус Стража: если враг не пробил щит, он получает урон ---
+        // Бонус Стража
         if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
             logMsg += `, щит укреплён`;
         }
-
-        // Проверяем, был ли нанесён урон и есть ли у врага (Стража) щит
         if (!isPlayer && p.enemyClan === 'Страж') {
-            // Если враг — Страж и у него есть щит после атаки
             const shieldAfter = isPlayer ? p.enemyShield : p.playerShield;
             if (shieldAfter > 0 && dmg > 0) {
-                // Наносим урон атакующему
                 if (isPlayer) {
                     p.playerHP -= 1;
                     if (p.playerHP < 0) p.playerHP = 0;
@@ -1430,7 +1358,6 @@
         saveGame();
     }
 
-    // ---------- ЯД В КОНЦЕ ХОДА ----------
     function applyPoisonAtEnd(who) {
         const p = gameState;
         if (!p) return;
@@ -1612,7 +1539,6 @@
 
     checkContinueButton();
     showScreen(menuScreen);
-    initTooltips();
 </script>
 </body>
 </html>
