@@ -162,7 +162,7 @@
             opacity: 1;
         }
 
-        /* ---------- КАРТА (ИСПРАВЛЕННАЯ) ---------- */
+        /* ---------- КАРТА (3 РЯДА ПО 2) ---------- */
         .map-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -237,7 +237,7 @@
         .map-node .icon { font-size: 40px; display: block; margin-bottom: 8px; }
         .map-node .label { font-size: 14px; color: #a08078; }
 
-        /* ---------- ОСТАЛЬНЫЕ СТИЛИ ---------- */
+        /* ---------- БОЙ ---------- */
         .battle-screen {
             display: none;
             background: rgba(18, 12, 12, 0.9);
@@ -263,6 +263,7 @@
         .health-box .hp-bar .fill.enemy { background: #9a4a3a; box-shadow: 0 0 15px rgba(180, 60, 40, 0.2); }
         .health-box .energy { font-size: 18px; font-weight: 700; color: #e2b8a0; }
 
+        /* ---------- КАРТЫ В РУКЕ ---------- */
         .card {
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
@@ -474,7 +475,6 @@
         .game-over-overlay .result.win { color: #6a9a7a; }
         .game-over-overlay .result.lose { color: #9a4a3a; }
 
-        /* ---------- АДАПТИВ ---------- */
         @media (max-width: 700px) {
             .clan-grid { flex-direction: column; align-items: center; }
             .clan-card { width: 100%; max-width: 300px; }
@@ -607,7 +607,7 @@
 
 <script>
     // =======================================================
-    // KAGE — С ИСПРАВЛЕННОЙ КАРТОЙ (3 РЯДА ПО 2 УЗЛА)
+    // KAGE — ИСПРАВЛЕННАЯ КАРТА (3 РЯДА ПО 2)
     // =======================================================
 
     // ---------- ЛЕПЕСТКИ ----------
@@ -828,7 +828,6 @@
     function restoreMap() {
         mapGrid.innerHTML = '';
         mapStatus.textContent = 'Выбери свой путь...';
-        // Разбиваем mapNodes на ряды по 2
         for (let row = 0; row < mapNodes.length; row += 2) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
@@ -863,7 +862,7 @@
         }
     }
 
-    // ---------- ГЕНЕРАЦИЯ КАРТЫ (ИСПРАВЛЕННАЯ) ----------
+    // ---------- ГЕНЕРАЦИЯ КАРТЫ (3 РЯДА ПО 2) ----------
     function generateMap() {
         mapNodes = [];
         mapGrid.innerHTML = '';
