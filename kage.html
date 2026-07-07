@@ -59,7 +59,6 @@
         ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
         * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
-        /* ---------- МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
@@ -316,7 +315,6 @@
         }
         .player-status .status-icon:hover { transform: scale(1.1); }
 
-        /* ---------- ПОДСКАЗКИ ---------- */
         .tooltip-container {
             position: relative;
             display: inline-block;
@@ -375,7 +373,6 @@
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-end-turn.waiting { color: #94a3b8; border-color: rgba(100,60,40,0.2); }
 
-        /* ---------- КАРТЫ В РУКЕ ---------- */
         .battle-hand {
             display: flex;
             gap: 6px;
@@ -568,7 +565,6 @@
 
     <div id="battleScreen" class="battle-screen">
         <div class="battle-container">
-            <!-- Враг -->
             <div class="battle-enemy">
                 <div class="info">
                     <span style="font-weight:700; color:#e2b8a0; font-size:13px;">👹 <span id="enemyClanBadge">Враг</span></span>
@@ -579,19 +575,16 @@
                 <div class="status-text" id="enemyStatus"></div>
             </div>
 
-            <!-- Поле боя -->
             <div class="battle-field">
                 <div class="turn-indicator" id="turnIndicator">⚔️ Твой ход</div>
                 <div class="battle-status" id="battleStatus">Выбери карту</div>
             </div>
 
-            <!-- Лог -->
             <div class="log-toggle" id="logToggle">📜 Лог боя</div>
             <div class="battle-log-container" id="battleLog">
                 <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
 
-            <!-- Панель игрока + кнопка -->
             <div class="battle-actions">
                 <div class="player-status">
                     <span class="hp-text" id="playerHP">30</span>
@@ -602,12 +595,10 @@
                 <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
             </div>
 
-            <!-- Рука карт -->
             <div class="battle-hand" id="handContainer">
                 <div class="empty-hand">Загрузка...</div>
             </div>
 
-            <!-- Оверлей -->
             <div id="gameOverContainer" style="display:none; position:absolute; inset:0; z-index:20;"></div>
         </div>
     </div>
@@ -616,10 +607,9 @@
 
 <script>
     // =======================================================
-    // SHARD — ИСПРАВЛЕННЫЙ ЯД И КАРТЫ
+    // SHARD — ИСПРАВЛЕННЫЙ ЯД И ОТОБРАЖЕНИЕ
     // =======================================================
 
-    // ---------- ПОДСКАЗКИ ----------
     function initTooltips() {
         document.querySelectorAll('[data-tooltip]').forEach(el => {
             const tooltip = document.createElement('span');
@@ -641,7 +631,6 @@
         });
     }
 
-    // ---------- ЛЕПЕСТКИ ----------
     function createSakura() {
         const container = document.getElementById('sakura-container');
         for (let i = 0; i < 50; i++) {
@@ -658,7 +647,6 @@
     }
     createSakura();
 
-    // ---------- НОВЫЕ КЛАССЫ ----------
     const CLAN_DATA = {
         'Алхимик': {
             icon: '🧪',
@@ -711,7 +699,6 @@
     let mapCoins = 0;
     let mapNodes = [];
 
-    // DOM элементы
     const menuScreen = document.getElementById('menuScreen');
     const settingsScreen = document.getElementById('settingsScreen');
     const clanSelectScreen = document.getElementById('clanSelectScreen');
@@ -749,7 +736,6 @@
         logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
     });
 
-    // ---------- СОХРАНЕНИЕ ----------
     function saveGame() {
         if (!gameState && !playerClanName) return;
         const saveData = {
@@ -814,7 +800,6 @@
         }
     }
 
-    // ---------- НАВИГАЦИЯ ----------
     continueBtn.addEventListener('click', () => {
         const save = loadGame();
         if (!save) return;
@@ -859,7 +844,6 @@
         this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
-    // ---------- КАРТА ----------
     function generateMap() {
         mapNodes = [];
         mapGrid.innerHTML = '';
@@ -993,7 +977,6 @@
         });
     }
 
-    // ---------- БОЕВАЯ СИСТЕМА ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -1060,10 +1043,18 @@
         enemyShieldText.textContent = `🛡️${p.enemyShield}`;
         enemyClanBadge.textContent = p.enemyClan;
 
+        // --- ОТОБРАЖЕНИЕ СТАТУСОВ (ИСПРАВЛЕНО) ---
         let pStatus = '';
         if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
         if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
-        playerStatus.textContent = pStatus ? '📊' : '📊';
+        playerStatus.textContent = pStatus || '📊';
+
+        let eStatus = '';
+        if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
+        if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
+        enemyStatus.textContent = eStatus;
+
+        // Обновляем подсказку для статуса игрока
         const tooltip = playerStatus.querySelector('.tooltip-text');
         if (tooltip) {
             let text = 'Статусы: ';
@@ -1072,11 +1063,6 @@
             if (p.playerStun === 0 && p.playerPoison === 0) text = 'Нет активных статусов';
             tooltip.textContent = text;
         }
-
-        let eStatus = '';
-        if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
-        if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
-        enemyStatus.textContent = eStatus;
 
         turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Твой ход' : '⏳ Ход врага';
         battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту' : 'Враг думает...';
@@ -1139,7 +1125,6 @@
         });
     }
 
-    // ---------- НОВАЯ ЛОГИКА ХОДОВ ----------
     function startPlayerTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
@@ -1362,7 +1347,6 @@
         // --- Яд ---
         if (card.poison > 0) {
             let poisonAmount = card.poison;
-            // Бонус Алхимика: яд сильнее
             if (isPlayer && p.playerClan === 'Алхимик') {
                 poisonAmount += 1;
             }
@@ -1380,7 +1364,6 @@
 
         // --- Оглушение ---
         let stun = card.stun || 0;
-
         if (stun > 0) {
             if (isPlayer) {
                 p.enemyStun += stun;
@@ -1418,9 +1401,16 @@
         }
 
         // --- Бонус Стража: если враг не пробил щит, он получает урон ---
-        if (dmg > 0 && !isPlayer && p.enemyClan === 'Страж') {
+        if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
+            logMsg += `, щит укреплён`;
+        }
+
+        // Проверяем, был ли нанесён урон и есть ли у врага (Стража) щит
+        if (!isPlayer && p.enemyClan === 'Страж') {
+            // Если враг — Страж и у него есть щит после атаки
             const shieldAfter = isPlayer ? p.enemyShield : p.playerShield;
-            if (shieldAfter > 0) {
+            if (shieldAfter > 0 && dmg > 0) {
+                // Наносим урон атакующему
                 if (isPlayer) {
                     p.playerHP -= 1;
                     if (p.playerHP < 0) p.playerHP = 0;
@@ -1431,10 +1421,6 @@
                     logMsg += `, шипы стража -1 HP`;
                 }
             }
-        }
-
-        if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
-            logMsg += `, щит укреплён`;
         }
 
         addLog(logMsg, isEnemy ? 'enemy' : 'player');
@@ -1468,7 +1454,6 @@
         }
     }
 
-    // ---------- ХОД ВРАГА ----------
     function enemyTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
@@ -1530,7 +1515,6 @@
             addLog(`⚔️ Враг сыграл ${cardsPlayed} карт`, 'enemy');
         }
 
-        // --- ЯД В КОНЦЕ ХОДА ВРАГА ---
         applyPoisonAtEnd('enemy');
 
         p.isPlayerTurn = true;
@@ -1541,7 +1525,6 @@
         saveGame();
     }
 
-    // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
     function checkGameOver() {
         if (!gameState) return false;
         const p = gameState;
@@ -1600,7 +1583,6 @@
         saveGame();
     }
 
-    // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
     endTurnBtn.addEventListener('click', function() {
         if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
         const p = gameState;
@@ -1617,7 +1599,6 @@
             return;
         }
 
-        // --- ЯД В КОНЦЕ ХОДА ИГРОКА ---
         applyPoisonAtEnd('player');
 
         addLog(`⚔️ Ты завершил ход`, 'player');
@@ -1629,7 +1610,6 @@
         saveGame();
     });
 
-    // ---------- ЗАПУСК ----------
     checkContinueButton();
     showScreen(menuScreen);
     initTooltips();
