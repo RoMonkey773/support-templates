@@ -616,7 +616,7 @@
 
 <script>
     // =======================================================
-    // SHARD — НОВАЯ ВЕРСИЯ (АЛХИМИК + СТРАЖ + БЕРСЕРК)
+    // SHARD — ИСПРАВЛЕННЫЙ ЯД И КАРТЫ
     // =======================================================
 
     // ---------- ПОДСКАЗКИ ----------
@@ -1362,10 +1362,8 @@
         // --- Яд ---
         if (card.poison > 0) {
             let poisonAmount = card.poison;
-            // Бонус Алхимика: яд длится на 1 ход дольше
-            if (isPlayer && p.playerClan === 'Алхимик') poisonAmount += 0; // Не увеличиваем силу, но увеличим длительность в конце хода
+            // Бонус Алхимика: яд сильнее
             if (isPlayer && p.playerClan === 'Алхимик') {
-                // Увеличиваем количество яда на 1 (как бонус)
                 poisonAmount += 1;
             }
             if (!isPlayer && p.enemyClan === 'Алхимик') {
@@ -1380,8 +1378,18 @@
             }
         }
 
-        // --- Оглушение (оставлено только для карт, если есть) ---
-        // У Алхимика и Стража нет оглушения, у Берсерка тоже нет. Оставляем для совместимости.
+        // --- Оглушение ---
+        let stun = card.stun || 0;
+
+        if (stun > 0) {
+            if (isPlayer) {
+                p.enemyStun += stun;
+                logMsg += `, оглуш. ${stun}`;
+            } else {
+                p.playerStun += stun;
+                logMsg += `, оглуш. ${stun}`;
+            }
+        }
 
         // --- Кража энергии ---
         if (card.stealEnergy > 0) {
@@ -1412,9 +1420,7 @@
         // --- Бонус Стража: если враг не пробил щит, он получает урон ---
         if (dmg > 0 && !isPlayer && p.enemyClan === 'Страж') {
             const shieldAfter = isPlayer ? p.enemyShield : p.playerShield;
-            // Если у врага (Стража) был щит и он не был пробит полностью
             if (shieldAfter > 0) {
-                // Наносим урон атакующему
                 if (isPlayer) {
                     p.playerHP -= 1;
                     if (p.playerHP < 0) p.playerHP = 0;
@@ -1427,9 +1433,7 @@
             }
         }
 
-        // Если Страж играет карту щита, он получает дополнительный бонус
         if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
-            // Просто добавляем в лог, что щит укреплён
             logMsg += `, щит укреплён`;
         }
 
@@ -1438,6 +1442,30 @@
         renderHand();
         checkGameOver();
         saveGame();
+    }
+
+    // ---------- ЯД В КОНЦЕ ХОДА ----------
+    function applyPoisonAtEnd(who) {
+        const p = gameState;
+        if (!p) return;
+        const isEnemy = who === 'enemy';
+        const poisonAmount = isEnemy ? p.enemyPoison : p.playerPoison;
+
+        if (poisonAmount > 0) {
+            if (isEnemy) {
+                p.enemyHP -= poisonAmount;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                addLog(`☠️ Враг получил ${poisonAmount} урона от яда`, 'poison');
+                p.enemyPoison -= 1;
+                if (p.enemyPoison < 0) p.enemyPoison = 0;
+            } else {
+                p.playerHP -= poisonAmount;
+                if (p.playerHP < 0) p.playerHP = 0;
+                addLog(`☠️ Ты получил ${poisonAmount} урона от яда`, 'poison');
+                p.playerPoison -= 1;
+                if (p.playerPoison < 0) p.playerPoison = 0;
+            }
+        }
     }
 
     // ---------- ХОД ВРАГА ----------
@@ -1502,7 +1530,7 @@
             addLog(`⚔️ Враг сыграл ${cardsPlayed} карт`, 'enemy');
         }
 
-        // --- ЯД В КОНЦЕ ХОДА ---
+        // --- ЯД В КОНЦЕ ХОДА ВРАГА ---
         applyPoisonAtEnd('enemy');
 
         p.isPlayerTurn = true;
@@ -1511,31 +1539,6 @@
         endTurnBtn.disabled = false;
         setTimeout(() => startPlayerTurn(), 600);
         saveGame();
-    }
-
-    // ---------- ЯД В КОНЦЕ ХОДА ----------
-    function applyPoisonAtEnd(who) {
-        const p = gameState;
-        if (!p) return;
-        const isEnemy = who === 'enemy';
-        const target = isEnemy ? 'enemy' : 'player';
-        const poisonAmount = isEnemy ? p.enemyPoison : p.playerPoison;
-
-        if (poisonAmount > 0) {
-            if (isEnemy) {
-                p.enemyHP -= poisonAmount;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                addLog(`☠️ Враг получил ${poisonAmount} урона от яда`, 'poison');
-                p.enemyPoison -= 1;
-                if (p.enemyPoison < 0) p.enemyPoison = 0;
-            } else {
-                p.playerHP -= poisonAmount;
-                if (p.playerHP < 0) p.playerHP = 0;
-                addLog(`☠️ Ты получил ${poisonAmount} урона от яда`, 'poison');
-                p.playerPoison -= 1;
-                if (p.playerPoison < 0) p.playerPoison = 0;
-            }
-        }
     }
 
     // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
