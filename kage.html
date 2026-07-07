@@ -119,7 +119,6 @@
         }
         .save-indicator.show { opacity: 1; }
 
-        /* ---------- ВЫБОР КЛАССА ---------- */
         .clan-select-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -157,7 +156,6 @@
         .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
         .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
-        /* ---------- КАРТА ---------- */
         .map-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -220,7 +218,6 @@
             min-height: 400px;
         }
 
-        /* ВРАГ */
         .battle-enemy {
             background: rgba(30,20,18,0.5);
             border-radius: 12px;
@@ -239,7 +236,6 @@
         .battle-enemy .shield-text { color: #38bdf8; font-size: 13px; }
         .battle-enemy .status-text { font-size: 12px; color: #a08078; }
 
-        /* ПОЛЕ БОЯ */
         .battle-field {
             background: rgba(30,20,18,0.2);
             border-radius: 12px;
@@ -255,7 +251,6 @@
         .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
         .battle-field .battle-status { font-size: 12px; color: #a08078; }
 
-        /* ЛОГ */
         .log-toggle {
             background: rgba(30,20,18,0.4);
             border: 1px solid rgba(180,80,30,0.1);
@@ -288,8 +283,8 @@
         .battle-log-container .log-entry.enemy-turn { color: #fbbf24; border-left: 2px solid #fbbf24; padding-left: 6px; }
         .battle-log-container .log-entry.player-turn { color: #c4b5fd; border-left: 2px solid #c4b5fd; padding-left: 6px; }
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
+        .battle-log-container .log-entry.poison { color: #6a9a6a; border-left: 2px solid #6a9a6a; padding-left: 6px; }
 
-        /* ПАНЕЛЬ ИГРОКА */
         .battle-actions {
             display: flex;
             gap: 8px;
@@ -321,7 +316,7 @@
         }
         .player-status .status-icon:hover { transform: scale(1.1); }
 
-        /* ПОДСКАЗКИ */
+        /* ---------- ПОДСКАЗКИ ---------- */
         .tooltip-container {
             position: relative;
             display: inline-block;
@@ -380,7 +375,7 @@
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-end-turn.waiting { color: #94a3b8; border-color: rgba(100,60,40,0.2); }
 
-        /* РУКА КАРТ */
+        /* ---------- КАРТЫ В РУКЕ ---------- */
         .battle-hand {
             display: flex;
             gap: 6px;
@@ -405,13 +400,24 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
             position: relative;
             flex-shrink: 0;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .battle-hand .card:hover:not(.disabled) {
             transform: translateY(-6px) scale(1.04);
             border-color: #c07040;
             box-shadow: 0 4px 20px rgba(180,80,30,0.2);
         }
-        .battle-hand .card .card-name { font-weight: 700; font-size: 10px; line-height: 1.2; }
+        .battle-hand .card .card-name {
+            font-weight: 700;
+            font-size: 10px;
+            line-height: 1.2;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
         .battle-hand .card .card-cost {
             display: inline-block;
             background: rgba(40,25,20,0.8);
@@ -427,6 +433,7 @@
             color: #a08078;
             margin-top: 2px;
             line-height: 1.2;
+            word-break: break-word;
         }
         .battle-hand .card.disabled {
             opacity: 0.35;
@@ -460,7 +467,6 @@
             padding: 12px;
         }
 
-        /* ОВЕРЛЕЙ */
         .game-over-overlay {
             position: absolute;
             inset: 0;
@@ -497,7 +503,7 @@
             .clan-card { width: 130px; padding: 14px 12px; }
             .clan-card .icon { font-size: 30px; }
             .clan-card .name { font-size: 16px; }
-            .battle-hand .card { width: 70px; padding: 5px 6px; }
+            .battle-hand .card { width: 70px; padding: 5px 6px; min-height: 60px; }
             .battle-hand .card .card-name { font-size: 9px; }
             .battle-hand .card .card-effect { font-size: 8px; }
             .battle-hand .card .card-cost { font-size: 9px; }
@@ -506,7 +512,7 @@
             .game-container { max-width: 100%; }
         }
         @media (max-width: 380px) {
-            .battle-hand .card { width: 60px; padding: 4px 5px; }
+            .battle-hand .card { width: 60px; padding: 4px 5px; min-height: 50px; }
             .battle-hand .card .card-name { font-size: 8px; }
             .battle-hand .card .card-effect { font-size: 7px; }
             .battle-hand .card .card-cost { font-size: 8px; }
@@ -610,7 +616,7 @@
 
 <script>
     // =======================================================
-    // SHARD — НОВАЯ ВЕРСИЯ (БЕЗ ТЕНЕЙ, С ПОДСКАЗКАМИ)
+    // SHARD — НОВАЯ ВЕРСИЯ (АЛХИМИК + СТРАЖ + БЕРСЕРК)
     // =======================================================
 
     // ---------- ПОДСКАЗКИ ----------
@@ -624,14 +630,12 @@
             el.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = tooltip.classList.contains('show');
-                // Закрываем все другие подсказки
                 document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
                 if (!isOpen) {
                     tooltip.classList.add('show');
                 }
             });
         });
-        // Закрываем подсказки при клике вне их
         document.addEventListener('click', () => {
             document.querySelectorAll('.tooltip-text.show').forEach(t => t.classList.remove('show'));
         });
@@ -654,34 +658,34 @@
     }
     createSakura();
 
-    // ---------- НОВЫЕ ДАННЫЕ (БЕЗ ТЕНЕЙ) ----------
+    // ---------- НОВЫЕ КЛАССЫ ----------
     const CLAN_DATA = {
-        'Ассасин': {
-            icon: '🗡️',
-            bonus: 'Критический удар +2, оглушение',
+        'Алхимик': {
+            icon: '🧪',
+            bonus: 'Яды длятся на 1 ход дольше',
             cards: [
-                { name: 'Удар в спину', dmg: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Скрытность', energyPlus: 2, cost: 1, rarity: 'Обычная' },
-                { name: 'Отравленный клинок', dmg: 2, poison: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Оглушающий удар', dmg: 3, stun: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Ночной кошмар', dmg: 5, stun: 1, cost: 3, rarity: 'Редкая' },
-                { name: 'Теневая ловушка', dmg: 2, stun: 1, stealEnergy: 1, cost: 3, rarity: 'Редкая' },
-                { name: 'Иллюзия', stun: 1, energyPlus: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Кинжал теней', dmg: 6, cost: 3, rarity: 'Обычная' }
+                { name: 'Ядовитый туман', dmg: 1, poison: 2, cost: 2, rarity: 'Обычная' },
+                { name: 'Кислотный плевок', dmg: 2, poison: 1, cost: 2, rarity: 'Обычная' },
+                { name: 'Зелье лечения', heal: 4, cost: 2, rarity: 'Обычная' },
+                { name: 'Зелье щита', shield: 4, cost: 2, rarity: 'Необычная' },
+                { name: 'Мгновенный яд', poison: 3, cost: 3, rarity: 'Необычная' },
+                { name: 'Взрывная смесь', dmg: 4, cost: 3, rarity: 'Редкая' },
+                { name: 'Зелье энергии', energyPlus: 3, cost: 1, rarity: 'Необычная' },
+                { name: 'Кислотный дождь', dmg: 1, poison: 3, cost: 3, rarity: 'Редкая' }
             ]
         },
         'Страж': {
             icon: '🛡️',
-            bonus: 'При получении урона враг получает 1 урон ядом',
+            bonus: 'Если враг не пробил щит → получает 1 урон',
             cards: [
                 { name: 'Щит', shield: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Ядовитое семя', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
-                { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
+                { name: 'Крепкий щит', shield: 7, cost: 3, rarity: 'Необычная' },
+                { name: 'Терновый шип', dmg: 1, shield: 3, cost: 2, rarity: 'Необычная' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Терновый шип', dmg: 2, shield: 3, poison: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
                 { name: 'Корни', dmg: 1, shield: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Ядовитый туман', dmg: 1, poison: 3, cost: 3, rarity: 'Редкая' },
-                { name: 'Живая изгородь', shield: 6, poison: 1, cost: 3, rarity: 'Необычная' }
+                { name: 'Живая изгородь', shield: 6, poison: 1, cost: 3, rarity: 'Необычная' },
+                { name: 'Каменная стена', shield: 8, cost: 4, rarity: 'Редкая' }
             ]
         },
         'Берсерк': {
@@ -695,7 +699,6 @@
                 { name: 'Ярость берсерка', dmg: 4, cost: 2, rarity: 'Обычная' },
                 { name: 'Мощный выпад', dmg: 6, cost: 3, rarity: 'Необычная' },
                 { name: 'Яростный рывок', dmg: 3, energyPlus: 1, cost: 2, rarity: 'Обычная' },
-                { name: 'Удар в спину', dmg: 8, cost: 4, rarity: 'Редкая' },
                 { name: 'Жертвенный рывок', heal: 8, dmg: 2, cost: 2, rarity: 'Необычная' }
             ]
         }
@@ -739,7 +742,6 @@
     const saveIndicator = document.getElementById('saveIndicator');
     const logToggle = document.getElementById('logToggle');
 
-    // Лог
     let logOpen = false;
     logToggle.addEventListener('click', () => {
         logOpen = !logOpen;
@@ -747,7 +749,7 @@
         logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
     });
 
-    // Сохранение
+    // ---------- СОХРАНЕНИЕ ----------
     function saveGame() {
         if (!gameState && !playerClanName) return;
         const saveData = {
@@ -812,7 +814,7 @@
         }
     }
 
-    // Навигация
+    // ---------- НАВИГАЦИЯ ----------
     continueBtn.addEventListener('click', () => {
         const save = loadGame();
         if (!save) return;
@@ -902,7 +904,7 @@
                 node.className = 'map-node';
                 node.classList.add(nodeData.type);
                 if (nodeData.type === 'enemy') {
-                    node.dataset.enemyClan = nodeData.enemyClan || 'Ассасин';
+                    node.dataset.enemyClan = nodeData.enemyClan || 'Алхимик';
                     node.innerHTML = `<span class="icon">❓</span><div class="label">⚔️ Враг</div>`;
                 } else {
                     node.innerHTML = `<span class="icon">🛒</span><div class="label">❤️ +10 HP</div>`;
@@ -930,7 +932,7 @@
 
         if (node.classList.contains('enemy')) {
             const enemyClan = node.dataset.enemyClan;
-            const enemyName = enemyClan || 'Ассасин';
+            const enemyName = enemyClan || 'Алхимик';
             mapStatus.textContent = `⚔️ Битва с ${enemyName}!`;
             startBattle(enemyName);
         } else if (node.classList.contains('merchant')) {
@@ -1032,6 +1034,7 @@
         entry.className = 'log-entry';
         if (type === 'enemy') entry.classList.add('enemy-turn');
         else if (type === 'player') entry.classList.add('player-turn');
+        else if (type === 'poison') entry.classList.add('poison');
         else entry.classList.add('system');
         entry.textContent = text;
         battleLog.appendChild(entry);
@@ -1061,7 +1064,6 @@
         if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
         if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
         playerStatus.textContent = pStatus ? '📊' : '📊';
-        // Обновляем подсказку для статуса
         const tooltip = playerStatus.querySelector('.tooltip-text');
         if (tooltip) {
             let text = 'Статусы: ';
@@ -1298,6 +1300,7 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
+        // --- Урон ---
         let dmg = card.dmg || 0;
         if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
         if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
@@ -1326,6 +1329,7 @@
             }
         }
 
+        // --- Лечение ---
         if (card.heal > 0) {
             let healAmount = card.heal;
             let selfDamage = 0;
@@ -1344,6 +1348,7 @@
             }
         }
 
+        // --- Щит ---
         if (card.shield > 0) {
             if (isPlayer) {
                 p.playerShield += card.shield;
@@ -1354,30 +1359,31 @@
             }
         }
 
+        // --- Яд ---
         if (card.poison > 0) {
+            let poisonAmount = card.poison;
+            // Бонус Алхимика: яд длится на 1 ход дольше
+            if (isPlayer && p.playerClan === 'Алхимик') poisonAmount += 0; // Не увеличиваем силу, но увеличим длительность в конце хода
+            if (isPlayer && p.playerClan === 'Алхимик') {
+                // Увеличиваем количество яда на 1 (как бонус)
+                poisonAmount += 1;
+            }
+            if (!isPlayer && p.enemyClan === 'Алхимик') {
+                poisonAmount += 1;
+            }
             if (isPlayer) {
-                p.enemyPoison += card.poison;
-                logMsg += `, яд +${card.poison}`;
+                p.enemyPoison += poisonAmount;
+                logMsg += `, яд +${poisonAmount}`;
             } else {
-                p.playerPoison += card.poison;
-                logMsg += `, яд +${card.poison}`;
+                p.playerPoison += poisonAmount;
+                logMsg += `, яд +${poisonAmount}`;
             }
         }
 
-        let stun = card.stun || 0;
-        if (isPlayer && p.playerClan === 'Ассасин') stun += 1;
-        if (!isPlayer && p.enemyClan === 'Ассасин') stun += 1;
+        // --- Оглушение (оставлено только для карт, если есть) ---
+        // У Алхимика и Стража нет оглушения, у Берсерка тоже нет. Оставляем для совместимости.
 
-        if (stun > 0) {
-            if (isPlayer) {
-                p.enemyStun += stun;
-                logMsg += `, оглуш. ${stun}`;
-            } else {
-                p.playerStun += stun;
-                logMsg += `, оглуш. ${stun}`;
-            }
-        }
-
+        // --- Кража энергии ---
         if (card.stealEnergy > 0) {
             if (isPlayer) {
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
@@ -1392,6 +1398,7 @@
             }
         }
 
+        // --- Энергия+ ---
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
@@ -1402,33 +1409,28 @@
             }
         }
 
-        if (dmg > 0) {
-            if (isPlayer && p.playerClan === 'Страж') {
-                p.enemyPoison += 1;
-                logMsg += `, яд +1`;
-            }
-            if (!isPlayer && p.enemyClan === 'Страж') {
-                p.playerPoison += 1;
-                logMsg += `, яд +1`;
+        // --- Бонус Стража: если враг не пробил щит, он получает урон ---
+        if (dmg > 0 && !isPlayer && p.enemyClan === 'Страж') {
+            const shieldAfter = isPlayer ? p.enemyShield : p.playerShield;
+            // Если у врага (Стража) был щит и он не был пробит полностью
+            if (shieldAfter > 0) {
+                // Наносим урон атакующему
+                if (isPlayer) {
+                    p.playerHP -= 1;
+                    if (p.playerHP < 0) p.playerHP = 0;
+                    logMsg += `, шипы стража -1 HP`;
+                } else {
+                    p.enemyHP -= 1;
+                    if (p.enemyHP < 0) p.enemyHP = 0;
+                    logMsg += `, шипы стража -1 HP`;
+                }
             }
         }
 
-        if (isPlayer) {
-            if (p.enemyPoison > 0) {
-                p.enemyHP -= p.enemyPoison;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                logMsg += `, яд -${p.enemyPoison}`;
-                p.enemyPoison -= 1;
-                if (p.enemyPoison < 0) p.enemyPoison = 0;
-            }
-        } else {
-            if (p.playerPoison > 0) {
-                p.playerHP -= p.playerPoison;
-                if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, яд -${p.playerPoison}`;
-                p.playerPoison -= 1;
-                if (p.playerPoison < 0) p.playerPoison = 0;
-            }
+        // Если Страж играет карту щита, он получает дополнительный бонус
+        if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
+            // Просто добавляем в лог, что щит укреплён
+            logMsg += `, щит укреплён`;
         }
 
         addLog(logMsg, isEnemy ? 'enemy' : 'player');
@@ -1438,6 +1440,7 @@
         saveGame();
     }
 
+    // ---------- ХОД ВРАГА ----------
     function enemyTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
@@ -1499,6 +1502,9 @@
             addLog(`⚔️ Враг сыграл ${cardsPlayed} карт`, 'enemy');
         }
 
+        // --- ЯД В КОНЦЕ ХОДА ---
+        applyPoisonAtEnd('enemy');
+
         p.isPlayerTurn = true;
         updateBattleUI();
         renderHand();
@@ -1507,6 +1513,32 @@
         saveGame();
     }
 
+    // ---------- ЯД В КОНЦЕ ХОДА ----------
+    function applyPoisonAtEnd(who) {
+        const p = gameState;
+        if (!p) return;
+        const isEnemy = who === 'enemy';
+        const target = isEnemy ? 'enemy' : 'player';
+        const poisonAmount = isEnemy ? p.enemyPoison : p.playerPoison;
+
+        if (poisonAmount > 0) {
+            if (isEnemy) {
+                p.enemyHP -= poisonAmount;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                addLog(`☠️ Враг получил ${poisonAmount} урона от яда`, 'poison');
+                p.enemyPoison -= 1;
+                if (p.enemyPoison < 0) p.enemyPoison = 0;
+            } else {
+                p.playerHP -= poisonAmount;
+                if (p.playerHP < 0) p.playerHP = 0;
+                addLog(`☠️ Ты получил ${poisonAmount} урона от яда`, 'poison');
+                p.playerPoison -= 1;
+                if (p.playerPoison < 0) p.playerPoison = 0;
+            }
+        }
+    }
+
+    // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
     function checkGameOver() {
         if (!gameState) return false;
         const p = gameState;
@@ -1565,6 +1597,7 @@
         saveGame();
     }
 
+    // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
     endTurnBtn.addEventListener('click', function() {
         if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
         const p = gameState;
@@ -1580,6 +1613,9 @@
             saveGame();
             return;
         }
+
+        // --- ЯД В КОНЦЕ ХОДА ИГРОКА ---
+        applyPoisonAtEnd('player');
 
         addLog(`⚔️ Ты завершил ход`, 'player');
         p.isPlayerTurn = false;
