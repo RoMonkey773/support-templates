@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Карточная битва</title>
     <style>
+        /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -14,7 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 8px;
             overflow-x: hidden;
             position: relative;
         }
@@ -29,12 +30,11 @@
         .sakura-petal {
             position: absolute;
             top: -20px;
-            width: 18px; height: 12px;
+            width: 14px; height: 10px;
             background: #7a4a4a;
             border-radius: 50% 50% 50% 0;
-            opacity: 0.3;
+            opacity: 0.25;
             animation: fall linear infinite;
-            box-shadow: 0 0 12px rgba(120,60,60,0.2);
         }
         .sakura-petal::after {
             content: '';
@@ -46,125 +46,73 @@
             opacity: 0.4;
         }
         @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.5; }
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.4; }
             100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
         }
         .game-container {
-            max-width: 1200px;
+            max-width: 500px;
             width: 100%;
             position: relative;
             z-index: 1;
         }
 
-        /* ---------- КАСТОМНЫЙ СКРОЛЛБАР (ТЁМНО-ЗОЛОТОЙ) ---------- */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 20, 18, 0.4);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c07040;
-            border-radius: 10px;
-            transition: background 0.3s;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d48050;
-        }
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #c07040 rgba(30, 20, 18, 0.4);
-        }
-        .battle-log-container::-webkit-scrollbar {
-            width: 4px;
-        }
-        .battle-log-container::-webkit-scrollbar-thumb {
-            background: #d48050;
-            border-radius: 10px;
-        }
-        .battle-log-container::-webkit-scrollbar-track {
-            background: rgba(10, 8, 8, 0.3);
-        }
+        /* ---------- КАСТОМНЫЙ СКРОЛЛБАР ---------- */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: rgba(30,20,18,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
+        * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
+        /* ---------- МЕНЮ ---------- */
         .menu-screen {
-            background: rgba(18,12,12,0.9);
+            background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 50px 30px;
+            border-radius: 20px;
+            padding: 30px 20px;
             text-align: center;
-            border: 1px solid rgba(180,80,30,0.25);
-            box-shadow: 0 0 40px rgba(180,80,30,0.08);
+            border: 1px solid rgba(180,80,30,0.2);
         }
         .menu-screen h1 {
-            font-size: 72px;
+            font-size: 48px;
             color: #e2b8a0;
-            text-shadow: 0 0 40px rgba(180,80,30,0.3);
-            letter-spacing: 12px;
-            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(180,80,30,0.2);
+            letter-spacing: 8px;
+            margin-bottom: 6px;
             font-weight: 900;
         }
         .menu-screen .subtitle {
             color: #a08078;
-            font-size: 18px;
-            margin-bottom: 40px;
-            letter-spacing: 2px;
+            font-size: 14px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
         }
-        .menu-screen .menu-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+        .menu-screen .menu-buttons { display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .menu-btn {
             background: rgba(40,25,20,0.8);
-            backdrop-filter: blur(4px);
             border: 1px solid rgba(180,80,30,0.3);
-            border-radius: 16px;
-            padding: 18px 40px;
-            width: 280px;
-            font-size: 20px;
+            border-radius: 14px;
+            padding: 14px 30px;
+            width: 240px;
+            font-size: 17px;
             font-weight: 700;
             color: #e2d5d0;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
             letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(180,80,30,0.05);
         }
-        .menu-btn:hover {
-            background: rgba(180,80,30,0.25);
-            border-color: #c07040;
-            transform: scale(1.05);
-        }
-        .menu-btn.small {
-            padding: 12px 30px;
-            font-size: 16px;
-            width: 200px;
-            background: rgba(30,20,18,0.8);
-            border-color: rgba(100,60,40,0.3);
-        }
-        .menu-btn.small:hover {
-            background: rgba(180,80,30,0.2);
-            border-color: #c07040;
-        }
-        .menu-btn.continue {
-            border-color: #5a8a5a;
-            box-shadow: 0 0 20px rgba(60,160,80,0.1);
-        }
-        .menu-btn.continue:hover {
-            background: rgba(60,160,80,0.2);
-            border-color: #6aaa6a;
-        }
+        .menu-btn:hover { background: rgba(180,80,30,0.25); border-color: #c07040; transform: scale(1.03); }
+        .menu-btn.small { padding: 10px 20px; font-size: 14px; width: 180px; }
+        .menu-btn.continue { border-color: #5a8a5a; }
+        .menu-btn.continue:hover { background: rgba(60,160,80,0.2); border-color: #6aaa6a; }
+
         .save-indicator {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(40,25,20,0.8);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(40,25,20,0.85);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
             color: #a08078;
             border: 1px solid rgba(180,80,30,0.15);
             transition: opacity 0.3s;
@@ -174,318 +122,280 @@
         }
         .save-indicator.show { opacity: 1; }
 
+        /* ---------- ВЫБОР КЛАНА ---------- */
         .clan-select-screen {
             display: none;
-            background: rgba(18,12,12,0.9);
+            background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 30px;
-            border: 1px solid rgba(180,80,30,0.25);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
         }
-        .clan-select-screen h2 {
-            font-size: 32px;
-            color: #e2b8a0;
-            text-shadow: 0 0 20px rgba(180,80,30,0.2);
-            margin-bottom: 10px;
-        }
-        .clan-select-screen .subtitle {
-            color: #a08078;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
+        .clan-select-screen h2 { font-size: 24px; color: #e2b8a0; margin-bottom: 6px; }
+        .clan-select-screen .subtitle { color: #a08078; font-size: 14px; margin-bottom: 20px; }
         .back-btn {
             background: transparent;
             border: none;
             color: #a08078;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
-            margin-bottom: 20px;
-            transition: 0.2s;
+            margin-bottom: 12px;
         }
         .back-btn:hover { color: #e2d5d0; }
-        .clan-grid {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+        .clan-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .clan-card {
             background: rgba(30,20,18,0.7);
             border: 1px solid rgba(60,40,30,0.4);
-            border-radius: 16px;
-            padding: 30px 25px;
-            width: 220px;
+            border-radius: 14px;
+            padding: 18px 16px;
+            width: 150px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            backdrop-filter: blur(4px);
         }
-        .clan-card:hover {
-            border-color: #c07040;
-            transform: translateY(-8px);
-            box-shadow: 0 10px 40px rgba(180,80,30,0.12);
-        }
-        .clan-card .icon { font-size: 52px; display: block; margin-bottom: 12px; }
-        .clan-card .name { font-size: 24px; font-weight: 700; color: #e2d5d0; }
-        .clan-card .desc { font-size: 14px; color: #a08078; margin-top: 8px; }
-        .clan-card .bonus { font-size: 13px; color: #c07040; margin-top: 12px; font-weight: 500; }
+        .clan-card:hover { border-color: #c07040; transform: translateY(-4px); }
+        .clan-card .icon { font-size: 36px; display: block; margin-bottom: 6px; }
+        .clan-card .name { font-size: 18px; font-weight: 700; color: #e2d5d0; }
+        .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
+        .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
+        /* ---------- КАРТА ---------- */
         .map-screen {
             display: none;
-            background: rgba(18,12,12,0.9);
+            background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 30px;
-            border: 1px solid rgba(180,80,30,0.25);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid rgba(180,80,30,0.2);
             text-align: center;
         }
-        .map-screen h2 {
-            font-size: 32px;
-            color: #e2b8a0;
-            text-shadow: 0 0 20px rgba(180,80,30,0.2);
-            margin-bottom: 10px;
-        }
+        .map-screen h2 { font-size: 22px; color: #e2b8a0; margin-bottom: 6px; }
         .map-screen .info {
             display: flex;
-            justify-content: space-between;
-            background: rgba(30,20,18,0.7);
-            padding: 12px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(180,80,30,0.15);
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-around;
+            background: rgba(30,20,18,0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(180,80,30,0.1);
+            font-size: 14px;
+            font-weight: 600;
         }
-        .map-screen .info span { font-size: 18px; font-weight: 600; }
-        .map-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            margin: 20px 0;
-            width: 100%;
-        }
-        .map-row {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .map-grid { display: flex; flex-direction: column; gap: 10px; align-items: center; margin: 12px 0; }
+        .map-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 400px; }
         .map-node {
             background: rgba(30,20,18,0.7);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(60,40,30,0.5);
-            border-radius: 16px;
-            padding: 20px 25px;
-            min-width: 130px;
+            border: 1px solid rgba(60,40,30,0.4);
+            border-radius: 14px;
+            padding: 14px 16px;
+            min-width: 100px;
             flex: 1 0 auto;
-            max-width: 180px;
+            max-width: 140px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
-        .map-node:hover {
-            border-color: #c07040;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(180,80,30,0.15);
-        }
-        .map-node.enemy { border-color: rgba(180,60,40,0.5); }
-        .map-node.enemy:hover { border-color: #c06040; box-shadow: 0 0 30px rgba(180,60,40,0.15); }
-        .map-node.merchant { border-color: rgba(60,140,80,0.4); }
-        .map-node.merchant:hover { border-color: #5a9a6a; box-shadow: 0 0 30px rgba(60,140,80,0.12); }
-        .map-node .icon { font-size: 40px; display: block; margin-bottom: 8px; }
-        .map-node .label { font-size: 14px; color: #a08078; }
+        .map-node:hover { border-color: #c07040; transform: scale(1.04); }
+        .map-node.enemy { border-color: rgba(180,60,40,0.4); }
+        .map-node.enemy:hover { border-color: #c06040; }
+        .map-node.merchant { border-color: rgba(60,140,80,0.3); }
+        .map-node.merchant:hover { border-color: #5a9a6a; }
+        .map-node .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+        .map-node .label { font-size: 12px; color: #a08078; }
+        #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
+        /* ---------- БОЕВОЙ ЭКРАН (МОБИЛЬНЫЙ) ---------- */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
             backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 20px 25px;
-            border: 1px solid rgba(180,80,30,0.25);
-            min-height: 500px;
+            border-radius: 16px;
+            padding: 10px 12px;
+            border: 1px solid rgba(180,80,30,0.2);
+            min-height: 400px;
             position: relative;
         }
         .battle-container {
-            display: grid;
-            grid-template-columns: 180px 1fr 160px;
-            grid-template-rows: auto 1fr auto;
-            gap: 10px;
-            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 400px;
         }
+
+        /* ВРАГ (сверху) */
         .battle-enemy {
-            grid-column: 1 / 4;
-            grid-row: 1;
-            background: rgba(30,20,18,0.6);
-            border-radius: 16px;
-            padding: 12px 20px;
-            border: 1px solid rgba(180,80,30,0.15);
+            background: rgba(30,20,18,0.5);
+            border-radius: 12px;
+            padding: 8px 14px;
+            border: 1px solid rgba(180,80,30,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 4px;
+            font-size: 14px;
         }
-        .battle-enemy .info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .battle-enemy .hp-text { font-size: 22px; font-weight: 700; color: #ef4444; }
-        .battle-enemy .energy-text { font-size: 18px; font-weight: 700; color: #e2b8a0; }
-        .battle-enemy .shield-text { color: #38bdf8; }
-        .battle-enemy .status-text { font-size: 14px; color: #a08078; }
+        .battle-enemy .info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .battle-enemy .hp-text { font-size: 18px; font-weight: 700; color: #ef4444; }
+        .battle-enemy .energy-text { font-size: 15px; font-weight: 700; color: #e2b8a0; }
+        .battle-enemy .shield-text { color: #38bdf8; font-size: 13px; }
+        .battle-enemy .status-text { font-size: 12px; color: #a08078; }
 
-        .battle-log-container {
-            grid-column: 1;
-            grid-row: 2 / 4;
-            background: rgba(10,8,8,0.8);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(180,80,30,0.1);
-            max-height: 300px;
-            overflow-y: auto;
-            font-size: 13px;
-        }
-        .battle-log-container .log-entry {
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(60,40,30,0.3);
-            color: #c0b0a8;
-        }
-        .battle-log-container .log-entry.enemy-turn { color: #fbbf24; border-left: 3px solid #fbbf24; padding-left: 8px; }
-        .battle-log-container .log-entry.player-turn { color: #c4b5fd; border-left: 3px solid #c4b5fd; padding-left: 8px; }
-        .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
-
+        /* ПОЛЕ БОЯ (центр) */
         .battle-field {
-            grid-column: 2;
-            grid-row: 2;
-            background: rgba(30,20,18,0.3);
-            border-radius: 16px;
-            border: 1px dashed rgba(180,80,30,0.1);
-            min-height: 120px;
+            background: rgba(30,20,18,0.2);
+            border-radius: 12px;
+            border: 1px dashed rgba(180,80,30,0.08);
+            min-height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #a08078;
-            font-size: 16px;
             flex-direction: column;
-            gap: 10px;
+            gap: 4px;
+            padding: 8px;
         }
-        .battle-field .turn-indicator {
-            font-size: 20px;
-            font-weight: 700;
-            color: #e2b8a0;
-        }
+        .battle-field .turn-indicator { font-size: 16px; font-weight: 700; color: #e2b8a0; }
+        .battle-field .battle-status { font-size: 12px; color: #a08078; }
 
-        .battle-actions {
-            grid-column: 3;
-            grid-row: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: stretch;
+        /* ЛОГ (сворачиваемый) */
+        .log-toggle {
+            background: rgba(30,20,18,0.4);
+            border: 1px solid rgba(180,80,30,0.1);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 12px;
+            color: #a08078;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+            user-select: none;
         }
-        .battle-actions .btn-end-turn {
+        .log-toggle:hover { background: rgba(180,80,30,0.1); }
+        .battle-log-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(10,8,8,0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(180,80,30,0.05);
+            font-size: 11px;
+        }
+        .battle-log-container.open { max-height: 120px; overflow-y: auto; padding: 6px 10px; }
+        .battle-log-container .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(60,40,30,0.2);
+            color: #c0b0a8;
+            font-size: 11px;
+        }
+        .battle-log-container .log-entry.enemy-turn { color: #fbbf24; border-left: 2px solid #fbbf24; padding-left: 6px; }
+        .battle-log-container .log-entry.player-turn { color: #c4b5fd; border-left: 2px solid #c4b5fd; padding-left: 6px; }
+        .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
+
+        /* ПАНЕЛЬ ИГРОКА + КНОПКА */
+        .battle-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30,20,18,0.3);
+            border-radius: 10px;
+            padding: 6px 12px;
+            border: 1px solid rgba(180,80,30,0.08);
+        }
+        .player-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .player-status .hp-text { color: #22c55e; }
+        .player-status .energy-text { color: #e2b8a0; }
+        .player-status .shield-text { color: #38bdf8; font-size: 13px; }
+        .player-status .status-icon { font-size: 13px; color: #a08078; }
+
+        .btn-end-turn {
             background: rgba(40,25,20,0.8);
             border: 1px solid rgba(180,80,30,0.25);
-            border-radius: 12px;
-            padding: 14px 10px;
-            font-size: 16px;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
             font-weight: 700;
             color: #e2d5d0;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
+            white-space: nowrap;
+            min-width: 80px;
         }
-        .battle-actions .btn-end-turn:hover:not(:disabled) {
-            background: rgba(180,80,30,0.2);
-            border-color: #c07040;
-            box-shadow: 0 0 30px rgba(180,80,30,0.1);
-        }
-        .battle-actions .btn-end-turn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .battle-actions .btn-end-turn.waiting {
-            color: #94a3b8;
-            border-color: rgba(100,60,40,0.2);
-        }
-        .battle-actions .player-status {
-            background: rgba(30,20,18,0.6);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid rgba(180,80,30,0.1);
-        }
-        .battle-actions .player-status .hp-text { font-size: 20px; font-weight: 700; color: #22c55e; }
-        .battle-actions .player-status .energy-text { font-size: 16px; font-weight: 700; color: #e2b8a0; }
-        .battle-actions .player-status .shield-text { color: #38bdf8; }
+        .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.2); border-color: #c07040; }
+        .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-end-turn.waiting { color: #94a3b8; border-color: rgba(100,60,40,0.2); }
 
+        /* РУКА КАРТ (сжатая) */
         .battle-hand {
-            grid-column: 1 / 4;
-            grid-row: 3;
             display: flex;
-            gap: 10px;
+            gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 10px 0;
-            min-height: 120px;
-            background: rgba(10,8,8,0.4);
-            border-radius: 16px;
-            border: 1px solid rgba(180,80,30,0.08);
+            padding: 6px 0;
+            min-height: 70px;
+            background: rgba(10,8,8,0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(180,80,30,0.05);
             align-items: center;
         }
         .battle-hand .card {
             background: linear-gradient(145deg, #1c1410, #2a1e18);
             border: 2px solid #3a2a22;
-            border-radius: 12px;
-            padding: 10px 12px;
-            width: 120px;
+            border-radius: 10px;
+            padding: 6px 8px;
+            width: 80px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
             position: relative;
             flex-shrink: 0;
         }
         .battle-hand .card:hover:not(.disabled) {
-            transform: translateY(-12px) scale(1.05);
+            transform: translateY(-6px) scale(1.04);
             border-color: #c07040;
-            box-shadow: 0 8px 30px rgba(180,80,30,0.3);
+            box-shadow: 0 4px 20px rgba(180,80,30,0.2);
         }
-        .battle-hand .card .card-name { font-weight: 700; font-size: 13px; }
+        .battle-hand .card .card-name { font-weight: 700; font-size: 10px; line-height: 1.2; }
         .battle-hand .card .card-cost {
             display: inline-block;
             background: rgba(40,25,20,0.8);
-            padding: 0 8px;
-            border-radius: 10px;
-            font-size: 11px;
-            margin-top: 4px;
+            padding: 0 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            margin-top: 2px;
             color: #e2b8a0;
-            border: 1px solid rgba(180,80,30,0.15);
+            border: 1px solid rgba(180,80,30,0.1);
         }
-        .battle-hand .card .card-effect { font-size: 11px; color: #a08078; margin-top: 4px; }
+        .battle-hand .card .card-effect {
+            font-size: 9px;
+            color: #a08078;
+            margin-top: 2px;
+            line-height: 1.2;
+        }
         .battle-hand .card.disabled {
-            opacity: 0.4;
+            opacity: 0.35;
             cursor: not-allowed;
             transform: none !important;
-            filter: grayscale(0.6);
+            filter: grayscale(0.5);
         }
         .battle-hand .card.rare { border-color: #c09050; }
         .battle-hand .card.rare .card-name { color: #d4a060; }
         .battle-hand .card.rare::after {
             content: '✦';
             position: absolute;
-            top: -6px;
-            right: -6px;
-            font-size: 14px;
+            top: -4px;
+            right: -4px;
+            font-size: 11px;
             color: #d4a060;
         }
         .battle-hand .card.uncommon { border-color: #5a7a7a; }
@@ -493,74 +403,70 @@
         .battle-hand .card.uncommon::after {
             content: '◆';
             position: absolute;
-            top: -6px;
-            right: -6px;
-            font-size: 12px;
+            top: -4px;
+            right: -4px;
+            font-size: 10px;
             color: #6a9a9a;
         }
         .battle-hand .empty-hand {
             color: #a08078;
-            font-size: 16px;
-            padding: 20px;
+            font-size: 13px;
+            padding: 12px;
         }
 
+        /* ОВЕРЛЕЙ КОНЦА ИГРЫ */
         .game-over-overlay {
-            grid-column: 1 / 4;
-            grid-row: 1 / 4;
+            position: absolute;
+            inset: 0;
             background: rgba(0,0,0,0.85);
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             z-index: 10;
-            padding: 30px;
+            padding: 20px;
         }
-        .game-over-overlay .result { font-size: 36px; font-weight: 900; }
+        .game-over-overlay .result { font-size: 28px; font-weight: 900; }
         .game-over-overlay .result.win { color: #22c55e; }
         .game-over-overlay .result.lose { color: #ef4444; }
         .game-over-overlay .btn {
             background: rgba(40,25,20,0.8);
             border: 1px solid rgba(180,80,30,0.25);
-            border-radius: 12px;
-            padding: 12px 30px;
-            font-size: 16px;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-size: 14px;
             font-weight: 700;
             color: #e2d5d0;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Segoe UI', Arial, sans-serif;
+            min-width: 120px;
         }
-        .game-over-overlay .btn:hover {
-            background: rgba(180,80,30,0.2);
-            border-color: #c07040;
-        }
+        .game-over-overlay .btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
-        @media (max-width: 900px) {
-            .battle-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto auto auto;
-            }
-            .battle-enemy { grid-column: 1; grid-row: 1; }
-            .battle-field { grid-column: 1; grid-row: 2; min-height: 80px; }
-            .battle-actions { grid-column: 1; grid-row: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .battle-actions .player-status { flex: 1; min-width: 120px; }
-            .battle-actions .btn-end-turn { flex: 1; min-width: 120px; }
-            .battle-log-container { grid-column: 1; grid-row: 4; max-height: 150px; }
-            .battle-hand { grid-column: 1; grid-row: 5; }
-            .battle-hand .card { width: 100px; padding: 8px 10px; }
-            .battle-hand .card .card-name { font-size: 11px; }
-            .battle-hand .card .card-effect { font-size: 10px; }
-            .game-over-overlay { grid-column: 1; grid-row: 1 / 6; }
+        /* ---------- АДАПТИВ (ТЕЛЕФОН) ---------- */
+        @media (max-width: 480px) {
+            .menu-btn { width: 200px; font-size: 15px; padding: 12px 20px; }
+            .clan-card { width: 130px; padding: 14px 12px; }
+            .clan-card .icon { font-size: 30px; }
+            .clan-card .name { font-size: 16px; }
+            .battle-hand .card { width: 70px; padding: 5px 6px; }
+            .battle-hand .card .card-name { font-size: 9px; }
+            .battle-hand .card .card-effect { font-size: 8px; }
+            .battle-hand .card .card-cost { font-size: 9px; }
+            .map-node { min-width: 80px; max-width: 110px; padding: 10px 12px; }
+            .map-node .icon { font-size: 22px; }
+            .game-container { max-width: 100%; }
         }
-        @media (max-width: 500px) {
-            .battle-hand .card { width: 80px; padding: 6px 8px; }
-            .battle-hand .card .card-name { font-size: 10px; }
-            .battle-hand .card .card-effect { font-size: 9px; }
-            .battle-hand .card .card-cost { font-size: 10px; }
-            .battle-enemy .hp-text { font-size: 18px; }
-            .battle-actions .player-status .hp-text { font-size: 16px; }
+        @media (max-width: 380px) {
+            .battle-hand .card { width: 60px; padding: 4px 5px; }
+            .battle-hand .card .card-name { font-size: 8px; }
+            .battle-hand .card .card-effect { font-size: 7px; }
+            .battle-hand .card .card-cost { font-size: 8px; }
+            .btn-end-turn { font-size: 12px; padding: 6px 12px; min-width: 60px; }
+            .player-status { font-size: 12px; }
         }
     </style>
 </head>
@@ -582,7 +488,7 @@
     </div>
 
     <div id="settingsScreen" class="menu-screen" style="display:none;">
-        <h1 style="font-size:40px;" class="ember-text">⚙️ Настройки</h1>
+        <h1 style="font-size:28px;" class="ember-text">⚙️ Настройки</h1>
         <p class="subtitle">Звук и управление (в разработке)</p>
         <div class="menu-buttons">
             <button class="menu-btn small" id="soundToggle">🔊 Звук: Вкл</button>
@@ -606,45 +512,52 @@
             <span>🪙 Монеты: <span id="mapCoins">0</span></span>
         </div>
         <div class="map-grid" id="mapGrid"></div>
-        <div id="mapStatus" style="margin-top:15px; color:#a08078;"></div>
+        <div id="mapStatus" style="margin-top:8px; color:#a08078; font-size:13px;"></div>
     </div>
 
     <div id="battleScreen" class="battle-screen">
         <div class="battle-container" id="battleContainer">
+            <!-- Враг -->
             <div class="battle-enemy">
                 <div class="info">
-                    <span style="font-weight:700; color:#e2b8a0;">👹 <span id="enemyClanBadge">Враг</span></span>
+                    <span style="font-weight:700; color:#e2b8a0; font-size:13px;">👹 <span id="enemyClanBadge">Враг</span></span>
                     <span class="hp-text" id="enemyHP">30</span>
-                    <span class="shield-text" id="enemyShieldText">🛡️ 0</span>
-                    <span class="energy-text">⚡ <span id="enemyEnergy">3</span></span>
+                    <span class="shield-text" id="enemyShieldText">🛡️0</span>
+                    <span class="energy-text">⚡<span id="enemyEnergy">3</span></span>
                 </div>
                 <div class="status-text" id="enemyStatus"></div>
             </div>
 
+            <!-- Поле боя -->
+            <div class="battle-field">
+                <div class="turn-indicator" id="turnIndicator">⚔️ Ход игрока</div>
+                <div class="battle-status" id="battleStatus">Выбери карту</div>
+            </div>
+
+            <!-- Лог (сворачиваемый) -->
+            <div class="log-toggle" id="logToggle">📜 Лог боя</div>
             <div class="battle-log-container" id="battleLog">
                 <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
 
-            <div class="battle-field" id="battleField">
-                <div class="turn-indicator" id="turnIndicator">⚔️ Ход игрока</div>
-                <div id="battleStatus" style="font-size:14px; color:#a08078;">Выбери карту из руки</div>
-            </div>
-
+            <!-- Панель игрока + кнопка -->
             <div class="battle-actions">
                 <div class="player-status">
-                    <div style="font-weight:600; color:#a08078; font-size:14px;">🧑 Игрок</div>
-                    <div><span class="hp-text" id="playerHP">30</span> <span class="shield-text" id="playerShieldText">🛡️ 0</span></div>
-                    <div><span class="energy-text">⚡ <span id="playerEnergy">3</span></span></div>
-                    <div id="playerStatus" style="font-size:12px; color:#a08078; margin-top:4px;"></div>
+                    <span class="hp-text" id="playerHP">30</span>
+                    <span class="shield-text" id="playerShieldText">🛡️0</span>
+                    <span class="energy-text">⚡<span id="playerEnergy">3</span></span>
+                    <span class="status-icon" id="playerStatus"></span>
                 </div>
-                <button class="btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
+                <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
             </div>
 
+            <!-- Рука карт -->
             <div class="battle-hand" id="handContainer">
-                <div class="empty-hand">Загрузка карт...</div>
+                <div class="empty-hand">Загрузка...</div>
             </div>
 
-            <div id="gameOverContainer" style="display:none;"></div>
+            <!-- Оверлей конца игры -->
+            <div id="gameOverContainer" style="display:none; position:absolute; inset:0; z-index:20;"></div>
         </div>
     </div>
 
@@ -652,20 +565,20 @@
 
 <script>
     // =======================================================
-    // KAGE — ПОЛНАЯ ВЕРСИЯ С ПОШАГОВЫМИ ХОДАМИ
+    // KAGE — МОБИЛЬНАЯ ВЕРСИЯ
     // =======================================================
 
     function createSakura() {
         const container = document.getElementById('sakura-container');
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 50; i++) {
             const petal = document.createElement('div');
             petal.className = 'sakura-petal';
             petal.style.left = Math.random() * 100 + '%';
             petal.style.animationDuration = (8 + Math.random() * 12) + 's';
             petal.style.animationDelay = (Math.random() * 20) + 's';
-            petal.style.width = (12 + Math.random() * 12) + 'px';
-            petal.style.height = (8 + Math.random() * 8) + 'px';
-            petal.style.opacity = 0.2 + Math.random() * 0.3;
+            petal.style.width = (10 + Math.random() * 10) + 'px';
+            petal.style.height = (6 + Math.random() * 8) + 'px';
+            petal.style.opacity = 0.2 + Math.random() * 0.25;
             container.appendChild(petal);
         }
     }
@@ -753,6 +666,15 @@
     const gameOverContainer = document.getElementById('gameOverContainer');
     const continueBtn = document.getElementById('continueBtn');
     const saveIndicator = document.getElementById('saveIndicator');
+    const logToggle = document.getElementById('logToggle');
+
+    // Лог (сворачивание)
+    let logOpen = false;
+    logToggle.addEventListener('click', () => {
+        logOpen = !logOpen;
+        battleLog.classList.toggle('open', logOpen);
+        logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
+    });
 
     // Сохранение
     function saveGame() {
@@ -977,8 +899,8 @@
             card.innerHTML = `
                 <span class="icon">${data.icon}</span>
                 <div class="name">${clan}</div>
-                <div class="desc">${data.cards.length} карт в колоде</div>
-                <div class="bonus">🎯 ${data.bonus}</div>
+                <div class="desc">${data.cards.length} карт</div>
+                <div class="bonus">${data.bonus}</div>
             `;
             card.addEventListener('click', () => {
                 playerClanName = clan;
@@ -1022,7 +944,7 @@
             const shuffled = shuffle(newDeck);
             if (isPlayer) { gameState.playerDeck = shuffled; } 
             else { gameState.enemyDeck = shuffled; }
-            addLog(`🔄 ${isPlayer ? 'Игрок' : 'Враг'} перетасовал колоду`, 'system');
+            addLog(`🔄 Перетасовка`, 'system');
             return drawCard(target);
         }
 
@@ -1040,8 +962,14 @@
         entry.textContent = text;
         battleLog.appendChild(entry);
         battleLog.scrollTop = battleLog.scrollHeight;
-        while (battleLog.children.length > 50) {
+        while (battleLog.children.length > 30) {
             battleLog.removeChild(battleLog.firstChild);
+        }
+        // Автоматически открываем лог при новом сообщении, если он свёрнут
+        if (!logOpen && battleLog.children.length > 2) {
+            logOpen = true;
+            battleLog.classList.add('open');
+            logToggle.textContent = '📜 Скрыть лог';
         }
     }
 
@@ -1052,22 +980,23 @@
         enemyHP.textContent = Math.max(0, p.enemyHP);
         playerEnergy.textContent = p.playerEnergy;
         enemyEnergy.textContent = p.enemyEnergy;
-        playerShieldText.textContent = `🛡️ ${p.playerShield}`;
-        enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
+        playerShieldText.textContent = `🛡️${p.playerShield}`;
+        enemyShieldText.textContent = `🛡️${p.enemyShield}`;
         enemyClanBadge.textContent = p.enemyClan;
 
         let pStatus = '';
-        if (p.playerStun > 0) pStatus += `💫 Оглушён (${p.playerStun}) `;
-        if (p.playerPoison > 0) pStatus += `☠️ Яд (${p.playerPoison}) `;
+        if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
+        if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
         playerStatus.textContent = pStatus;
 
         let eStatus = '';
-        if (p.enemyStun > 0) eStatus += `💫 Оглушён (${p.enemyStun}) `;
-        if (p.enemyPoison > 0) eStatus += `☠️ Яд (${p.enemyPoison}) `;
+        if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
+        if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
         enemyStatus.textContent = eStatus;
 
-        turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
-        battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту из руки' : 'Враг думает...';
+        turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Твой ход' : '⏳ Ход врага';
+        battleStatus.textContent = p.isPlayerTurn ? 'Выбери карту' : 'Враг думает...';
+        endTurnBtn.disabled = !p.isPlayerTurn || p.gameOver;
         saveGame();
     }
 
@@ -1080,7 +1009,7 @@
 
         const p = gameState;
         if (p.playerHand.length === 0) {
-            handContainer.innerHTML = '<div class="empty-hand">Нет карт в руке</div>';
+            handContainer.innerHTML = '<div class="empty-hand">Нет карт</div>';
             return;
         }
 
@@ -1094,13 +1023,13 @@
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
-            if (card.dmg) effects.push(`⚔️ ${card.dmg}`);
-            if (card.heal) effects.push(`❤️ +${card.heal}`);
-            if (card.shield) effects.push(`🛡️ ${card.shield}`);
-            if (card.poison) effects.push(`☠️ ${card.poison}`);
-            if (card.stun) effects.push(`💫 оглуш. ${card.stun}`);
-            if (card.stealEnergy) effects.push(`⚡ кража ${card.stealEnergy}`);
-            if (card.energyPlus) effects.push(`⚡ +${card.energyPlus}`);
+            if (card.dmg) effects.push(`⚔${card.dmg}`);
+            if (card.heal) effects.push(`❤+${card.heal}`);
+            if (card.shield) effects.push(`🛡${card.shield}`);
+            if (card.poison) effects.push(`☠${card.poison}`);
+            if (card.stun) effects.push(`💫${card.stun}`);
+            if (card.stealEnergy) effects.push(`⚡-${card.stealEnergy}`);
+            if (card.energyPlus) effects.push(`⚡+${card.energyPlus}`);
 
             let rarityColor = '#a08078';
             if (card.rarity === 'Необычная') rarityColor = '#6a9a9a';
@@ -1109,16 +1038,16 @@
             cardEl.innerHTML = `
                 <div class="card-name" style="color:${rarityColor};">${card.name}</div>
                 <div class="card-effect">${effects.join(' ')}</div>
-                <div class="card-cost">⚡ ${card.cost}</div>
+                <div class="card-cost">⚡${card.cost}</div>
             `;
 
             cardEl.addEventListener('click', () => {
                 if (canPlay) {
-                    cardEl.style.transform = 'translateY(-30px) scale(1.1)';
+                    cardEl.style.transform = 'translateY(-12px) scale(1.06)';
                     cardEl.style.borderColor = '#c07040';
                     setTimeout(() => {
                         playCard(index);
-                    }, 300);
+                    }, 200);
                 }
             });
 
@@ -1133,17 +1062,17 @@
 
         if (p.playerStun > 0) {
             p.playerStun -= 1;
-            addLog(`💫 Ты оглушён и пропускаешь ход`, 'system');
+            addLog(`💫 Ты оглушён`, 'system');
             p.isPlayerTurn = false;
             updateBattleUI();
             endTurnBtn.disabled = true;
-            endTurnBtn.textContent = '⏳ Ход врага...';
-            setTimeout(() => enemyTurn(), 800);
+            endTurnBtn.textContent = '⏳ Ход врага';
+            setTimeout(() => enemyTurn(), 600);
             return;
         }
 
         p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
-        addLog(`⚡ Ты восстановил 1 энергию (${p.playerEnergy}/${p.playerMaxEnergy})`, 'player');
+        addLog(`⚡ +1 энергия (${p.playerEnergy})`, 'player');
 
         while (p.playerHand.length < 4) {
             drawCard('player');
@@ -1163,8 +1092,8 @@
         }
 
         if (!canPlayAny) {
-            addLog('⏳ Нет доступных карт. Заверши ход.', 'system');
-            endTurnBtn.textContent = '⏳ Завершить ход (нет карт)';
+            addLog('⏳ Нет доступных карт', 'system');
+            endTurnBtn.textContent = '⏳ Завершить (нет карт)';
         } else {
             endTurnBtn.textContent = '⚔️ Завершить ход';
         }
@@ -1240,7 +1169,7 @@
         const p = gameState;
         const card = p.playerHand[index];
         if (p.playerEnergy < card.cost) {
-            addLog('⚠️ Недостаточно энергии!', 'system');
+            addLog('⚠️ Нет энергии', 'system');
             return;
         }
 
@@ -1266,11 +1195,11 @@
         }
 
         if (!canPlayAny && p.playerEnergy > 0) {
-            addLog('⏳ Нет подходящих карт для разыгрыша.', 'system');
-            endTurnBtn.textContent = '⏳ Завершить ход (нет карт)';
+            addLog('⏳ Нет подходящих карт', 'system');
+            endTurnBtn.textContent = '⏳ Завершить (нет карт)';
         } else if (p.playerEnergy === 0) {
-            addLog('⚡ Вся энергия потрачена.', 'system');
-            endTurnBtn.textContent = '⏳ Завершить ход (нет энергии)';
+            addLog('⚡ Энергия кончилась', 'system');
+            endTurnBtn.textContent = '⏳ Завершить (0 энергии)';
         } else {
             endTurnBtn.textContent = '⚔️ Завершить ход';
         }
@@ -1308,10 +1237,10 @@
                 else p.playerHP -= actualDmg;
                 if (p.enemyHP < 0) p.enemyHP = 0;
                 if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, нанёс ${actualDmg} урона`;
+                logMsg += `, -${actualDmg} HP`;
             }
             if (absorbed > 0) {
-                logMsg += `, щит поглотил ${absorbed} урона`;
+                logMsg += `, щит -${absorbed}`;
             }
         }
 
@@ -1322,34 +1251,34 @@
                 selfDamage = 2;
                 p.playerHP -= selfDamage;
                 if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, жертвует ${selfDamage} HP`;
+                logMsg += `, -${selfDamage} HP (жертва)`;
             }
             if (isPlayer) {
                 p.playerHP = Math.min(p.playerHP + healAmount, p.playerMaxHP);
-                logMsg += `, восстановил ${healAmount} HP`;
+                logMsg += `, +${healAmount} HP`;
             } else {
                 p.enemyHP = Math.min(p.enemyHP + healAmount, p.enemyMaxHP);
-                logMsg += `, восстановил врагу ${healAmount} HP`;
+                logMsg += `, враг +${healAmount} HP`;
             }
         }
 
         if (card.shield > 0) {
             if (isPlayer) {
                 p.playerShield += card.shield;
-                logMsg += `, получил щит ${card.shield}`;
+                logMsg += `, щит +${card.shield}`;
             } else {
                 p.enemyShield += card.shield;
-                logMsg += `, враг получил щит ${card.shield}`;
+                logMsg += `, враг щит +${card.shield}`;
             }
         }
 
         if (card.poison > 0) {
             if (isPlayer) {
                 p.enemyPoison += card.poison;
-                logMsg += `, отравил врага (${card.poison})`;
+                logMsg += `, яд +${card.poison}`;
             } else {
                 p.playerPoison += card.poison;
-                logMsg += `, отравил игрока (${card.poison})`;
+                logMsg += `, яд +${card.poison}`;
             }
         }
 
@@ -1360,10 +1289,10 @@
         if (stun > 0) {
             if (isPlayer) {
                 p.enemyStun += stun;
-                logMsg += `, оглушил врага на ${stun} хода`;
+                logMsg += `, оглуш. ${stun}`;
             } else {
                 p.playerStun += stun;
-                logMsg += `, оглушил игрока на ${stun} хода`;
+                logMsg += `, оглуш. ${stun}`;
             }
         }
 
@@ -1372,33 +1301,33 @@
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
                 p.enemyEnergy -= stolen;
                 p.playerEnergy = Math.min(p.playerEnergy + stolen, p.playerMaxEnergy);
-                logMsg += `, украл ${stolen} энергии у врага`;
+                logMsg += `, кража ⚡${stolen}`;
             } else {
                 const stolen = Math.min(card.stealEnergy, p.playerEnergy);
                 p.playerEnergy -= stolen;
                 p.enemyEnergy = Math.min(p.enemyEnergy + stolen, p.enemyMaxEnergy);
-                logMsg += `, украл ${stolen} энергии у игрока`;
+                logMsg += `, кража ⚡${stolen}`;
             }
         }
 
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
-                logMsg += `, получил +${card.energyPlus} энергии`;
+                logMsg += `, +⚡${card.energyPlus}`;
             } else {
                 p.enemyEnergy = Math.min(p.enemyEnergy + card.energyPlus, p.enemyMaxEnergy);
-                logMsg += `, враг получил +${card.energyPlus} энергии`;
+                logMsg += `, враг +⚡${card.energyPlus}`;
             }
         }
 
         if (dmg > 0) {
             if (isPlayer && p.playerClan === 'Тернии') {
                 p.enemyPoison += 1;
-                logMsg += `, тернии отравили врага (+1 яд)`;
+                logMsg += `, яд +1`;
             }
             if (!isPlayer && p.enemyClan === 'Тернии') {
                 p.playerPoison += 1;
-                logMsg += `, тернии отравили игрока (+1 яд)`;
+                logMsg += `, яд +1`;
             }
         }
 
@@ -1406,7 +1335,7 @@
             if (p.enemyPoison > 0) {
                 p.enemyHP -= p.enemyPoison;
                 if (p.enemyHP < 0) p.enemyHP = 0;
-                logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
+                logMsg += `, яд -${p.enemyPoison}`;
                 p.enemyPoison -= 1;
                 if (p.enemyPoison < 0) p.enemyPoison = 0;
             }
@@ -1414,7 +1343,7 @@
             if (p.playerPoison > 0) {
                 p.playerHP -= p.playerPoison;
                 if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
+                logMsg += `, яд -${p.playerPoison}`;
                 p.playerPoison -= 1;
                 if (p.playerPoison < 0) p.playerPoison = 0;
             }
@@ -1432,7 +1361,7 @@
         const p = gameState;
 
         p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
-        addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy})`, 'enemy');
+        addLog(`⚡ Враг +1 энергия (${p.enemyEnergy})`, 'enemy');
 
         while (p.enemyHand.length < 4) {
             drawCard('enemy');
@@ -1440,7 +1369,7 @@
 
         if (p.enemyStun > 0) {
             p.enemyStun -= 1;
-            addLog(`💫 Враг оглушён и пропускает ход`, 'enemy');
+            addLog(`💫 Враг оглушён`, 'enemy');
             p.isPlayerTurn = true;
             updateBattleUI();
             renderHand();
@@ -1480,9 +1409,9 @@
 
         if (cardsPlayed === 0) {
             if (p.enemyEnergy === 0) {
-                addLog(`⏳ Враг потратил всю энергию`, 'enemy');
+                addLog(`⏳ Враг без энергии`, 'enemy');
             } else {
-                addLog(`⏳ Враг не нашёл подходящих карт`, 'enemy');
+                addLog(`⏳ Враг не нашёл карт`, 'enemy');
             }
         } else {
             addLog(`⚔️ Враг сыграл ${cardsPlayed} карт`, 'enemy');
@@ -1519,11 +1448,11 @@
     }
 
     function showGameOver(win) {
-        gameOverContainer.style.display = 'flex';
+        gameOverContainer.style.display = 'block';
         gameOverContainer.innerHTML = `
             <div class="game-over-overlay">
                 <div class="result ${win ? 'win' : 'lose'}">${win ? '🏆 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}</div>
-                <button class="btn" onclick="afterBattle()">🗺️ Вернуться на карту</button>
+                <button class="btn" onclick="afterBattle()">🗺️ Вернуться</button>
                 <button class="btn" onclick="goToMenu()">🏠 Меню</button>
             </div>
         `;
@@ -1560,11 +1489,11 @@
 
         if (p.playerStun > 0) {
             p.playerStun -= 1;
-            addLog(`💫 Ты оглушён и пропускаешь ход`, 'system');
+            addLog(`💫 Ты оглушён`, 'system');
             p.isPlayerTurn = false;
             updateBattleUI();
             endTurnBtn.disabled = true;
-            endTurnBtn.textContent = '⏳ Ход врага...';
+            endTurnBtn.textContent = '⏳ Ход врага';
             setTimeout(() => enemyTurn(), 600);
             saveGame();
             return;
@@ -1574,7 +1503,7 @@
         p.isPlayerTurn = false;
         updateBattleUI();
         endTurnBtn.disabled = true;
-        endTurnBtn.textContent = '⏳ Ход врага...';
+        endTurnBtn.textContent = '⏳ Ход врага';
         setTimeout(() => enemyTurn(), 600);
         saveGame();
     });
