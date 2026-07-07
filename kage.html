@@ -66,6 +66,7 @@
         ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
         * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
+        /* ---------- МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
@@ -129,6 +130,7 @@
         }
         .save-indicator.show { opacity: 1; }
 
+        /* ---------- ВЫБОР КЛАССА ---------- */
         .clan-select-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -170,7 +172,7 @@
         .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
         .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
-        /* ---------- КАРТА (ГОРА С 3 ПУТЯМИ) ---------- */
+        /* ---------- КАРТА (ГОРА) ---------- */
         .map-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -192,12 +194,13 @@
             border-radius: 10px;
             margin-bottom: 12px;
             border: 1px solid rgba(180,80,30,0.1);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             flex-shrink: 0;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
-        .map-screen .info span { font-size: 13px; }
+        .map-screen .info span { font-size: 12px; }
         .map-grid {
             display: flex;
             flex-direction: column;
@@ -249,6 +252,115 @@
             filter: grayscale(0.5);
         }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; flex-shrink: 0; }
+
+        /* ---------- МАГАЗИН ---------- */
+        .shop-screen {
+            display: none;
+            background: rgba(18,12,12,0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(180,80,30,0.2);
+            height: 100%;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .shop-screen h2 { font-size: 22px; color: #e2b8a0; margin-bottom: 6px; text-align: center; flex-shrink: 0; }
+        .shop-screen .shop-info {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(30,20,18,0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(180,80,30,0.1);
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .shop-screen .shop-info span { font-size: 12px; }
+        .shop-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        .shop-item {
+            background: rgba(30,20,18,0.7);
+            border: 1px solid rgba(60,40,30,0.4);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .shop-item .card-info { display: flex; flex-direction: column; text-align: left; }
+        .shop-item .card-info .name { font-size: 14px; font-weight: 700; color: #e2b8a0; }
+        .shop-item .card-info .effect { font-size: 11px; color: #a08078; }
+        .shop-item .card-info .race { font-size: 10px; color: #c084fc; }
+        .shop-item .shop-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .shop-item .shop-actions button {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .shop-item .shop-actions .buy-btn {
+            background: #22c55e;
+            color: #0d0a0a;
+        }
+        .shop-item .shop-actions .buy-btn:hover { background: #16a34a; transform: scale(1.03); }
+        .shop-item .shop-actions .buy-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .shop-item .shop-actions .remove-btn {
+            background: #ef4444;
+            color: white;
+        }
+        .shop-item .shop-actions .remove-btn:hover { background: #dc2626; transform: scale(1.03); }
+        .shop-item .shop-actions .remove-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .shop-empty {
+            color: #a08078;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .shop-back-btn {
+            background: rgba(40,25,20,0.8);
+            border: 1px solid rgba(180,80,30,0.25);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e2d5d0;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+        .shop-back-btn:hover { background: rgba(180,80,30,0.2); border-color: #c07040; }
 
         /* ---------- БОЕВОЙ ЭКРАН ---------- */
         .battle-screen {
@@ -445,7 +557,7 @@
         }
         .battle-hand .card .card-name {
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.2;
             word-break: break-word;
             overflow-wrap: break-word;
@@ -458,7 +570,7 @@
             background: rgba(40,25,20,0.8);
             padding: 0 8px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             margin-top: 3px;
             color: #e2b8a0;
             border: 1px solid rgba(180,80,30,0.1);
@@ -466,11 +578,18 @@
             z-index: 1;
         }
         .battle-hand .card .card-effect {
-            font-size: 12px;
+            font-size: 11px;
             color: #a08078;
-            margin-top: 3px;
+            margin-top: 2px;
             line-height: 1.2;
             word-break: break-word;
+            position: relative;
+            z-index: 1;
+        }
+        .battle-hand .card .card-race {
+            font-size: 9px;
+            color: #c084fc;
+            margin-top: 2px;
             position: relative;
             z-index: 1;
         }
@@ -528,8 +647,8 @@
             .clan-card .name { font-size: 14px; }
             .battle-hand .card { width: 90px; padding: 6px 8px; min-height: 75px; }
             .battle-hand .card .card-name { font-size: 12px; }
-            .battle-hand .card .card-effect { font-size: 11px; }
-            .battle-hand .card .card-cost { font-size: 11px; }
+            .battle-hand .card .card-effect { font-size: 10px; }
+            .battle-hand .card .card-cost { font-size: 10px; }
             .map-node { min-width: 45px; max-width: 70px; padding: 6px 8px; }
             .map-node .icon { font-size: 16px; }
             .map-node .label { font-size: 8px; }
@@ -539,6 +658,9 @@
             .battle-enemy .hp-text { font-size: 16px; }
             .battle-enemy { min-height: 50px; padding: 6px 10px; }
             .battle-field { min-height: 60px; }
+            .shop-item .card-info .name { font-size: 12px; }
+            .shop-item .card-info .effect { font-size: 10px; }
+            .shop-item .shop-actions button { font-size: 10px; padding: 3px 8px; }
         }
         @media (max-width: 380px) {
             .battle-hand .card { width: 75px; padding: 5px 6px; min-height: 65px; }
@@ -562,6 +684,7 @@
 
 <div class="game-container">
 
+    <!-- МЕНЮ -->
     <div id="menuScreen" class="menu-screen">
         <h1 class="ember-text">SHARD</h1>
         <p class="subtitle">Выбери свой Осколок и начни битву</p>
@@ -572,6 +695,7 @@
         </div>
     </div>
 
+    <!-- НАСТРОЙКИ -->
     <div id="settingsScreen" class="menu-screen" style="display:none;">
         <h1 style="font-size:28px;" class="ember-text">⚙️ Настройки</h1>
         <p class="subtitle">Звук и управление (в разработке)</p>
@@ -581,6 +705,7 @@
         </div>
     </div>
 
+    <!-- ВЫБОР КЛАССА -->
     <div id="clanSelectScreen" class="clan-select-screen" style="display:none;">
         <button class="back-btn" id="backFromClans">⬅️ Назад</button>
         <h2>Выбери класс</h2>
@@ -596,11 +721,27 @@
             <span>❤️ HP: <span id="mapHP">30</span></span>
             <span>⚔️ Победы: <span id="mapWins">0</span></span>
             <span>🪙 Монеты: <span id="mapCoins">0</span></span>
+            <span id="synergyDisplay" style="font-size:11px; color:#c084fc;">Синергии: </span>
         </div>
         <div class="map-grid" id="mapGrid"></div>
         <div id="mapStatus" style="margin-top:8px; color:#a08078; font-size:13px;"></div>
     </div>
 
+    <!-- МАГАЗИН -->
+    <div id="shopScreen" class="shop-screen" style="display:none;">
+        <button class="back-btn" id="backFromShop">⬅️ Назад</button>
+        <h2>🛒 Магазин</h2>
+        <div class="shop-info">
+            <span>🪙 Монеты: <span id="shopCoins">0</span></span>
+            <span id="shopSynergyDisplay" style="font-size:11px; color:#c084fc;">Синергии: </span>
+        </div>
+        <div class="shop-grid" id="shopGrid">
+            <!-- Товары генерируются из JS -->
+        </div>
+        <button class="shop-back-btn" id="shopBackBtn">⬅️ Вернуться на карту</button>
+    </div>
+
+    <!-- БОЕВОЙ ЭКРАН -->
     <div id="battleScreen" class="battle-screen" style="display:none;">
         <div class="battle-container">
             <div class="battle-enemy">
@@ -645,7 +786,7 @@
 
 <script>
     // =======================================================
-    // SHARD — КАРТА "ГОРА" С 3 ПУТЯМИ
+    // SHARD — С МАГАЗИНОМ, РАСАМИ И СИНЕРГИЯМИ
     // =======================================================
 
     function createSakura() {
@@ -664,46 +805,67 @@
     }
     createSakura();
 
-    // ---------- НОВЫЕ КАРТЫ (ПО 6 НА КЛАСС) ----------
-    const CLAN_DATA = {
-        'Алхимик': {
-            icon: '🧪',
-            bonus: 'Яды длятся на 1 ход дольше',
-            cards: [
-                { name: 'Кислотный плевок', dmg: 1, poison: 1, cost: 2, rarity: 'common' },
-                { name: 'Взрывная смесь', dmg: 3, cost: 3, rarity: 'common' },
-                { name: 'Зелье щита', shield: 4, cost: 2, rarity: 'uncommon' },
-                { name: 'Ядовитый шип', shield: 2, poison: 1, cost: 2, rarity: 'uncommon' },
-                { name: 'Зелье защиты', shield: 3, cost: 2, rarity: 'common' },
-                { name: 'Зелье лечения', heal: 4, cost: 2, rarity: 'common' }
-            ]
-        },
-        'Страж': {
-            icon: '🛡️',
-            bonus: 'Если враг не пробил щит → получает 1 урон',
-            cards: [
-                { name: 'Удар щитом', dmg: 2, shield: 2, cost: 2, rarity: 'common' },
-                { name: 'Боевой выпад', dmg: 3, cost: 2, rarity: 'common' },
-                { name: 'Крепкий щит', shield: 6, cost: 3, rarity: 'uncommon' },
-                { name: 'Терновый шип', shield: 3, dmg: 1, cost: 2, rarity: 'uncommon' },
-                { name: 'Каменная стена', shield: 7, cost: 4, rarity: 'rare' },
-                { name: 'Восстановление', heal: 4, shield: 2, cost: 2, rarity: 'common' }
-            ]
-        },
-        'Берсерк': {
-            icon: '⚡',
-            bonus: 'Урон всех карт увеличен на 1',
-            cards: [
-                { name: 'Яростный удар', dmg: 5, cost: 3, rarity: 'common' },
-                { name: 'Мощный выпад', dmg: 6, cost: 3, rarity: 'uncommon' },
-                { name: 'Ярость берсерка', shield: 3, cost: 2, rarity: 'common' },
-                { name: 'Яростный рывок', shield: 2, energyPlus: 1, cost: 2, rarity: 'common' },
-                { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'uncommon' },
-                { name: 'Жертвенный рывок', heal: 6, dmg: 2, cost: 2, rarity: 'uncommon' }
-            ]
-        }
+    // ---------- БАЗОВЫЕ КАРТЫ КЛАССОВ (БЕЗ РАСЫ) ----------
+    const CLASS_CARDS = {
+        'Алхимик': [
+            { name: 'Кислотный плевок', dmg: 1, poison: 1, cost: 2, rarity: 'common' },
+            { name: 'Взрывная смесь', dmg: 3, cost: 3, rarity: 'common' },
+            { name: 'Зелье щита', shield: 4, cost: 2, rarity: 'uncommon' },
+            { name: 'Ядовитый шип', shield: 2, poison: 1, cost: 2, rarity: 'uncommon' },
+            { name: 'Зелье защиты', shield: 3, cost: 2, rarity: 'common' },
+            { name: 'Зелье лечения', heal: 4, cost: 2, rarity: 'common' }
+        ],
+        'Страж': [
+            { name: 'Удар щитом', dmg: 2, shield: 2, cost: 2, rarity: 'common' },
+            { name: 'Боевой выпад', dmg: 3, cost: 2, rarity: 'common' },
+            { name: 'Крепкий щит', shield: 6, cost: 3, rarity: 'uncommon' },
+            { name: 'Терновый шип', shield: 3, dmg: 1, cost: 2, rarity: 'uncommon' },
+            { name: 'Каменная стена', shield: 7, cost: 4, rarity: 'rare' },
+            { name: 'Восстановление', heal: 4, shield: 2, cost: 2, rarity: 'common' }
+        ],
+        'Берсерк': [
+            { name: 'Яростный удар', dmg: 5, cost: 3, rarity: 'common' },
+            { name: 'Мощный выпад', dmg: 6, cost: 3, rarity: 'uncommon' },
+            { name: 'Ярость берсерка', shield: 3, cost: 2, rarity: 'common' },
+            { name: 'Яростный рывок', shield: 2, energyPlus: 1, cost: 2, rarity: 'common' },
+            { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'uncommon' },
+            { name: 'Жертвенный рывок', heal: 6, dmg: 2, cost: 2, rarity: 'uncommon' }
+        ]
     };
 
+    // ---------- РАСОВЫЕ КАРТЫ (ПУЛ 16 ШТУК) ----------
+    const RACE_CARDS_POOL = [
+        // Эльфы (4 карты)
+        { name: 'Лесной лучник', dmg: 2, poison: 1, cost: 2, race: 'Эльфы', rarity: 'uncommon' },
+        { name: 'Друид', dmg: 3, cost: 3, race: 'Эльфы', rarity: 'uncommon' },
+        { name: 'Эльфийский стрелок', dmg: 4, cost: 3, race: 'Эльфы', rarity: 'rare' },
+        { name: 'Хранитель леса', shield: 5, cost: 3, race: 'Эльфы', rarity: 'uncommon' },
+        // Орки (4 карты)
+        { name: 'Орк-боец', dmg: 5, cost: 3, race: 'Орки', rarity: 'common' },
+        { name: 'Орк-вождь', dmg: 6, cost: 3, race: 'Орки', rarity: 'rare' },
+        { name: 'Орк-бронник', shield: 3, cost: 2, race: 'Орки', rarity: 'uncommon' },
+        { name: 'Орк-шаман', shield: 2, energyPlus: 1, cost: 2, race: 'Орки', rarity: 'uncommon' },
+        // Звери (4 карты)
+        { name: 'Волк', dmg: 3, cost: 2, race: 'Звери', rarity: 'common' },
+        { name: 'Медведь', shield: 4, cost: 2, race: 'Звери', rarity: 'common' },
+        { name: 'Тигр', dmg: 4, cost: 3, race: 'Звери', rarity: 'uncommon' },
+        { name: 'Единорог', heal: 4, cost: 2, race: 'Звери', rarity: 'rare' },
+        // Феи (4 карты)
+        { name: 'Фея-целительница', heal: 6, cost: 3, race: 'Феи', rarity: 'rare' },
+        { name: 'Фея-защитница', shield: 4, cost: 2, race: 'Феи', rarity: 'uncommon' },
+        { name: 'Фея-воин', dmg: 3, cost: 2, race: 'Феи', rarity: 'uncommon' },
+        { name: 'Фея-энерджайзер', energyPlus: 2, cost: 1, race: 'Феи', rarity: 'rare' }
+    ];
+
+    // ---------- СИНЕРГИИ РАС ----------
+    const RACE_SYNERGIES = {
+        'Эльфы': { 2: { shield: 1 }, 4: { shield: 2 } },
+        'Орки': { 2: { dmg: 1 }, 4: { dmg: 2 } },
+        'Звери': { 2: { heal: 1 }, 4: { heal: 2 } },
+        'Феи': { 2: { energy: 1 }, 4: { energy: 2 } }
+    };
+
+    // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
     let gameState = null;
     let soundEnabled = true;
     let playerClanName = null;
@@ -711,18 +873,27 @@
     let mapCoins = 0;
     let mapNodes = [];
     let completedNodeIds = [];
+    let playerDeck = [];
+    let shopCards = [];
+    let raceCounts = { 'Эльфы': 0, 'Орки': 0, 'Звери': 0, 'Феи': 0 };
+    let activeSynergies = { shield: 0, dmg: 0, heal: 0, energy: 0 };
 
     const menuScreen = document.getElementById('menuScreen');
     const settingsScreen = document.getElementById('settingsScreen');
     const clanSelectScreen = document.getElementById('clanSelectScreen');
     const mapScreen = document.getElementById('mapScreen');
+    const shopScreen = document.getElementById('shopScreen');
     const battleScreen = document.getElementById('battleScreen');
     const clanGrid = document.getElementById('clanGrid');
     const mapGrid = document.getElementById('mapGrid');
+    const shopGrid = document.getElementById('shopGrid');
     const mapHP = document.getElementById('mapHP');
     const mapWinsEl = document.getElementById('mapWins');
     const mapCoinsEl = document.getElementById('mapCoins');
+    const shopCoinsEl = document.getElementById('shopCoins');
     const mapStatus = document.getElementById('mapStatus');
+    const synergyDisplay = document.getElementById('synergyDisplay');
+    const shopSynergyDisplay = document.getElementById('shopSynergyDisplay');
     const handContainer = document.getElementById('handContainer');
     const playerHP = document.getElementById('playerHP');
     const enemyHP = document.getElementById('enemyHP');
@@ -750,6 +921,44 @@
         logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
     });
 
+    // ---------- ФУНКЦИИ СИНЕРГИИ ----------
+    function calculateSynergies() {
+        const counts = { 'Эльфы': 0, 'Орки': 0, 'Звери': 0, 'Феи': 0 };
+        playerDeck.forEach(card => {
+            if (card.race) {
+                counts[card.race] = (counts[card.race] || 0) + 1;
+            }
+        });
+        raceCounts = counts;
+        activeSynergies = { shield: 0, dmg: 0, heal: 0, energy: 0 };
+
+        Object.keys(RACE_SYNERGIES).forEach(race => {
+            const count = counts[race] || 0;
+            const synergy = RACE_SYNERGIES[race];
+            if (count >= 4 && synergy[4]) {
+                Object.keys(synergy[4]).forEach(key => {
+                    activeSynergies[key] = (activeSynergies[key] || 0) + synergy[4][key];
+                });
+            } else if (count >= 2 && synergy[2]) {
+                Object.keys(synergy[2]).forEach(key => {
+                    activeSynergies[key] = (activeSynergies[key] || 0) + synergy[2][key];
+                });
+            }
+        });
+
+        // Обновляем отображение
+        let synText = 'Синергии: ';
+        if (activeSynergies.dmg > 0) synText += `⚔+${activeSynergies.dmg} `;
+        if (activeSynergies.shield > 0) synText += `🛡+${activeSynergies.shield} `;
+        if (activeSynergies.heal > 0) synText += `❤+${activeSynergies.heal} `;
+        if (activeSynergies.energy > 0) synText += `⚡+${activeSynergies.energy} `;
+        if (synText === 'Синергии: ') synText += 'нет';
+        synergyDisplay.textContent = synText;
+        shopSynergyDisplay.textContent = synText;
+
+        return activeSynergies;
+    }
+
     // ---------- СОХРАНЕНИЕ ----------
     function saveGame() {
         if (!gameState && !playerClanName) return;
@@ -759,6 +968,8 @@
             mapCoins: mapCoins,
             mapNodes: mapNodes,
             completedNodeIds: completedNodeIds,
+            playerDeck: playerDeck,
+            shopCards: shopCards,
             gameState: gameState ? {
                 playerClan: gameState.playerClan,
                 enemyClan: gameState.enemyClan,
@@ -811,10 +1022,14 @@
     }
 
     function showScreen(screen) {
-        const screens = [menuScreen, settingsScreen, clanSelectScreen, mapScreen, battleScreen];
+        const screens = [menuScreen, settingsScreen, clanSelectScreen, mapScreen, shopScreen, battleScreen];
         screens.forEach(s => s.style.display = 'none');
         screen.style.display = 'flex';
         checkContinueButton();
+        if (screen === mapScreen || screen === shopScreen) {
+            calculateSynergies();
+            updateUI();
+        }
     }
 
     continueBtn.addEventListener('click', () => {
@@ -825,6 +1040,8 @@
         mapCoins = save.mapCoins || 0;
         mapNodes = save.mapNodes || [];
         completedNodeIds = save.completedNodeIds || [];
+        playerDeck = save.playerDeck || [];
+        shopCards = save.shopCards || [];
 
         if (save.gameState) {
             gameState = save.gameState;
@@ -845,7 +1062,7 @@
         } else {
             gameState = null;
             showScreen(mapScreen);
-            updateMapUI();
+            updateUI();
             generateMap();
         }
     });
@@ -865,28 +1082,24 @@
         this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
-    // ---------- КАРТА "ГОРА" ----------
+    // ---------- КАРТА (ГОРА) ----------
     function generateMap() {
         mapNodes = [];
         completedNodeIds = [];
         mapGrid.innerHTML = '';
         mapStatus.textContent = 'Выбери путь к боссу...';
 
-        // Структура: [уровень][позиция] = { type, enemyClan, merchantType }
-        // 5 уровней: 0-старт, 1, 2, 3, 4-босс
         const levelStructure = [
-            { nodes: 1, isBoss: false, isStart: true },  // 0: старт
-            { nodes: 3, isBoss: false, isStart: false }, // 1
-            { nodes: 3, isBoss: false, isStart: false }, // 2
-            { nodes: 3, isBoss: false, isStart: false }, // 3
-            { nodes: 1, isBoss: true, isStart: false }   // 4: босс
+            { nodes: 1, isBoss: false, isStart: true },
+            { nodes: 3, isBoss: false, isStart: false },
+            { nodes: 3, isBoss: false, isStart: false },
+            { nodes: 3, isBoss: false, isStart: false },
+            { nodes: 1, isBoss: true, isStart: false }
         ];
 
-        // Всего 2 магазина на всю карту
         let merchantCount = 0;
-        const maxMerchants = 2;
+        const maxMerchants = 1;
 
-        // Создаём узлы
         for (let level = 0; level < levelStructure.length; level++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
@@ -902,7 +1115,7 @@
 
                 if (isBoss) {
                     node.classList.add('boss');
-                    const enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
+                    const enemyClan = Object.keys(CLASS_CARDS)[Math.floor(Math.random() * Object.keys(CLASS_CARDS).length)];
                     mapNodes.push({
                         id: nodeId,
                         level: level,
@@ -911,11 +1124,7 @@
                         enemyClan: enemyClan,
                         completed: false
                     });
-                    node.innerHTML = `
-                        <span class="icon">👑</span>
-                        <div class="label">БОСС</div>
-                        <div class="level-label">Уровень ${level + 1}</div>
-                    `;
+                    node.innerHTML = `<span class="icon">👑</span><div class="label">БОСС</div><div class="level-label">Уровень ${level + 1}</div>`;
                 } else if (isStart) {
                     node.classList.add('start');
                     mapNodes.push({
@@ -925,35 +1134,24 @@
                         type: 'start',
                         completed: true
                     });
-                    node.innerHTML = `
-                        <span class="icon">🚪</span>
-                        <div class="label">Старт</div>
-                        <div class="level-label">Уровень ${level + 1}</div>
-                    `;
+                    node.innerHTML = `<span class="icon">🚪</span><div class="label">Старт</div><div class="level-label">Уровень ${level + 1}</div>`;
                     node.style.cursor = 'default';
                 } else {
-                    // Враг или магазин
-                    const isMerchant = merchantCount < maxMerchants && Math.random() < 0.2;
+                    const isMerchant = merchantCount < maxMerchants && Math.random() < 0.25;
                     if (isMerchant) {
                         merchantCount++;
                         node.classList.add('merchant');
-                        const isHeal = Math.random() > 0.5;
                         mapNodes.push({
                             id: nodeId,
                             level: level,
                             pos: pos,
-                            type: 'merchant',
-                            merchantType: isHeal ? 'heal' : 'buy',
+                            type: 'shop',
                             completed: false
                         });
-                        node.innerHTML = `
-                            <span class="icon">${isHeal ? '❤️' : '🛒'}</span>
-                            <div class="label">${isHeal ? '+10 HP' : 'Купить'}</div>
-                            <div class="level-label">Уровень ${level + 1}</div>
-                        `;
+                        node.innerHTML = `<span class="icon">🛒</span><div class="label">Магазин</div><div class="level-label">Уровень ${level + 1}</div>`;
                     } else {
                         node.classList.add('enemy');
-                        const enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
+                        const enemyClan = Object.keys(CLASS_CARDS)[Math.floor(Math.random() * Object.keys(CLASS_CARDS).length)];
                         mapNodes.push({
                             id: nodeId,
                             level: level,
@@ -962,11 +1160,7 @@
                             enemyClan: enemyClan,
                             completed: false
                         });
-                        node.innerHTML = `
-                            <span class="icon">❓</span>
-                            <div class="label">⚔️ Враг</div>
-                            <div class="level-label">Уровень ${level + 1}</div>
-                        `;
+                        node.innerHTML = `<span class="icon">❓</span><div class="label">⚔️ Враг</div><div class="level-label">Уровень ${level + 1}</div>`;
                     }
                 }
 
@@ -974,10 +1168,29 @@
                 node.addEventListener('click', () => onNodeClick(node));
                 rowDiv.appendChild(node);
             }
-
             mapGrid.appendChild(rowDiv);
         }
 
+        // Если магазин не появился, добавляем его на уровень 2
+        if (merchantCount === 0) {
+            const level2Nodes = mapNodes.filter(n => n.level === 2);
+            if (level2Nodes.length > 0) {
+                const targetNode = level2Nodes.find(n => n.type === 'enemy');
+                if (targetNode) {
+                    targetNode.type = 'shop';
+                    const nodeElements = mapGrid.querySelectorAll('.map-node');
+                    nodeElements.forEach(el => {
+                        if (el.dataset.nodeId === targetNode.id) {
+                            el.classList.remove('enemy');
+                            el.classList.add('merchant');
+                            el.innerHTML = `<span class="icon">🛒</span><div class="label">Магазин</div><div class="level-label">Уровень 3</div>`;
+                        }
+                    });
+                }
+            }
+        }
+
+        updateUI();
         saveGame();
     }
 
@@ -986,13 +1199,12 @@
         const nodeData = mapNodes.find(n => n.id === nodeId);
         if (!nodeData || nodeData.completed) return;
 
-        // Старт — пропускаем
         if (nodeData.type === 'start') {
             mapStatus.textContent = 'Начни свой путь!';
             return;
         }
 
-        // Проверяем, доступен ли узел (нужно пройти предыдущий уровень)
+        // Проверка доступности
         if (nodeData.level > 0) {
             const prevLevel = nodeData.level - 1;
             const prevNodes = mapNodes.filter(n => n.level === prevLevel);
@@ -1001,7 +1213,6 @@
                 mapStatus.textContent = '❌ Сначала пройди предыдущий уровень!';
                 return;
             }
-            // Для уровня 1 проверяем старт
             if (prevLevel === 0) {
                 const startNode = mapNodes.find(n => n.type === 'start');
                 if (startNode && !startNode.completed) {
@@ -1011,94 +1222,140 @@
             }
         }
 
-        // Обработка узла
         if (nodeData.type === 'enemy' || nodeData.type === 'boss') {
             const enemyClan = nodeData.enemyClan || 'Алхимик';
             const isBoss = nodeData.type === 'boss';
             mapStatus.textContent = isBoss ? `👑 Битва с БОССОМ!` : `⚔️ Битва с ${enemyClan}!`;
-            // Помечаем как пройденный ДО боя, чтобы избежать повторного клика
             nodeData.completed = true;
             node.classList.add('disabled');
             saveGame();
             startBattle(enemyClan, isBoss, nodeData);
-        } else if (nodeData.type === 'merchant') {
-            if (nodeData.merchantType === 'heal') {
-                // Бесплатное лечение
-                if (gameState) {
-                    const healed = Math.min(10, gameState.playerMaxHP - gameState.playerHP);
-                    gameState.playerHP += healed;
-                    mapStatus.textContent = `❤️ Восстановлено ${healed} HP!`;
-                    nodeData.completed = true;
-                    node.classList.add('disabled');
-                    updateMapUI();
-                    saveGame();
-                    setTimeout(() => {
-                        if (!gameState.gameOver) {
-                            generateMap();
-                            updateMapUI();
-                        }
-                    }, 1000);
-                } else {
-                    mapStatus.textContent = '❌ Сначала выбери класс!';
-                }
-            } else {
-                // Покупка карты за 5 монет
-                if (mapCoins >= 5 && gameState) {
-                    mapCoins -= 5;
-                    const clanCards = CLAN_DATA[playerClanName].cards;
-                    const randomCard = clanCards[Math.floor(Math.random() * clanCards.length)];
-                    gameState.playerDeck.push(cloneCard(randomCard));
-                    mapStatus.textContent = `🛒 Куплена карта "${randomCard.name}"!`;
-                    nodeData.completed = true;
-                    node.classList.add('disabled');
-                    updateMapUI();
-                    saveGame();
-                    setTimeout(() => {
-                        if (!gameState.gameOver) {
-                            generateMap();
-                            updateMapUI();
-                        }
-                    }, 1000);
-                } else if (mapCoins < 5) {
-                    mapStatus.textContent = '❌ Недостаточно монет! (нужно 5)';
-                } else {
-                    mapStatus.textContent = '❌ Сначала начни игру!';
-                }
-            }
+        } else if (nodeData.type === 'shop') {
+            // Открываем магазин
+            nodeData.completed = true;
+            node.classList.add('disabled');
+            saveGame();
+            openShop();
         }
     }
 
-    function updateMapUI() {
+    // ---------- МАГАЗИН ----------
+    function openShop() {
+        // Генерируем 6 случайных карт (если ещё не сгенерированы)
+        if (shopCards.length === 0) {
+            const shuffled = [...RACE_CARDS_POOL].sort(() => Math.random() - 0.5);
+            shopCards = shuffled.slice(0, 6);
+        }
+        showScreen(shopScreen);
+        renderShop();
+        updateUI();
+    }
+
+    function renderShop() {
+        shopGrid.innerHTML = '';
+        const available = shopCards.filter(c => !c.removed);
+        if (available.length === 0) {
+            shopGrid.innerHTML = '<div class="shop-empty">🛒 Магазин пуст</div>';
+            return;
+        }
+
+        available.forEach((card, index) => {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+
+            const raceColor = {
+                'Эльфы': '#22d3ee',
+                'Орки': '#ef4444',
+                'Звери': '#fbbf24',
+                'Феи': '#c084fc'
+            }[card.race] || '#a08078';
+
+            let effects = [];
+            if (card.dmg) effects.push(`⚔${card.dmg}`);
+            if (card.heal) effects.push(`❤+${card.heal}`);
+            if (card.shield) effects.push(`🛡${card.shield}`);
+            if (card.poison) effects.push(`☠${card.poison}`);
+            if (card.energyPlus) effects.push(`⚡+${card.energyPlus}`);
+
+            item.innerHTML = `
+                <div class="card-info">
+                    <div class="name">${card.name}</div>
+                    <div class="effect">${effects.join(' ')}</div>
+                    <div class="race" style="color:${raceColor};">${card.race}</div>
+                </div>
+                <div class="shop-actions">
+                    <button class="buy-btn" data-index="${index}">Купить (5🪙)</button>
+                    <button class="remove-btn" data-index="${index}">🗑️</button>
+                </div>
+            `;
+
+            item.querySelector('.buy-btn').addEventListener('click', () => {
+                if (mapCoins >= 5) {
+                    mapCoins -= 5;
+                    const boughtCard = { ...card };
+                    playerDeck.push(boughtCard);
+                    shopCards[index].removed = true;
+                    calculateSynergies();
+                    renderShop();
+                    updateUI();
+                    saveGame();
+                    mapStatus.textContent = `✅ Куплена карта "${boughtCard.name}"!`;
+                } else {
+                    mapStatus.textContent = '❌ Недостаточно монет!';
+                }
+            });
+
+            item.querySelector('.remove-btn').addEventListener('click', () => {
+                shopCards[index].removed = true;
+                renderShop();
+                updateUI();
+                saveGame();
+                mapStatus.textContent = `🗑️ Карта удалена из магазина.`;
+            });
+
+            shopGrid.appendChild(item);
+        });
+    }
+
+    // ---------- ОБНОВЛЕНИЕ UI ----------
+    function updateUI() {
         mapHP.textContent = gameState ? gameState.playerHP : 30;
         mapWinsEl.textContent = mapWins;
         mapCoinsEl.textContent = mapCoins;
+        shopCoinsEl.textContent = mapCoins;
+        calculateSynergies();
         saveGame();
     }
 
+    // ---------- ВЫБОР КЛАССА ----------
     function renderClans() {
         clanGrid.innerHTML = '';
-        const clanNames = Object.keys(CLAN_DATA);
+        const clanNames = Object.keys(CLASS_CARDS);
         clanNames.forEach(clan => {
-            const data = CLAN_DATA[clan];
             const card = document.createElement('div');
             card.className = 'clan-card';
+            const icon = clan === 'Алхимик' ? '🧪' : clan === 'Страж' ? '🛡️' : '⚡';
+            const bonus = clan === 'Алхимик' ? 'Яды +1' : clan === 'Страж' ? 'Щиты +1' : 'Урон +1';
             card.innerHTML = `
-                <span class="icon">${data.icon}</span>
+                <span class="icon">${icon}</span>
                 <div class="name">${clan}</div>
-                <div class="desc">${data.cards.length} карт</div>
-                <div class="bonus">${data.bonus}</div>
+                <div class="desc">6 базовых карт</div>
+                <div class="bonus">${bonus}</div>
             `;
             card.addEventListener('click', () => {
                 playerClanName = clan;
+                // Создаём начальную колоду из 6 карт класса
+                playerDeck = CLASS_CARDS[clan].map(c => ({ ...c }));
                 mapWins = 0;
                 mapCoins = 0;
                 mapNodes = [];
                 completedNodeIds = [];
+                shopCards = [];
                 gameState = null;
                 deleteSave();
                 generateMap();
                 showScreen(mapScreen);
-                updateMapUI();
+                updateUI();
             });
             clanGrid.appendChild(card);
         });
@@ -1123,7 +1380,7 @@
 
         if (deck.length === 0) {
             const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
-            const baseCards = CLAN_DATA[clanName].cards;
+            const baseCards = CLASS_CARDS[clanName];
             const newDeck = [];
             for (let i = 0; i < 3; i++) {
                 baseCards.forEach(c => newDeck.push(cloneCard(c)));
@@ -1201,6 +1458,9 @@
             return;
         }
 
+        // Рассчитываем активные синергии для боя
+        const synergies = calculateSynergies();
+
         p.playerHand.forEach((card, index) => {
             const cardEl = document.createElement('div');
             cardEl.className = 'card';
@@ -1212,22 +1472,36 @@
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
-            if (card.dmg) effects.push(`⚔${card.dmg}`);
-            if (card.heal) effects.push(`❤+${card.heal}`);
-            if (card.shield) effects.push(`🛡${card.shield}`);
+            let baseDmg = card.dmg || 0;
+            let baseShield = card.shield || 0;
+            let baseHeal = card.heal || 0;
+            let baseEnergy = 0;
+
+            // Применяем синергии к карте
+            let finalDmg = baseDmg + (card.race && synergies.dmg ? synergies.dmg : 0);
+            let finalShield = baseShield + (card.race && synergies.shield ? synergies.shield : 0);
+            let finalHeal = baseHeal + (card.race && synergies.heal ? synergies.heal : 0);
+            let finalEnergy = (card.energyPlus || 0) + (card.race && synergies.energy ? synergies.energy : 0);
+
+            if (finalDmg) effects.push(`⚔${finalDmg}`);
+            if (finalHeal) effects.push(`❤+${finalHeal}`);
+            if (finalShield) effects.push(`🛡${finalShield}`);
             if (card.poison) effects.push(`☠${card.poison}`);
             if (card.stun) effects.push(`💫${card.stun}`);
+            if (finalEnergy) effects.push(`⚡+${finalEnergy}`);
             if (card.stealEnergy) effects.push(`⚡-${card.stealEnergy}`);
-            if (card.energyPlus) effects.push(`⚡+${card.energyPlus}`);
 
             let rarityColor = '#a08078';
             if (card.rarity === 'uncommon') rarityColor = '#22d3ee';
             if (card.rarity === 'rare') rarityColor = '#c084fc';
 
+            let raceDisplay = card.race ? `<div class="card-race" style="color:${rarityColor};">${card.race}</div>` : '';
+
             cardEl.innerHTML = `
                 <div class="card-name" style="color:${rarityColor};">${card.name}</div>
                 <div class="card-effect">${effects.join(' ')}</div>
                 <div class="card-cost">⚡${card.cost}</div>
+                ${raceDisplay}
             `;
 
             cardEl.addEventListener('click', () => {
@@ -1284,7 +1558,7 @@
         }, 1500);
     }
 
-    // ---------- НОВАЯ ЛОГИКА ХОДОВ ----------
+    // ---------- ХОДЫ ----------
     function startPlayerTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
@@ -1331,14 +1605,30 @@
     }
 
     function startBattle(enemyClanName, isBoss, nodeData) {
-        const playerData = CLAN_DATA[playerClanName];
-        const enemyData = CLAN_DATA[enemyClanName];
+        const synergies = calculateSynergies();
+
+        const playerData = CLASS_CARDS[playerClanName];
+        const enemyData = CLASS_CARDS[enemyClanName];
 
         function createInfiniteDeck(clanName) {
-            const baseCards = CLAN_DATA[clanName].cards;
+            const baseCards = CLASS_CARDS[clanName];
             const deck = [];
             for (let i = 0; i < 3; i++) {
                 baseCards.forEach(c => deck.push(cloneCard(c)));
+            }
+            // Добавляем расовые карты из колоды игрока
+            if (clanName === playerClanName) {
+                playerDeck.forEach(c => {
+                    if (c.race) {
+                        const cloned = cloneCard(c);
+                        // Применяем синергии к расовым картам при создании колоды
+                        if (synergies.dmg) cloned.dmg = (cloned.dmg || 0) + synergies.dmg;
+                        if (synergies.shield) cloned.shield = (cloned.shield || 0) + synergies.shield;
+                        if (synergies.heal) cloned.heal = (cloned.heal || 0) + synergies.heal;
+                        if (synergies.energy) cloned.energyPlus = (cloned.energyPlus || 0) + synergies.energy;
+                        deck.push(cloned);
+                    }
+                });
             }
             return shuffle(deck);
         }
@@ -1453,8 +1743,8 @@
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
         let dmg = card.dmg || 0;
-        if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
-        if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
+        // Бонус Берсерка уже применён при создании колоды
+        // if (isPlayer && p.playerClan === 'Берсерк') dmg += 1; // Уже в колоде
 
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
@@ -1510,12 +1800,8 @@
 
         if (card.poison > 0) {
             let poisonAmount = card.poison;
-            if (isPlayer && p.playerClan === 'Алхимик') {
-                poisonAmount += 1;
-            }
-            if (!isPlayer && p.enemyClan === 'Алхимик') {
-                poisonAmount += 1;
-            }
+            if (isPlayer && p.playerClan === 'Алхимик') poisonAmount += 1;
+            if (!isPlayer && p.enemyClan === 'Алхимик') poisonAmount += 1;
             if (isPlayer) {
                 p.enemyPoison += poisonAmount;
                 logMsg += `, яд +${poisonAmount}`;
@@ -1725,8 +2011,7 @@
         }
         gameOverContainer.style.display = 'none';
         showScreen(mapScreen);
-        updateMapUI();
-        // Генерируем карту заново, чтобы обновить доступные узлы
+        updateUI();
         generateMap();
         mapStatus.textContent = 'Выбери следующий путь...';
         saveGame();
@@ -1768,6 +2053,18 @@
     });
 
     // ---------- ЗАПУСК ----------
+    document.getElementById('backFromShop').addEventListener('click', () => {
+        showScreen(mapScreen);
+        updateUI();
+        generateMap();
+    });
+
+    document.getElementById('shopBackBtn').addEventListener('click', () => {
+        showScreen(mapScreen);
+        updateUI();
+        generateMap();
+    });
+
     checkContinueButton();
     showScreen(menuScreen);
 </script>
