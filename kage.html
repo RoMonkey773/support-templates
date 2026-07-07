@@ -54,8 +54,11 @@
             position: relative;
             z-index: 1;
         }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: rgba(30,20,18,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #c07040; border-radius: 10px; }
+        * { scrollbar-width: thin; scrollbar-color: #c07040 rgba(30,20,18,0.2); }
 
-        /* ---------- МЕНЮ ---------- */
         .menu-screen {
             background: rgba(18,12,12,0.92);
             backdrop-filter: blur(8px);
@@ -196,7 +199,7 @@
         .map-node .label { font-size: 12px; color: #a08078; }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; }
 
-        /* ---------- НОВЫЙ БОЕВОЙ ИНТЕРФЕЙС ---------- */
+        /* БОЕВОЙ ЭКРАН */
         .battle-screen {
             display: none;
             background: rgba(18,12,12,0.95);
@@ -214,7 +217,6 @@
             min-height: 400px;
         }
 
-        /* ВРАГ — одна строка */
         .battle-enemy {
             background: rgba(30,20,18,0.5);
             border-radius: 10px;
@@ -234,7 +236,6 @@
         .battle-enemy .status-text { font-size: 12px; color: #a08078; }
         .battle-enemy .clan-badge { font-weight: 700; color: #e2b8a0; font-size: 13px; }
 
-        /* ПОЛЕ БОЯ — компактное */
         .battle-field {
             background: rgba(30,20,18,0.15);
             border-radius: 10px;
@@ -250,7 +251,6 @@
         .battle-field .turn-indicator { font-size: 15px; font-weight: 700; color: #e2b8a0; }
         .battle-field .battle-status { font-size: 11px; color: #a08078; }
 
-        /* ЛОГ */
         .log-toggle {
             background: rgba(30,20,18,0.3);
             border: 1px solid rgba(180,80,30,0.08);
@@ -285,7 +285,6 @@
         .battle-log-container .log-entry.system { color: #94a3b8; font-style: italic; }
         .battle-log-container .log-entry.poison { color: #6a9a6a; border-left: 2px solid #6a9a6a; padding-left: 6px; }
 
-        /* ПАНЕЛЬ ИГРОКА — одна строка + большая кнопка */
         .battle-actions {
             display: flex;
             gap: 6px;
@@ -307,11 +306,7 @@
         .player-status .hp-text { color: #22c55e; font-size: 16px; }
         .player-status .energy-text { color: #e2b8a0; font-size: 14px; }
         .player-status .shield-text { color: #38bdf8; font-size: 13px; }
-        .player-status .status-icon {
-            font-size: 13px;
-            color: #a08078;
-            font-weight: 400;
-        }
+        .player-status .status-icon { font-size: 13px; color: #a08078; font-weight: 400; }
 
         .btn-end-turn {
             background: rgba(40,25,20,0.8);
@@ -332,7 +327,6 @@
         .btn-end-turn:hover:not(:disabled) { background: rgba(180,80,30,0.25); border-color: #c07040; }
         .btn-end-turn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* РУКА КАРТ */
         .battle-hand {
             display: flex;
             gap: 5px;
@@ -530,7 +524,6 @@
 
     <div id="battleScreen" class="battle-screen">
         <div class="battle-container">
-            <!-- ВРАГ — компактная строка -->
             <div class="battle-enemy">
                 <div class="info">
                     <span class="clan-badge">👹 <span id="enemyClanBadge">Враг</span></span>
@@ -541,19 +534,16 @@
                 <div class="status-text" id="enemyStatus"></div>
             </div>
 
-            <!-- ПОЛЕ БОЯ -->
             <div class="battle-field">
                 <div class="turn-indicator" id="turnIndicator">⚔️ Твой ход</div>
                 <div class="battle-status" id="battleStatus">Выбери карту</div>
             </div>
 
-            <!-- ЛОГ -->
             <div class="log-toggle" id="logToggle">📜 Лог боя</div>
             <div class="battle-log-container" id="battleLog">
                 <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
 
-            <!-- ИГРОК + КНОПКА -->
             <div class="battle-actions">
                 <div class="player-status">
                     <span class="hp-text" id="playerHP">30</span>
@@ -564,7 +554,6 @@
                 <button class="btn-end-turn" id="endTurnBtn">⚔️ Ход</button>
             </div>
 
-            <!-- РУКА КАРТ -->
             <div class="battle-hand" id="handContainer">
                 <div class="empty-hand">Загрузка...</div>
             </div>
@@ -577,7 +566,7 @@
 
 <script>
     // =======================================================
-    // SHARD — КОМПАКТНЫЙ ИНТЕРФЕЙС
+    // SHARD — СБАЛАНСИРОВАННЫЙ СТРАЖ
     // =======================================================
 
     function createSakura() {
@@ -596,6 +585,7 @@
     }
     createSakura();
 
+    // ---------- НОВЫЙ БАЛАНС СТРАЖА ----------
     const CLAN_DATA = {
         'Алхимик': {
             icon: '🧪',
@@ -617,9 +607,12 @@
             cards: [
                 { name: 'Щит', shield: 5, cost: 2, rarity: 'Обычная' },
                 { name: 'Крепкий щит', shield: 7, cost: 3, rarity: 'Необычная' },
+                { name: 'Удар щитом', dmg: 2, shield: 2, cost: 2, rarity: 'Обычная' },
+                { name: 'Оглушающий удар', dmg: 1, stun: 1, cost: 3, rarity: 'Необычная' },
                 { name: 'Терновый шип', dmg: 1, shield: 3, cost: 2, rarity: 'Необычная' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
+                { name: 'Боевой выпад', dmg: 3, cost: 2, rarity: 'Обычная' },
+                { name: 'Колючая броня', dmg: 1, shield: 4, poison: 1, cost: 3, rarity: 'Редкая' },
                 { name: 'Корни', dmg: 1, shield: 4, cost: 2, rarity: 'Обычная' },
                 { name: 'Живая изгородь', shield: 6, poison: 1, cost: 3, rarity: 'Необычная' },
                 { name: 'Каменная стена', shield: 8, cost: 4, rarity: 'Редкая' }
@@ -991,13 +984,11 @@
         enemyShieldText.textContent = `🛡️${p.enemyShield}`;
         enemyClanBadge.textContent = p.enemyClan;
 
-        // Статусы игрока — иконками
         let pStatus = '';
         if (p.playerStun > 0) pStatus += `💫${p.playerStun} `;
         if (p.playerPoison > 0) pStatus += `☠️${p.playerPoison} `;
         playerStatus.textContent = pStatus || '';
 
-        // Статусы врага
         let eStatus = '';
         if (p.enemyStun > 0) eStatus += `💫${p.enemyStun} `;
         if (p.enemyPoison > 0) eStatus += `☠️${p.enemyPoison} `;
