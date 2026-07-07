@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Карточная битва</title>
-    <!-- Подключаем шрифт Orbitron -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: #0a0a12;
             color: #e2e8f0;
             min-height: 100vh;
@@ -44,6 +42,7 @@
             transform: rotate(0deg);
             animation: fall linear infinite;
             box-shadow: 0 0 12px rgba(252, 201, 209, 0.3);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.0);
         }
         .sakura-petal::after {
             content: '';
@@ -58,6 +57,15 @@
         @keyframes fall {
             0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
             100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
+        }
+        /* Класс для порыва ветра */
+        .wind-gust {
+            animation: windGust 1.2s cubic-bezier(0.2, 0.8, 0.3, 1.0) forwards;
+        }
+        @keyframes windGust {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(150px, -30px) rotate(45deg); }
+            100% { transform: translate(300px, -60px) rotate(90deg) scale(0.5); opacity: 0.3; }
         }
 
         .game-container {
@@ -116,7 +124,7 @@
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             letter-spacing: 1px;
             box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
         }
@@ -257,7 +265,7 @@
             color: #e2e8f0;
             cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
         }
         .btn-end-turn:hover:not(:disabled) {
@@ -397,7 +405,7 @@
 
 <script>
     // =======================================================
-    // KAGE — С НОВЫМ ИНТЕРФЕЙСОМ (ЛЕПЕСТКИ, СВЕЧЕНИЕ, ШРИФТ)
+    // KAGE — С ЛЕПЕСТКАМИ, ПОРЫВАМИ ВЕТРА И ИСПРАВЛЕННЫМ СЧЁТЧИКОМ
     // =======================================================
 
     // ---------- ЛЕПЕСТКИ САКУРЫ ----------
@@ -417,6 +425,63 @@
         }
     }
     createSakura();
+
+    // ---------- ПОРЫВЫ ВЕТРА (РЕДКОЕ СОБЫТИЕ) ----------
+    function triggerWindGust() {
+        const petals = document.querySelectorAll('.sakura-petal');
+        // Выбираем случайный процент лепестков (30-60%)
+        const gustCount = Math.floor(petals.length * (0.3 + Math.random() * 0.3));
+        const selected = [];
+        const indices = [];
+        while (selected.length < gustCount) {
+            const idx = Math.floor(Math.random() * petals.length);
+            if (!indices.includes(idx)) {
+                indices.push(idx);
+                selected.push(petals[idx]);
+            }
+        }
+        selected.forEach(petal => {
+            petal.classList.remove('wind-gust');
+            // Сбрасываем анимацию, чтобы она сработала заново
+            void petal.offsetWidth;
+            petal.classList.add('wind-gust');
+            // Случайное направление (влево или вправо)
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            const translateX = 100 + Math.random() * 200;
+            const translateY = -20 - Math.random() * 60;
+            const rotate = 30 + Math.random() * 60;
+            petal.style.setProperty('--tx', direction * translateX + 'px');
+            petal.style.setProperty('--ty', translateY + 'px');
+            petal.style.setProperty('--rot', rotate + 'deg');
+            // Добавляем динамический keyframe
+            const style = document.createElement('style');
+            const keyframe = `
+                @keyframes windGust_${Date.now()} {
+                    0% { transform: translate(0, 0) rotate(0deg); }
+                    50% { transform: translate(${direction * translateX}px, ${translateY}px) rotate(${rotate}deg); }
+                    100% { transform: translate(${direction * translateX * 0.5}px, ${-translateY}px) rotate(${rotate * 0.5}deg) scale(0.4); opacity: 0.1; }
+                }
+            `;
+            style.textContent = keyframe;
+            document.head.appendChild(style);
+            petal.style.animation = `windGust_${Date.now()} 1.2s cubic-bezier(0.2, 0.8, 0.3, 1.0) forwards`;
+            setTimeout(() => {
+                petal.style.animation = '';
+                petal.style.transform = '';
+                petal.style.opacity = '';
+            }, 1500);
+        });
+    }
+
+    // Запускаем порыв ветра случайно (каждые 10-25 секунд)
+    function scheduleWindGust() {
+        const delay = 10000 + Math.random() * 15000;
+        setTimeout(() => {
+            triggerWindGust();
+            scheduleWindGust();
+        }, delay);
+    }
+    scheduleWindGust();
 
     // ---------- ДАННЫЕ КЛАНОВ ----------
     const CLAN_DATA = {
@@ -1088,7 +1153,8 @@
         if (p.enemyHP <= 0) {
             p.enemyHP = 0;
             p.gameOver = true;
-            mapWins++;
+            // Исправление: прибавляем ровно 1 победу
+            mapWins += 1;
             mapCoins += 5;
             addLog(`🏆 Ты победил! +5 монет`);
             statusText.textContent = '🏆 Ты победил!';
