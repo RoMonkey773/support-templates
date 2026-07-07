@@ -170,7 +170,7 @@
         .clan-card .desc { font-size: 12px; color: #a08078; margin-top: 4px; }
         .clan-card .bonus { font-size: 11px; color: #c07040; margin-top: 6px; }
 
-        /* ---------- КАРТА (ВЕТВЯЩАЯСЯ) ---------- */
+        /* ---------- КАРТА (ГОРА С 3 ПУТЯМИ) ---------- */
         .map-screen {
             display: none;
             background: rgba(18,12,12,0.92);
@@ -206,27 +206,28 @@
             flex: 1;
             overflow-y: auto;
             padding: 6px 0;
+            justify-content: center;
         }
         .map-row {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
             width: 100%;
-            max-width: 400px;
+            max-width: 100%;
         }
         .map-node {
             background: rgba(30,20,18,0.7);
             border: 1px solid rgba(60,40,30,0.4);
-            border-radius: 12px;
-            padding: 10px 12px;
-            min-width: 70px;
+            border-radius: 10px;
+            padding: 8px 10px;
+            min-width: 55px;
             flex: 1 0 auto;
-            max-width: 110px;
+            max-width: 85px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             position: relative;
         }
         .map-node:hover:not(.disabled) { border-color: #c07040; transform: scale(1.04); }
@@ -234,25 +235,18 @@
         .map-node.enemy:hover:not(.disabled) { border-color: #c06040; }
         .map-node.merchant { border-color: rgba(60,140,80,0.3); }
         .map-node.merchant:hover:not(.disabled) { border-color: #5a9a6a; }
-        .map-node.boss { border-color: #c084fc; border-width: 2px; }
-        .map-node.boss:hover:not(.disabled) { border-color: #a060d0; box-shadow: 0 0 20px rgba(192,132,252,0.2); }
-        .map-node .icon { font-size: 22px; display: block; margin-bottom: 3px; }
-        .map-node .label { font-size: 10px; color: #a08078; }
-        .map-node .level-label { font-size: 9px; color: #64748b; margin-top: 2px; }
+        .map-node.boss { border-color: #c084fc; border-width: 2px; background: rgba(192,132,252,0.1); }
+        .map-node.boss:hover:not(.disabled) { border-color: #a060d0; box-shadow: 0 0 20px rgba(192,132,252,0.3); }
+        .map-node.start { border-color: #94a3b8; opacity: 0.7; cursor: default; }
+        .map-node .icon { font-size: 20px; display: block; margin-bottom: 2px; }
+        .map-node .label { font-size: 9px; color: #a08078; line-height: 1.1; }
+        .map-node .level-label { font-size: 8px; color: #64748b; margin-top: 1px; }
         .map-node.disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             cursor: not-allowed;
             transform: none !important;
             pointer-events: none;
-        }
-        .map-node .connection-line {
-            position: absolute;
-            width: 2px;
-            height: 20px;
-            background: rgba(180,80,30,0.2);
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
+            filter: grayscale(0.5);
         }
         #mapStatus { font-size: 13px; color: #a08078; margin-top: 8px; flex-shrink: 0; }
 
@@ -536,9 +530,9 @@
             .battle-hand .card .card-name { font-size: 12px; }
             .battle-hand .card .card-effect { font-size: 11px; }
             .battle-hand .card .card-cost { font-size: 11px; }
-            .map-node { min-width: 60px; max-width: 90px; padding: 8px 10px; }
-            .map-node .icon { font-size: 18px; }
-            .map-node .label { font-size: 9px; }
+            .map-node { min-width: 45px; max-width: 70px; padding: 6px 8px; }
+            .map-node .icon { font-size: 16px; }
+            .map-node .label { font-size: 8px; }
             .game-container { max-width: 100%; padding: 4px 4px 0 4px; }
             .btn-end-turn { font-size: 13px; padding: 6px 12px; min-width: 70px; }
             .player-status { font-size: 12px; }
@@ -555,9 +549,9 @@
             .player-status { font-size: 11px; gap: 4px; }
             .battle-enemy .hp-text { font-size: 14px; }
             .battle-enemy .energy-text { font-size: 13px; }
-            .map-node { min-width: 50px; max-width: 75px; padding: 6px 8px; }
-            .map-node .icon { font-size: 16px; }
-            .map-node .label { font-size: 8px; }
+            .map-node { min-width: 38px; max-width: 60px; padding: 4px 6px; }
+            .map-node .icon { font-size: 14px; }
+            .map-node .label { font-size: 7px; }
         }
     </style>
 </head>
@@ -594,7 +588,7 @@
         <div class="clan-grid" id="clanGrid"></div>
     </div>
 
-    <!-- НОВАЯ КАРТА (ВЕТВЯЩАЯСЯ) -->
+    <!-- КАРТА (ГОРА) -->
     <div id="mapScreen" class="map-screen" style="display:none;">
         <button class="back-btn" id="backFromMap">⬅️ Назад</button>
         <h2 class="ember-text">🗺️ Путь к боссу</h2>
@@ -651,7 +645,7 @@
 
 <script>
     // =======================================================
-    // SHARD — ВЕТВЯЩАЯСЯ КАРТА (6 УРОВНЕЙ, 2 МАГАЗИНА)
+    // SHARD — КАРТА "ГОРА" С 3 ПУТЯМИ
     // =======================================================
 
     function createSakura() {
@@ -716,7 +710,7 @@
     let mapWins = 0;
     let mapCoins = 0;
     let mapNodes = [];
-    let completedNodes = [];
+    let completedNodeIds = [];
 
     const menuScreen = document.getElementById('menuScreen');
     const settingsScreen = document.getElementById('settingsScreen');
@@ -764,7 +758,7 @@
             mapWins: mapWins,
             mapCoins: mapCoins,
             mapNodes: mapNodes,
-            completedNodes: completedNodes,
+            completedNodeIds: completedNodeIds,
             gameState: gameState ? {
                 playerClan: gameState.playerClan,
                 enemyClan: gameState.enemyClan,
@@ -830,7 +824,7 @@
         mapWins = save.mapWins || 0;
         mapCoins = save.mapCoins || 0;
         mapNodes = save.mapNodes || [];
-        completedNodes = save.completedNodes || [];
+        completedNodeIds = save.completedNodeIds || [];
 
         if (save.gameState) {
             gameState = save.gameState;
@@ -871,22 +865,21 @@
         this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
-    // ---------- ВЕТВЯЩАЯСЯ КАРТА ----------
+    // ---------- КАРТА "ГОРА" ----------
     function generateMap() {
         mapNodes = [];
-        completedNodes = [];
+        completedNodeIds = [];
         mapGrid.innerHTML = '';
         mapStatus.textContent = 'Выбери путь к боссу...';
 
         // Структура: [уровень][позиция] = { type, enemyClan, merchantType }
-        // 6 уровней: 0-старт, 1-2, 2-2, 3-2, 4-2, 5-босс
-        const levels = [
-            { nodes: 1, isBoss: false }, // 0: старт
-            { nodes: 2, isBoss: false }, // 1
-            { nodes: 2, isBoss: false }, // 2
-            { nodes: 2, isBoss: false }, // 3
-            { nodes: 2, isBoss: false }, // 4
-            { nodes: 1, isBoss: true }   // 5: босс
+        // 5 уровней: 0-старт, 1, 2, 3, 4-босс
+        const levelStructure = [
+            { nodes: 1, isBoss: false, isStart: true },  // 0: старт
+            { nodes: 3, isBoss: false, isStart: false }, // 1
+            { nodes: 3, isBoss: false, isStart: false }, // 2
+            { nodes: 3, isBoss: false, isStart: false }, // 3
+            { nodes: 1, isBoss: true, isStart: false }   // 4: босс
         ];
 
         // Всего 2 магазина на всю карту
@@ -894,60 +887,81 @@
         const maxMerchants = 2;
 
         // Создаём узлы
-        for (let level = 0; level < levels.length; level++) {
+        for (let level = 0; level < levelStructure.length; level++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'map-row';
 
-            const nodeCount = levels[level].nodes;
-            const isBoss = levels[level].isBoss;
+            const nodeCount = levelStructure[level].nodes;
+            const isBoss = levelStructure[level].isBoss;
+            const isStart = levelStructure[level].isStart;
 
             for (let pos = 0; pos < nodeCount; pos++) {
                 const node = document.createElement('div');
                 node.className = 'map-node';
-                const nodeData = {
-                    level: level,
-                    pos: pos,
-                    completed: false,
-                };
+                const nodeId = `${level}-${pos}`;
 
                 if (isBoss) {
                     node.classList.add('boss');
-                    nodeData.type = 'boss';
-                    nodeData.enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
+                    const enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
+                    mapNodes.push({
+                        id: nodeId,
+                        level: level,
+                        pos: pos,
+                        type: 'boss',
+                        enemyClan: enemyClan,
+                        completed: false
+                    });
                     node.innerHTML = `
                         <span class="icon">👑</span>
                         <div class="label">БОСС</div>
                         <div class="level-label">Уровень ${level + 1}</div>
                     `;
-                } else if (level === 0) {
-                    // Старт
-                    nodeData.type = 'start';
+                } else if (isStart) {
+                    node.classList.add('start');
+                    mapNodes.push({
+                        id: nodeId,
+                        level: level,
+                        pos: pos,
+                        type: 'start',
+                        completed: true
+                    });
                     node.innerHTML = `
                         <span class="icon">🚪</span>
                         <div class="label">Старт</div>
                         <div class="level-label">Уровень ${level + 1}</div>
                     `;
                     node.style.cursor = 'default';
-                    node.style.opacity = '0.7';
                 } else {
                     // Враг или магазин
-                    const isMerchant = merchantCount < maxMerchants && Math.random() < 0.25;
+                    const isMerchant = merchantCount < maxMerchants && Math.random() < 0.2;
                     if (isMerchant) {
                         merchantCount++;
                         node.classList.add('merchant');
-                        nodeData.type = 'merchant';
                         const isHeal = Math.random() > 0.5;
-                        nodeData.merchantType = isHeal ? 'heal' : 'buy';
+                        mapNodes.push({
+                            id: nodeId,
+                            level: level,
+                            pos: pos,
+                            type: 'merchant',
+                            merchantType: isHeal ? 'heal' : 'buy',
+                            completed: false
+                        });
                         node.innerHTML = `
                             <span class="icon">${isHeal ? '❤️' : '🛒'}</span>
-                            <div class="label">${isHeal ? '+10 HP' : 'Купить карту'}</div>
+                            <div class="label">${isHeal ? '+10 HP' : 'Купить'}</div>
                             <div class="level-label">Уровень ${level + 1}</div>
                         `;
                     } else {
                         node.classList.add('enemy');
-                        nodeData.type = 'enemy';
                         const enemyClan = Object.keys(CLAN_DATA)[Math.floor(Math.random() * Object.keys(CLAN_DATA).length)];
-                        nodeData.enemyClan = enemyClan;
+                        mapNodes.push({
+                            id: nodeId,
+                            level: level,
+                            pos: pos,
+                            type: 'enemy',
+                            enemyClan: enemyClan,
+                            completed: false
+                        });
                         node.innerHTML = `
                             <span class="icon">❓</span>
                             <div class="label">⚔️ Враг</div>
@@ -956,16 +970,9 @@
                     }
                 }
 
-                // Добавляем линии соединения для визуализации
-                if (level > 0 && level < levels.length - 1) {
-                    const line = document.createElement('div');
-                    line.className = 'connection-line';
-                    node.appendChild(line);
-                }
-
+                node.dataset.nodeId = nodeId;
                 node.addEventListener('click', () => onNodeClick(node));
                 rowDiv.appendChild(node);
-                mapNodes.push(nodeData);
             }
 
             mapGrid.appendChild(rowDiv);
@@ -975,14 +982,9 @@
     }
 
     function onNodeClick(node) {
-        const rowDiv = node.parentElement;
-        const rowIndex = Array.from(mapGrid.children).indexOf(rowDiv);
-        const indexInRow = Array.from(rowDiv.children).indexOf(node);
-        const nodeIndex = rowIndex * 2 + indexInRow;
-
-        if (nodeIndex >= mapNodes.length) return;
-        const nodeData = mapNodes[nodeIndex];
-        if (nodeData.completed) return;
+        const nodeId = node.dataset.nodeId;
+        const nodeData = mapNodes.find(n => n.id === nodeId);
+        if (!nodeData || nodeData.completed) return;
 
         // Старт — пропускаем
         if (nodeData.type === 'start') {
@@ -990,20 +992,22 @@
             return;
         }
 
-        // Проверяем, доступен ли узел (только соседние уровни)
-        const prevLevel = rowIndex - 1;
-        if (prevLevel >= 0) {
-            let hasCompletedPrev = false;
-            for (let i = 0; i < mapNodes.length; i++) {
-                if (mapNodes[i].level === prevLevel && mapNodes[i].completed) {
-                    hasCompletedPrev = true;
-                    break;
-                }
-            }
-            // Для уровней 1-4 нужно, чтобы был пройден предыдущий уровень
-            if (rowIndex > 0 && !hasCompletedPrev && rowIndex < mapNodes.length - 1) {
+        // Проверяем, доступен ли узел (нужно пройти предыдущий уровень)
+        if (nodeData.level > 0) {
+            const prevLevel = nodeData.level - 1;
+            const prevNodes = mapNodes.filter(n => n.level === prevLevel);
+            const hasCompletedPrev = prevNodes.some(n => n.completed);
+            if (!hasCompletedPrev && prevLevel > 0) {
                 mapStatus.textContent = '❌ Сначала пройди предыдущий уровень!';
                 return;
+            }
+            // Для уровня 1 проверяем старт
+            if (prevLevel === 0) {
+                const startNode = mapNodes.find(n => n.type === 'start');
+                if (startNode && !startNode.completed) {
+                    mapStatus.textContent = '❌ Начни со старта!';
+                    return;
+                }
             }
         }
 
@@ -1012,12 +1016,11 @@
             const enemyClan = nodeData.enemyClan || 'Алхимик';
             const isBoss = nodeData.type === 'boss';
             mapStatus.textContent = isBoss ? `👑 Битва с БОССОМ!` : `⚔️ Битва с ${enemyClan}!`;
-            startBattle(enemyClan, isBoss);
-            // Отмечаем как пройденный после боя
+            // Помечаем как пройденный ДО боя, чтобы избежать повторного клика
             nodeData.completed = true;
-            completedNodes.push(nodeIndex);
             node.classList.add('disabled');
             saveGame();
+            startBattle(enemyClan, isBoss, nodeData);
         } else if (nodeData.type === 'merchant') {
             if (nodeData.merchantType === 'heal') {
                 // Бесплатное лечение
@@ -1025,9 +1028,18 @@
                     const healed = Math.min(10, gameState.playerMaxHP - gameState.playerHP);
                     gameState.playerHP += healed;
                     mapStatus.textContent = `❤️ Восстановлено ${healed} HP!`;
+                    nodeData.completed = true;
+                    node.classList.add('disabled');
+                    updateMapUI();
+                    saveGame();
+                    setTimeout(() => {
+                        if (!gameState.gameOver) {
+                            generateMap();
+                            updateMapUI();
+                        }
+                    }, 1000);
                 } else {
                     mapStatus.textContent = '❌ Сначала выбери класс!';
-                    return;
                 }
             } else {
                 // Покупка карты за 5 монет
@@ -1037,25 +1049,22 @@
                     const randomCard = clanCards[Math.floor(Math.random() * clanCards.length)];
                     gameState.playerDeck.push(cloneCard(randomCard));
                     mapStatus.textContent = `🛒 Куплена карта "${randomCard.name}"!`;
+                    nodeData.completed = true;
+                    node.classList.add('disabled');
+                    updateMapUI();
+                    saveGame();
+                    setTimeout(() => {
+                        if (!gameState.gameOver) {
+                            generateMap();
+                            updateMapUI();
+                        }
+                    }, 1000);
                 } else if (mapCoins < 5) {
                     mapStatus.textContent = '❌ Недостаточно монет! (нужно 5)';
-                    return;
                 } else {
                     mapStatus.textContent = '❌ Сначала начни игру!';
-                    return;
                 }
             }
-            nodeData.completed = true;
-            completedNodes.push(nodeIndex);
-            node.classList.add('disabled');
-            updateMapUI();
-            saveGame();
-            setTimeout(() => {
-                if (!gameState.gameOver) {
-                    generateMap();
-                    updateMapUI();
-                }
-            }, 1000);
         }
     }
 
@@ -1084,7 +1093,7 @@
                 mapWins = 0;
                 mapCoins = 0;
                 mapNodes = [];
-                completedNodes = [];
+                completedNodeIds = [];
                 gameState = null;
                 deleteSave();
                 generateMap();
@@ -1321,7 +1330,7 @@
         endTurnBtn.disabled = false;
     }
 
-    function startBattle(enemyClanName, isBoss = false) {
+    function startBattle(enemyClanName, isBoss, nodeData) {
         const playerData = CLAN_DATA[playerClanName];
         const enemyData = CLAN_DATA[enemyClanName];
 
@@ -1366,6 +1375,7 @@
             coinFlipDone: false,
             playerStarted: false,
             isBoss: isBoss,
+            currentNode: nodeData,
         };
 
         for (let i = 0; i < 4; i++) {
@@ -1716,8 +1726,8 @@
         gameOverContainer.style.display = 'none';
         showScreen(mapScreen);
         updateMapUI();
-        // Отмечаем текущий узел как пройденный
-        // Узлы уже отмечены в onNodeClick
+        // Генерируем карту заново, чтобы обновить доступные узлы
+        generateMap();
         mapStatus.textContent = 'Выбери следующий путь...';
         saveGame();
     }
