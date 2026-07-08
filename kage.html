@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KAGE — Рогалик</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #0a0a12;
@@ -56,6 +52,17 @@
             background: #7c3aed;
             border-color: #7c3aed;
             transform: scale(1.05);
+        }
+        .menu-btn.small {
+            padding: 12px 30px;
+            font-size: 16px;
+            width: 200px;
+            background: #1e1e32;
+            border-color: #2d2d4a;
+        }
+        .menu-btn.small:hover {
+            background: #3d3d5a;
+            border-color: #3d3d5a;
         }
 
         /* Выбор клана */
@@ -136,7 +143,7 @@
         .status-text { text-align: center; font-size: 18px; color: #c4b5fd; margin: 10px 0; }
 
         /* Выбор после боя */
-        .reward-screen {
+        .choice-screen {
             display: none;
             background: #14141f;
             border-radius: 24px;
@@ -144,14 +151,50 @@
             text-align: center;
             border: 1px solid #2d2d4a;
         }
-        .reward-grid {
+        .choice-grid {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
             margin: 20px 0;
         }
-        .reward-card {
+        .choice-card {
+            background: #1e1e32;
+            border: 2px solid #2d2d4a;
+            border-radius: 16px;
+            padding: 25px;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .choice-card:hover {
+            border-color: #7c3aed;
+            transform: scale(1.05);
+            background: #28284a;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
+        }
+        .choice-card .icon { font-size: 48px; display: block; margin-bottom: 12px; }
+        .choice-card .name { font-size: 20px; font-weight: bold; color: #e2e8f0; }
+        .choice-card .desc { font-size: 14px; color: #94a3b8; margin-top: 8px; }
+
+        /* Магазин */
+        .shop-screen {
+            display: none;
+            background: #14141f;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #2d2d4a;
+        }
+        .shop-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .shop-card {
             background: #1e1e32;
             border: 2px solid #2d2d4a;
             border-radius: 16px;
@@ -161,15 +204,15 @@
             transition: all 0.3s;
             text-align: center;
         }
-        .reward-card:hover {
+        .shop-card:hover {
             border-color: #7c3aed;
             transform: scale(1.05);
             background: #28284a;
             box-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
         }
-        .reward-card .icon { font-size: 40px; display: block; margin-bottom: 10px; }
-        .reward-card .name { font-size: 16px; font-weight: bold; color: #e2e8f0; }
-        .reward-card .desc { font-size: 13px; color: #94a3b8; margin-top: 5px; }
+        .shop-card .name { font-size: 16px; font-weight: bold; color: #e2e8f0; }
+        .shop-card .desc { font-size: 13px; color: #94a3b8; margin-top: 5px; }
+        .shop-card .price { font-size: 14px; color: #fbbf24; margin-top: 8px; }
 
         /* Колодец */
         .well-screen {
@@ -200,8 +243,8 @@
         }
 
         @media (max-width: 700px) {
-            .clan-grid, .reward-grid { flex-direction: column; align-items: center; }
-            .clan-card, .reward-card { width: 100%; max-width: 300px; }
+            .clan-grid, .choice-grid, .shop-grid { flex-direction: column; align-items: center; }
+            .clan-card, .choice-card, .shop-card { width: 100%; max-width: 300px; }
             .card { width: 110px; padding: 10px 12px; }
             .health-container { flex-direction: column; }
             .menu-screen h1 { font-size: 48px; letter-spacing: 6px; }
@@ -217,6 +260,15 @@
         <h1>KAGE</h1>
         <p style="color:#94a3b8; font-size:18px; margin-bottom:40px;">Выбери свой путь и начни битву теней</p>
         <button class="menu-btn" id="newGameBtn">⚔️ Новая игра</button>
+        <button class="menu-btn small" id="settingsBtn">⚙️ Настройки</button>
+    </div>
+
+    <!-- НАСТРОЙКИ -->
+    <div id="settingsScreen" class="menu-screen" style="display:none;">
+        <h1 style="font-size:40px;">⚙️ Настройки</h1>
+        <p style="color:#94a3b8; font-size:16px; margin-bottom:30px;">Звук и управление (в разработке)</p>
+        <button class="menu-btn small" id="soundToggle">🔊 Звук: Вкл</button>
+        <button class="menu-btn small" id="backFromSettings">⬅️ Назад</button>
     </div>
 
     <!-- ВЫБОР КЛАНА -->
@@ -229,7 +281,7 @@
     <!-- БОЙ -->
     <div id="battleScreen" class="battle-screen">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-            <span id="playerClanBadge">⚔️ Клан: Тени</span>
+            <span id="playerClanBadge">⚔️ Клан: Алхимик</span>
             <span id="turnIndicator">⚔️ Ход игрока</span>
         </div>
         <div class="health-container">
@@ -259,11 +311,19 @@
         </div>
     </div>
 
-    <!-- НАГРАДА (ВЫБОР КАРТЫ) -->
-    <div id="rewardScreen" class="reward-screen">
+    <!-- ВЫБОР ПОСЛЕ БОЯ (Магазин / Враг / Колодец) -->
+    <div id="choiceScreen" class="choice-screen">
         <h2 style="color:#c4b5fd; font-size:32px; margin-bottom:10px;">🏆 Ты победил!</h2>
-        <p style="color:#94a3b8; font-size:16px; margin-bottom:20px;">Выбери одну карту в награду</p>
-        <div class="reward-grid" id="rewardGrid"></div>
+        <p style="color:#94a3b8; font-size:16px; margin-bottom:20px;">Выбери, что делать дальше</p>
+        <div class="choice-grid" id="choiceGrid"></div>
+    </div>
+
+    <!-- МАГАЗИН -->
+    <div id="shopScreen" class="shop-screen">
+        <h2 style="color:#c4b5fd; font-size:32px; margin-bottom:10px;">🛒 Магазин</h2>
+        <p style="color:#94a3b8; font-size:16px; margin-bottom:20px;">Выбери карту для покупки</p>
+        <div class="shop-grid" id="shopGrid"></div>
+        <button class="menu-btn small" id="shopBackBtn">⬅️ Назад</button>
     </div>
 
     <!-- КОЛОДЕЦ -->
@@ -272,48 +332,48 @@
         <p style="color:#94a3b8; font-size:16px; margin-bottom:20px;">Брось монетку и получи случайный эффект на следующий бой!</p>
         <button class="well-btn" id="wellBtn">🪙 Бросить монетку</button>
         <div id="wellResult" style="margin-top:20px; font-size:20px; color:#c4b5fd;"></div>
-        <button class="menu-btn" style="margin-top:20px; width:200px; padding:12px; font-size:16px;" id="wellContinueBtn">⚔️ Продолжить</button>
+        <button class="menu-btn" style="margin-top:20px; width:200px; padding:12px; font-size:16px; display:none;" id="wellContinueBtn">⚔️ Продолжить</button>
     </div>
 </div>
 
 <script>
     // =======================================================
-    // KAGE — РОГАЛИК С КОЛОДЦЕМ
+    // KAGE — РОГАЛИК (Алхимик, Страж, Берсерк)
     // =======================================================
 
     // ---------- ДАННЫЕ КЛАНОВ ----------
     const CLAN_DATA = {
-        'Тени': {
-            icon: '🌑',
-            bonus: 'Оглушение длится на 1 ход дольше',
-            cards: [
-                { name: 'Удар Тени', dmg: 2, stun: 1, cost: 2, rarity: 'Обычная' },
-                { name: 'Кинжал теней', dmg: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Страх', stun: 2, cost: 3, rarity: 'Необычная' },
-                { name: 'Скрытность', energyPlus: 2, cost: 1, rarity: 'Обычная' },
-                { name: 'Теневая ловушка', dmg: 1, stun: 2, stealEnergy: 1, cost: 3, rarity: 'Редкая' }
-            ]
-        },
-        'Тернии': {
-            icon: '🌿',
+        'Алхимик': {
+            icon: '🧪',
             bonus: 'При получении урона враг получает 1 урон ядом',
             cards: [
-                { name: 'Шипованая лоза', shield: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Ядовитое семя', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
+                { name: 'Зелье защиты', shield: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Ядовитый туман', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
                 { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
                 { name: 'Терновый шип', dmg: 2, shield: 3, poison: 1, cost: 2, rarity: 'Необычная' }
             ]
         },
-        'Ярость': {
-            icon: '⚡',
+        'Страж': {
+            icon: '🛡️',
+            bonus: 'Оглушение длится на 1 ход дольше',
+            cards: [
+                { name: 'Щит стража', shield: 6, cost: 2, rarity: 'Обычная' },
+                { name: 'Удар стража', dmg: 3, stun: 1, cost: 3, rarity: 'Обычная' },
+                { name: 'Страх', stun: 2, cost: 3, rarity: 'Необычная' },
+                { name: 'Стойкость', shield: 3, energyPlus: 1, cost: 2, rarity: 'Обычная' },
+                { name: 'Ловушка', dmg: 2, stun: 1, stealEnergy: 1, cost: 3, rarity: 'Редкая' }
+            ]
+        },
+        'Берсерк': {
+            icon: '⚔️',
             bonus: 'Урон всех карт увеличен на 1',
             cards: [
                 { name: 'Яростный удар', dmg: 5, cost: 3, rarity: 'Обычная' },
                 { name: 'Двойной выпад', dmg: 4, cost: 2, rarity: 'Необычная' },
                 { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'Необычная' },
-                { name: 'Удар зверя', dmg: 7, cost: 3, rarity: 'Редкая' },
-                { name: 'Ярость берсерка', dmg: 4, cost: 2, rarity: 'Обычная' }
+                { name: 'Удар берсерка', dmg: 7, cost: 3, rarity: 'Редкая' },
+                { name: 'Ярость', dmg: 4, cost: 2, rarity: 'Обычная' }
             ]
         }
     };
@@ -322,19 +382,23 @@
     let gameState = null;
     let selectedClan = null;
     let playerDeck = [];
-    let runStats = { // Эффекты, которые действуют на всё забегание
+    let runStats = {
         bonusDamage: 0,
         bonusShield: 0,
         maxEnergy: 6,
-        extraCards: []
+        extraCards: [],
+        coins: 10 // Монетки для магазина
     };
-    let enemyBaseHP = 15; // Начинаем с 15 HP врага
+    let enemyBaseHP = 15;
+    let soundEnabled = true;
 
     // ---------- ЭЛЕМЕНТЫ DOM ----------
     const menuScreen = document.getElementById('menuScreen');
+    const settingsScreen = document.getElementById('settingsScreen');
     const clanScreen = document.getElementById('clanScreen');
     const battleScreen = document.getElementById('battleScreen');
-    const rewardScreen = document.getElementById('rewardScreen');
+    const choiceScreen = document.getElementById('choiceScreen');
+    const shopScreen = document.getElementById('shopScreen');
     const wellScreen = document.getElementById('wellScreen');
     const clanGrid = document.getElementById('clanGrid');
     const handContainer = document.getElementById('handContainer');
@@ -354,22 +418,36 @@
     const playerClanBadge = document.getElementById('playerClanBadge');
     const turnIndicator = document.getElementById('turnIndicator');
     const gameOverContainer = document.getElementById('gameOverContainer');
-    const rewardGrid = document.getElementById('rewardGrid');
+    const choiceGrid = document.getElementById('choiceGrid');
+    const shopGrid = document.getElementById('shopGrid');
     const wellResult = document.getElementById('wellResult');
     const wellBtn = document.getElementById('wellBtn');
 
     // ---------- НАВИГАЦИЯ ----------
     function showScreen(screen) {
-        [menuScreen, clanScreen, battleScreen, rewardScreen, wellScreen].forEach(s => s.style.display = 'none');
+        [menuScreen, settingsScreen, clanScreen, battleScreen, choiceScreen, shopScreen, wellScreen].forEach(s => s.style.display = 'none');
         screen.style.display = 'block';
     }
 
     document.getElementById('newGameBtn').addEventListener('click', () => {
         selectedClan = null;
-        runStats = { bonusDamage: 0, bonusShield: 0, maxEnergy: 6, extraCards: [] };
+        runStats = { bonusDamage: 0, bonusShield: 0, maxEnergy: 6, extraCards: [], coins: 10 };
         enemyBaseHP = 15;
         showScreen(clanScreen);
         renderClans();
+    });
+
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+        showScreen(settingsScreen);
+    });
+
+    document.getElementById('backFromSettings').addEventListener('click', () => {
+        showScreen(menuScreen);
+    });
+
+    document.getElementById('soundToggle').addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
     });
 
     // ---------- РЕНДЕР КЛАНОВ ----------
@@ -401,10 +479,10 @@
         for (let i = 0; i < 3; i++) {
             baseCards.forEach(c => playerDeck.push({ ...c }));
         }
-        // Добавляем бонусные карты из колодца
         runStats.extraCards.forEach(c => playerDeck.push({ ...c }));
         shuffle(playerDeck);
         enemyBaseHP = 15;
+        runStats.coins = 10;
         startBattle();
     }
 
@@ -415,7 +493,7 @@
             playerMaxHP: 30,
             playerEnergy: 3,
             playerMaxEnergy: runStats.maxEnergy,
-            enemyHP: enemyBaseHP + Math.floor(enemyBaseHP * 0.3), // +30% HP за каждый бой
+            enemyHP: enemyBaseHP + Math.floor(enemyBaseHP * 0.3),
             enemyMaxHP: enemyBaseHP + Math.floor(enemyBaseHP * 0.3),
             enemyEnergy: 3,
             enemyMaxEnergy: 6,
@@ -433,7 +511,6 @@
             enemyHand: [],
         };
 
-        // Создаём колоду врага из случайного клана
         const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== selectedClan)[0];
         const enemyCards = CLAN_DATA[enemyClanName].cards;
         const enemyDeck = [];
@@ -449,7 +526,7 @@
 
         showScreen(battleScreen);
         gameOverContainer.innerHTML = '';
-        playerClanBadge.textContent = `⚔️ ${selectedClan} | Враг ${p.enemyHP} HP`;
+        playerClanBadge.textContent = `⚔️ ${selectedClan} | Враг ${p.enemyHP} HP | 🪙 ${runStats.coins}`;
         battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
         addLog(`⚔️ Ты — ${selectedClan}, враг — ${enemyClanName}`);
 
@@ -465,7 +542,6 @@
         const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
 
         if (deck.length === 0) {
-            // Перетасовка
             const clanName = isPlayer ? selectedClan : Object.keys(CLAN_DATA).filter(c => c !== selectedClan)[0];
             const baseCards = CLAN_DATA[clanName].cards;
             const newDeck = [];
@@ -607,10 +683,8 @@
 
         let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
 
-        // Урон с бонусом Ярости и бонусом от колодца
         let dmg = (card.dmg || 0) + (isPlayer ? runStats.bonusDamage : 0);
-        if (isPlayer && selectedClan === 'Ярость') dmg += 1;
-        if (!isPlayer) dmg += 0;
+        if (isPlayer && selectedClan === 'Берсерк') dmg += 1;
 
         if (dmg > 0) {
             const shield = isPlayer ? p.enemyShield : p.playerShield;
@@ -636,7 +710,6 @@
             }
         }
 
-        // Лечение
         if (card.heal > 0) {
             if (isPlayer) {
                 p.playerHP = Math.min(p.playerHP + card.heal, p.playerMaxHP);
@@ -647,7 +720,6 @@
             }
         }
 
-        // Щит с бонусом от колодца
         let shieldVal = (card.shield || 0) + (isPlayer ? runStats.bonusShield : 0);
         if (shieldVal > 0) {
             if (isPlayer) {
@@ -659,7 +731,6 @@
             }
         }
 
-        // Яд
         if (card.poison > 0) {
             if (isPlayer) {
                 p.enemyPoison += card.poison;
@@ -670,10 +741,8 @@
             }
         }
 
-        // Оглушение с бонусом Теней
         let stun = card.stun || 0;
-        if (isPlayer && selectedClan === 'Тени') stun += 1;
-        if (!isPlayer && !selectedClan === 'Тени') stun += 0;
+        if (isPlayer && selectedClan === 'Страж') stun += 1;
 
         if (stun > 0) {
             if (isPlayer) {
@@ -685,7 +754,6 @@
             }
         }
 
-        // Кража энергии
         if (card.stealEnergy > 0) {
             if (isPlayer) {
                 const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
@@ -700,7 +768,6 @@
             }
         }
 
-        // Энергия+
         if (card.energyPlus > 0) {
             if (isPlayer) {
                 p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
@@ -711,19 +778,13 @@
             }
         }
 
-        // Бонус Терний
         if (dmg > 0) {
-            if (isPlayer && selectedClan === 'Тернии') {
+            if (isPlayer && selectedClan === 'Алхимик') {
                 p.enemyPoison += 1;
-                logMsg += `, тернии отравили врага (+1 яд)`;
-            }
-            if (!isPlayer && !selectedClan === 'Тернии') {
-                p.playerPoison += 1;
-                logMsg += `, тернии отравили игрока (+1 яд)`;
+                logMsg += `, алхимик отравил врага (+1 яд)`;
             }
         }
 
-        // Применяем яд
         if (isPlayer) {
             if (p.enemyPoison > 0) {
                 p.enemyHP -= p.enemyPoison;
@@ -831,24 +892,51 @@
             statusText.textContent = '🏆 Ты победил!';
             endTurnBtn.disabled = true;
             renderHand();
-            // Победа - показываем награду
-            setTimeout(() => showReward(), 800);
+            // Показываем выбор после боя
+            setTimeout(() => showChoice(), 800);
             return true;
         }
         return false;
     }
 
-    // ---------- НАГРАДА ----------
-    function showReward() {
-        // Выбираем 3 случайные карты из колоды игрока
-        const pool = [...playerDeck];
-        shuffle(pool);
-        const rewardCards = pool.slice(0, 3);
+    // ---------- ВЫБОР ПОСЛЕ БОЯ ----------
+    function showChoice() {
+        choiceGrid.innerHTML = '';
+        const choices = [
+            { icon: '🛒', name: 'Магазин', desc: 'Купить карту за монетки', action: () => { showShop(); } },
+            { icon: '⚔️', name: 'Следующий враг', desc: 'Продолжить битву', action: () => { enemyBaseHP += 5; startBattle(); } },
+            { icon: '🪣', name: 'Колодец', desc: 'Бросить монетку и получить эффект', action: () => { showWell(); } }
+        ];
 
-        rewardGrid.innerHTML = '';
-        rewardCards.forEach((card, index) => {
+        choices.forEach(choice => {
+            const card = document.createElement('div');
+            card.className = 'choice-card';
+            card.innerHTML = `
+                <span class="icon">${choice.icon}</span>
+                <div class="name">${choice.name}</div>
+                <div class="desc">${choice.desc}</div>
+            `;
+            card.addEventListener('click', choice.action);
+            choiceGrid.appendChild(card);
+        });
+
+        showScreen(choiceScreen);
+    }
+
+    // ---------- МАГАЗИН ----------
+    function showShop() {
+        // Показываем 3 случайные карты из всех кланов
+        const allCards = Object.values(CLAN_DATA).flatMap(c => c.cards);
+        const shopCards = [];
+        for (let i = 0; i < 3; i++) {
+            const card = allCards[Math.floor(Math.random() * allCards.length)];
+            shopCards.push({ ...card, price: 5 + Math.floor(Math.random() * 5) });
+        }
+
+        shopGrid.innerHTML = '';
+        shopCards.forEach((card, index) => {
             const cardEl = document.createElement('div');
-            cardEl.className = 'reward-card';
+            cardEl.className = 'shop-card';
             let effects = [];
             if (card.dmg) effects.push(`⚔️ ${card.dmg}`);
             if (card.heal) effects.push(`❤️ +${card.heal}`);
@@ -865,28 +953,37 @@
             cardEl.innerHTML = `
                 <div class="name" style="color:${rarityColor};">${card.name}</div>
                 <div class="desc">${effects.join(' ')}</div>
-                <div style="font-size:12px;color:#64748b;margin-top:5px;">⚡ ${card.cost}</div>
+                <div class="price">🪙 ${card.price}</div>
             `;
             cardEl.addEventListener('click', () => {
-                // Добавляем карту в колоду
-                playerDeck.push({ ...card });
-                addLog(`📜 В колоду добавлена карта: ${card.name}`);
-                // Показываем колодец
-                showWell();
+                if (runStats.coins >= card.price) {
+                    runStats.coins -= card.price;
+                    playerDeck.push({ ...card });
+                    addLog(`🛒 Куплена карта: ${card.name}`);
+                    showChoice();
+                } else {
+                    alert('Недостаточно монет!');
+                }
             });
-            rewardGrid.appendChild(cardEl);
+            shopGrid.appendChild(cardEl);
         });
 
-        showScreen(rewardScreen);
+        showScreen(shopScreen);
     }
+
+    document.getElementById('shopBackBtn').addEventListener('click', () => {
+        showChoice();
+    });
 
     // ---------- КОЛОДЕЦ ----------
     function showWell() {
         wellResult.textContent = '';
+        wellBtn.disabled = false;
+        wellBtn.style.opacity = '1';
+        document.getElementById('wellContinueBtn').style.display = 'none';
         showScreen(wellScreen);
     }
 
-    // ---------- БРОСОК МОНЕТКИ ----------
     document.getElementById('wellBtn').addEventListener('click', function() {
         const effects = [
             { text: '🛡️ +2 к броне на этот бой', apply: () => { runStats.bonusShield += 2; } },
@@ -910,11 +1007,10 @@
     });
 
     document.getElementById('wellContinueBtn').addEventListener('click', function() {
-        // Увеличиваем сложность врага
-        enemyBaseHP += 5;
         // Сбрасываем бонусы колодца (они действовали только на один бой)
         runStats.bonusDamage = 0;
         runStats.bonusShield = 0;
+        enemyBaseHP += 5;
         startBattle();
     });
 
