@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAGE — Карточная битва</title>
+    <title>Шард — Карточная битва</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -184,8 +184,8 @@
 
     <!-- МЕНЮ -->
     <div id="menuScreen" class="menu-screen">
-        <h1>KAGE</h1>
-        <p class="subtitle">Выбери свой путь и начни битву теней</p>
+        <h1>ШАРД</h1>
+        <p class="subtitle">Выбери свой путь и начни битву</p>
         <button class="menu-btn" id="newGameBtn">⚔️ Новая игра</button>
         <button class="menu-btn small" id="settingsBtn">⚙️ Настройки</button>
     </div>
@@ -243,45 +243,46 @@
 
 <script>
     // =======================================================
-    // KAGE — Алхимик, Страж, Берсерк (6 карт)
+    // ШАРД — Алхимик, Страж, Берсерк (финальный баланс)
     // =======================================================
 
     // ---------- ДАННЫЕ КЛАНОВ (6 КАРТ) ----------
     const CLAN_DATA = {
         'Алхимик': {
             icon: '🧪',
-            bonus: 'При получении урона враг получает 1 урон ядом',
+            bonus: 'Яд наносит +1 урон',
             cards: [
+                { name: 'Кислотный плевок', dmg: 2, cost: 2, rarity: 'Обычная' },
+                { name: 'Ядовитый туман', dmg: 1, poison: 2, cost: 3, rarity: 'Необычная' },
                 { name: 'Зелье защиты', shield: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Ядовитый туман', dmg: 2, poison: 2, cost: 3, rarity: 'Необычная' },
-                { name: 'Колючая броня', shield: 4, poison: 1, cost: 2, rarity: 'Редкая' },
+                { name: 'Колючая броня', shield: 3, poison: 1, cost: 2, rarity: 'Необычная' },
+                { name: 'Терновый шип', shield: 4, poison: 1, cost: 3, rarity: 'Редкая' },
                 { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Терновый шип', dmg: 2, shield: 3, poison: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Кислотный дождь', dmg: 3, poison: 1, cost: 3, rarity: 'Редкая' }
+                { name: 'Второе дыхание', heal: 5, cost: 2, rarity: 'Обычная' } // второй хил
             ]
         },
         'Страж': {
             icon: '🛡️',
-            bonus: 'Оглушение длится на 1 ход дольше',
+            bonus: 'Все щиты +1',
             cards: [
-                { name: 'Щит стража', shield: 6, cost: 2, rarity: 'Обычная' },
-                { name: 'Удар стража', dmg: 3, stun: 1, cost: 3, rarity: 'Обычная' },
-                { name: 'Страх', stun: 2, cost: 3, rarity: 'Необычная' },
-                { name: 'Стойкость', shield: 3, energyPlus: 1, cost: 2, rarity: 'Обычная' },
-                { name: 'Ловушка', dmg: 2, stun: 1, stealEnergy: 1, cost: 3, rarity: 'Редкая' },
-                { name: 'Каменная стена', shield: 8, cost: 4, rarity: 'Редкая' }
+                { name: 'Удар стража', dmg: 4, cost: 3, rarity: 'Обычная' },
+                { name: 'Тяжёлый удар', dmg: 5, cost: 3, rarity: 'Необычная' },
+                { name: 'Каменная стена', shield: 7, cost: 3, rarity: 'Редкая' },
+                { name: 'Щит стража', shield: 5, cost: 2, rarity: 'Обычная' },
+                { name: 'Железная кожа', shield: 4, cost: 2, rarity: 'Обычная' },
+                { name: 'Божественная защита', heal: 4, shield: 3, cost: 2, rarity: 'Необычная' } // хил + щит
             ]
         },
         'Берсерк': {
             icon: '⚔️',
-            bonus: 'Урон всех карт увеличен на 1',
+            bonus: 'Все карты +1 урон',
             cards: [
                 { name: 'Яростный удар', dmg: 5, cost: 3, rarity: 'Обычная' },
                 { name: 'Двойной выпад', dmg: 4, cost: 2, rarity: 'Необычная' },
-                { name: 'Боевой клич', energyPlus: 3, cost: 1, rarity: 'Необычная' },
-                { name: 'Удар берсерка', dmg: 7, cost: 3, rarity: 'Редкая' },
-                { name: 'Ярость', dmg: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Кровавая жатва', dmg: 6, heal: 3, cost: 3, rarity: 'Редкая' }
+                { name: 'Боевой клич', shield: 3, cost: 2, rarity: 'Необычная' },
+                { name: 'Ярость берсерка', shield: 4, cost: 3, rarity: 'Редкая' },
+                { name: 'Каменная кожа', shield: 5, cost: 3, rarity: 'Обычная' },
+                { name: 'Кровавая жатва', dmg: 3, cost: 2, rarity: 'Редкая' } // хил = урон
             ]
         }
     };
@@ -289,6 +290,7 @@
     // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
     let gameState = null;
     let soundEnabled = true;
+    let enemyBaseHP = 15;
 
     // ---------- ЭЛЕМЕНТЫ DOM ----------
     const menuScreen = document.getElementById('menuScreen');
@@ -321,6 +323,7 @@
     }
 
     document.getElementById('newGameBtn').addEventListener('click', () => {
+        enemyBaseHP = 15;
         showScreen(clanScreen);
         renderClans();
     });
@@ -400,8 +403,8 @@
             playerMaxHP: 30,
             playerEnergy: 3,
             playerMaxEnergy: 6,
-            enemyHP: 30,
-            enemyMaxHP: 30,
+            enemyHP: enemyBaseHP,
+            enemyMaxHP: enemyBaseHP,
             enemyEnergy: 3,
             enemyMaxEnergy: 6,
             playerShield: 0,
@@ -489,12 +492,10 @@
         enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
 
         let pStatus = '';
-        if (p.playerStun > 0) pStatus += `💫 Оглушён (${p.playerStun}) `;
         if (p.playerPoison > 0) pStatus += `☠️ Яд (${p.playerPoison}) `;
         playerStatus.textContent = pStatus;
 
         let eStatus = '';
-        if (p.enemyStun > 0) eStatus += `💫 Оглушён (${p.enemyStun}) `;
         if (p.enemyPoison > 0) eStatus += `☠️ Яд (${p.enemyPoison}) `;
         enemyStatus.textContent = eStatus;
 
@@ -514,17 +515,23 @@
         p.playerHand.forEach((card, index) => {
             const cardEl = document.createElement('div');
             cardEl.className = 'card';
-            const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && p.playerStun === 0 && !p.gameOver;
+            const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && !p.gameOver;
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
-            if (card.dmg) effects.push(`⚔️ ${card.dmg}`);
-            if (card.heal) effects.push(`❤️ +${card.heal}`);
-            if (card.shield) effects.push(`🛡️ ${card.shield}`);
-            if (card.poison) effects.push(`☠️ ${card.poison}`);
-            if (card.stun) effects.push(`💫 оглуш. ${card.stun}`);
-            if (card.stealEnergy) effects.push(`⚡ кража ${card.stealEnergy}`);
-            if (card.energyPlus) effects.push(`⚡ +${card.energyPlus}`);
+            let dmg = card.dmg || 0;
+            let shield = card.shield || 0;
+            let heal = card.heal || 0;
+
+            // Бонусы кланов
+            if (p.playerClan === 'Берсерк') dmg += 1;
+            if (p.playerClan === 'Страж') shield += 1;
+            if (p.playerClan === 'Алхимик' && card.poison) card.poison += 1;
+
+            if (dmg > 0) effects.push(`⚔️ ${dmg}`);
+            if (heal > 0) effects.push(`❤️ +${heal}`);
+            if (shield > 0) effects.push(`🛡️ ${shield}`);
+            if (card.poison > 0) effects.push(`☠️ ${card.poison}`);
 
             let rarityColor = '#94a3b8';
             if (card.rarity === 'Необычная') rarityColor = '#22d3ee';
@@ -546,7 +553,7 @@
 
     // ---------- РАЗЫГРАТЬ КАРТУ ----------
     function playCard(index) {
-        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn || gameState.playerStun > 0) return;
+        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
 
         const p = gameState;
         const card = p.playerHand[index];
@@ -555,7 +562,69 @@
             return;
         }
 
-        applyCardEffects(card, 'player');
+        // Применяем эффекты карты
+        let dmg = card.dmg || 0;
+        let shield = card.shield || 0;
+        let heal = card.heal || 0;
+        let poison = card.poison || 0;
+
+        // Бонусы кланов
+        if (p.playerClan === 'Берсерк') dmg += 1;
+        if (p.playerClan === 'Страж') shield += 1;
+        if (p.playerClan === 'Алхимик' && poison > 0) poison += 1;
+
+        // Особые механики
+        if (p.playerClan === 'Берсерк' && heal > 0) {
+            // Кровавая жатва: хил = урон
+            dmg = heal;
+            heal = 0;
+        }
+        if (p.playerClan === 'Страж' && heal > 0 && card.shield) {
+            // Божественная защита: хил + щит
+            // shield уже добавлен
+        }
+
+        let logMsg = `Игрок сыграл ${card.name}`;
+
+        // Урон
+        if (dmg > 0) {
+            const shieldTarget = p.enemyShield;
+            let actualDmg = dmg;
+            let absorbed = 0;
+            if (shieldTarget > 0) {
+                absorbed = Math.min(shieldTarget, dmg);
+                actualDmg -= absorbed;
+                p.enemyShield -= absorbed;
+                if (p.enemyShield < 0) p.enemyShield = 0;
+            }
+            if (actualDmg > 0) {
+                p.enemyHP -= actualDmg;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                logMsg += `, нанёс ${actualDmg} урона`;
+            }
+            if (absorbed > 0) {
+                logMsg += `, щит поглотил ${absorbed} урона`;
+            }
+        }
+
+        // Лечение
+        if (heal > 0) {
+            p.playerHP = Math.min(p.playerHP + heal, p.playerMaxHP);
+            logMsg += `, восстановил ${heal} HP`;
+        }
+
+        // Щит
+        if (shield > 0) {
+            p.playerShield += shield;
+            logMsg += `, получил щит ${shield}`;
+        }
+
+        // Яд
+        if (poison > 0) {
+            p.enemyPoison += poison;
+            logMsg += `, наложил яд ${poison}`;
+        }
+
         p.playerHand.splice(index, 1);
         p.playerEnergy -= card.cost;
 
@@ -563,6 +632,7 @@
             drawCard('player');
         }
 
+        addLog(logMsg);
         updateUI();
         renderHand();
 
@@ -573,163 +643,21 @@
         setTimeout(() => enemyTurn(), 600);
     }
 
-    // ---------- ПРИМЕНИТЬ ЭФФЕКТЫ КАРТЫ ----------
-    function applyCardEffects(card, target) {
-        const p = gameState;
-        if (!p) return;
-        const isPlayer = target === 'player';
-        const enemy = isPlayer ? 'enemy' : 'player';
-        const isEnemy = !isPlayer;
-
-        let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
-
-        let dmg = card.dmg || 0;
-        if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
-        if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
-
-        if (dmg > 0) {
-            const shield = isPlayer ? p.enemyShield : p.playerShield;
-            let actualDmg = dmg;
-            let absorbed = 0;
-            if (shield > 0) {
-                absorbed = Math.min(shield, dmg);
-                actualDmg -= absorbed;
-                if (isPlayer) p.enemyShield -= absorbed;
-                else p.playerShield -= absorbed;
-                if (p.enemyShield < 0) p.enemyShield = 0;
-                if (p.playerShield < 0) p.playerShield = 0;
-            }
-            if (actualDmg > 0) {
-                if (isPlayer) p.enemyHP -= actualDmg;
-                else p.playerHP -= actualDmg;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, нанёс ${actualDmg} урона`;
-            }
-            if (absorbed > 0) {
-                logMsg += `, щит поглотил ${absorbed} урона`;
-            }
-        }
-
-        if (card.heal > 0) {
-            if (isPlayer) {
-                p.playerHP = Math.min(p.playerHP + card.heal, p.playerMaxHP);
-                logMsg += `, восстановил ${card.heal} HP`;
-            } else {
-                p.enemyHP = Math.min(p.enemyHP + card.heal, p.enemyMaxHP);
-                logMsg += `, восстановил врагу ${card.heal} HP`;
-            }
-        }
-
-        if (card.shield > 0) {
-            if (isPlayer) {
-                p.playerShield += card.shield;
-                logMsg += `, получил щит ${card.shield}`;
-            } else {
-                p.enemyShield += card.shield;
-                logMsg += `, враг получил щит ${card.shield}`;
-            }
-        }
-
-        if (card.poison > 0) {
-            if (isPlayer) {
-                p.enemyPoison += card.poison;
-                logMsg += `, отравил врага (${card.poison})`;
-            } else {
-                p.playerPoison += card.poison;
-                logMsg += `, отравил игрока (${card.poison})`;
-            }
-        }
-
-        let stun = card.stun || 0;
-        if (isPlayer && p.playerClan === 'Страж') stun += 1;
-        if (!isPlayer && p.enemyClan === 'Страж') stun += 1;
-
-        if (stun > 0) {
-            if (isPlayer) {
-                p.enemyStun += stun;
-                logMsg += `, оглушил врага на ${stun} хода`;
-            } else {
-                p.playerStun += stun;
-                logMsg += `, оглушил игрока на ${stun} хода`;
-            }
-        }
-
-        if (card.stealEnergy > 0) {
-            if (isPlayer) {
-                const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
-                p.enemyEnergy -= stolen;
-                p.playerEnergy = Math.min(p.playerEnergy + stolen, p.playerMaxEnergy);
-                logMsg += `, украл ${stolen} энергии у врага`;
-            } else {
-                const stolen = Math.min(card.stealEnergy, p.playerEnergy);
-                p.playerEnergy -= stolen;
-                p.enemyEnergy = Math.min(p.enemyEnergy + stolen, p.enemyMaxEnergy);
-                logMsg += `, украл ${stolen} энергии у игрока`;
-            }
-        }
-
-        if (card.energyPlus > 0) {
-            if (isPlayer) {
-                p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
-                logMsg += `, получил +${card.energyPlus} энергии`;
-            } else {
-                p.enemyEnergy = Math.min(p.enemyEnergy + card.energyPlus, p.enemyMaxEnergy);
-                logMsg += `, враг получил +${card.energyPlus} энергии`;
-            }
-        }
-
-        if (dmg > 0) {
-            if (isPlayer && p.playerClan === 'Алхимик') {
-                p.enemyPoison += 1;
-                logMsg += `, алхимик отравил врага (+1 яд)`;
-            }
-            if (!isPlayer && p.enemyClan === 'Алхимик') {
-                p.playerPoison += 1;
-                logMsg += `, алхимик отравил игрока (+1 яд)`;
-            }
-        }
-
-        if (isPlayer) {
-            if (p.enemyPoison > 0) {
-                p.enemyHP -= p.enemyPoison;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                logMsg += `, враг получил ${p.enemyPoison} урона от яда`;
-            }
-        } else {
-            if (p.playerPoison > 0) {
-                p.playerHP -= p.playerPoison;
-                if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, игрок получил ${p.playerPoison} урона от яда`;
-            }
-        }
-
-        addLog(logMsg, isEnemy);
-        updateUI();
-        renderHand();
-        checkGameOver();
-    }
-
     // ---------- ХОД ВРАГА ----------
     function enemyTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
 
+        // Яд срабатывает в конце хода врага
+        if (p.enemyPoison > 0) {
+            p.enemyHP -= p.enemyPoison;
+            if (p.enemyHP < 0) p.enemyHP = 0;
+            addLog(`☠️ Враг получил ${p.enemyPoison} урона от яда`, true);
+            if (checkGameOver()) return;
+        }
+
         p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
         addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy}/${p.enemyMaxEnergy})`, true);
-
-        if (p.enemyStun > 0) {
-            p.enemyStun -= 1;
-            addLog(`💫 Враг оглушён и пропускает ход`, true);
-            p.isPlayerTurn = true;
-            p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
-            updateUI();
-            renderHand();
-            if (!checkGameOver()) {
-                addLog(`⚔️ Твой ход!`);
-            }
-            return;
-        }
 
         while (p.enemyHand.length < 4) {
             drawCard('enemy');
@@ -748,10 +676,63 @@
                 if (originalIndex === -1) continue;
 
                 if (p.enemyEnergy >= card.cost) {
-                    applyCardEffects(card, 'enemy');
+                    // Враг разыгрывает карту
+                    let dmg = card.dmg || 0;
+                    let shield = card.shield || 0;
+                    let heal = card.heal || 0;
+                    let poison = card.poison || 0;
+
+                    // Бонусы врага
+                    if (p.enemyClan === 'Берсерк') dmg += 1;
+                    if (p.enemyClan === 'Страж') shield += 1;
+                    if (p.enemyClan === 'Алхимик' && poison > 0) poison += 1;
+
+                    if (p.enemyClan === 'Берсерк' && heal > 0) {
+                        dmg = heal;
+                        heal = 0;
+                    }
+
+                    let logMsg = `Враг сыграл ${card.name}`;
+
+                    if (dmg > 0) {
+                        const shieldTarget = p.playerShield;
+                        let actualDmg = dmg;
+                        let absorbed = 0;
+                        if (shieldTarget > 0) {
+                            absorbed = Math.min(shieldTarget, dmg);
+                            actualDmg -= absorbed;
+                            p.playerShield -= absorbed;
+                            if (p.playerShield < 0) p.playerShield = 0;
+                        }
+                        if (actualDmg > 0) {
+                            p.playerHP -= actualDmg;
+                            if (p.playerHP < 0) p.playerHP = 0;
+                            logMsg += `, нанёс ${actualDmg} урона`;
+                        }
+                        if (absorbed > 0) {
+                            logMsg += `, щит поглотил ${absorbed} урона`;
+                        }
+                    }
+
+                    if (heal > 0) {
+                        p.enemyHP = Math.min(p.enemyHP + heal, p.enemyMaxHP);
+                        logMsg += `, восстановил ${heal} HP`;
+                    }
+
+                    if (shield > 0) {
+                        p.enemyShield += shield;
+                        logMsg += `, получил щит ${shield}`;
+                    }
+
+                    if (poison > 0) {
+                        p.playerPoison += poison;
+                        logMsg += `, наложил яд ${poison}`;
+                    }
+
                     p.enemyHand.splice(originalIndex, 1);
                     p.enemyEnergy -= card.cost;
                     cardPlayed = true;
+                    addLog(logMsg, true);
                     break;
                 }
             }
@@ -805,17 +786,36 @@
 
     // ---------- ЭКРАН КОНЦА ИГРЫ ----------
     function showGameOver(win) {
-        gameOverContainer.innerHTML = `
-            <div class="game-over-overlay">
-                <div class="result ${win ? 'win' : 'lose'}">${win ? '🏆 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}</div>
-                <button class="menu-btn" style="margin:10px auto; width:200px; padding:12px; font-size:16px;" onclick="restartGame()">🔄 Играть снова</button>
-                <button class="menu-btn" style="margin:0 auto; width:200px; padding:12px; font-size:16px; background:#2d2d4a;" onclick="goToMenu()">🏠 Меню</button>
-            </div>
-        `;
+        if (win) {
+            gameOverContainer.innerHTML = `
+                <div class="game-over-overlay">
+                    <div class="result win">🏆 ПОБЕДА!</div>
+                    <button class="menu-btn" style="margin:10px auto; width:200px; padding:12px; font-size:16px;" onclick="continueGame()">⚔️ Продолжить</button>
+                    <button class="menu-btn" style="margin:0 auto; width:200px; padding:12px; font-size:16px; background:#2d2d4a;" onclick="goToMenu()">🏠 Меню</button>
+                </div>
+            `;
+        } else {
+            gameOverContainer.innerHTML = `
+                <div class="game-over-overlay">
+                    <div class="result lose">💀 ПОРАЖЕНИЕ</div>
+                    <button class="menu-btn" style="margin:10px auto; width:200px; padding:12px; font-size:16px;" onclick="restartGame()">🔄 Играть снова</button>
+                    <button class="menu-btn" style="margin:0 auto; width:200px; padding:12px; font-size:16px; background:#2d2d4a;" onclick="goToMenu()">🏠 Меню</button>
+                </div>
+            `;
+        }
+    }
+
+    // ---------- ПРОДОЛЖИТЬ (НОВЫЙ ВРАГ) ----------
+    function continueGame() {
+        enemyBaseHP += 5;
+        gameOverContainer.innerHTML = '';
+        battleScreen.style.display = 'none';
+        startGame(gameState.playerClan);
     }
 
     // ---------- ПЕРЕЗАПУСК ----------
     function restartGame() {
+        enemyBaseHP = 15;
         gameOverContainer.innerHTML = '';
         battleScreen.style.display = 'none';
         showScreen(clanScreen);
@@ -834,15 +834,6 @@
     endTurnBtn.addEventListener('click', function() {
         if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
         const p = gameState;
-
-        if (p.playerStun > 0) {
-            p.playerStun -= 1;
-            addLog(`💫 Ты оглушён и пропускаешь ход`);
-            p.isPlayerTurn = false;
-            updateUI();
-            setTimeout(() => enemyTurn(), 600);
-            return;
-        }
 
         p.isPlayerTurn = false;
         updateUI();
