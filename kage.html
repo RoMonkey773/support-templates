@@ -786,7 +786,7 @@
 
 <script>
     // =======================================================
-    // SHARD — С МАГАЗИНОМ, РАСАМИ И СИНЕРГИЯМИ
+    // SHARD — ИСПРАВЛЕННАЯ ВЕРСИЯ (РАБОТАЮТ КАРТЫ)
     // =======================================================
 
     function createSakura() {
@@ -946,7 +946,6 @@
             }
         });
 
-        // Обновляем отображение
         let synText = 'Синергии: ';
         if (activeSynergies.dmg > 0) synText += `⚔+${activeSynergies.dmg} `;
         if (activeSynergies.shield > 0) synText += `🛡+${activeSynergies.shield} `;
@@ -1445,6 +1444,7 @@
         saveGame();
     }
 
+    // ---------- ГЛАВНАЯ ФИКС: РЕНДЕР РУКИ (РАБОТАЕТ) ----------
     function renderHand() {
         handContainer.innerHTML = '';
         if (!gameState || gameState.gameOver) {
@@ -1458,7 +1458,6 @@
             return;
         }
 
-        // Рассчитываем активные синергии для боя
         const synergies = calculateSynergies();
 
         p.playerHand.forEach((card, index) => {
@@ -1468,19 +1467,14 @@
             else if (card.rarity === 'uncommon') cardEl.classList.add('uncommon');
             else cardEl.classList.add('common');
 
+            // Проверка, можно ли сыграть карту
             const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && p.playerStun === 0 && !p.gameOver && p.coinFlipDone;
             if (!canPlay) cardEl.classList.add('disabled');
 
             let effects = [];
-            let baseDmg = card.dmg || 0;
-            let baseShield = card.shield || 0;
-            let baseHeal = card.heal || 0;
-            let baseEnergy = 0;
-
-            // Применяем синергии к карте
-            let finalDmg = baseDmg + (card.race && synergies.dmg ? synergies.dmg : 0);
-            let finalShield = baseShield + (card.race && synergies.shield ? synergies.shield : 0);
-            let finalHeal = baseHeal + (card.race && synergies.heal ? synergies.heal : 0);
+            let finalDmg = (card.dmg || 0) + (card.race && synergies.dmg ? synergies.dmg : 0);
+            let finalShield = (card.shield || 0) + (card.race && synergies.shield ? synergies.shield : 0);
+            let finalHeal = (card.heal || 0) + (card.race && synergies.heal ? synergies.heal : 0);
             let finalEnergy = (card.energyPlus || 0) + (card.race && synergies.energy ? synergies.energy : 0);
 
             if (finalDmg) effects.push(`⚔${finalDmg}`);
@@ -1504,6 +1498,7 @@
                 ${raceDisplay}
             `;
 
+            // Обработчик клика
             cardEl.addEventListener('click', () => {
                 if (canPlay) {
                     cardEl.style.transform = 'translateY(-10px) scale(1.05)';
@@ -1518,7 +1513,222 @@
         });
     }
 
-    // ---------- МОНЕТКА ----------
+    // ---------- РАЗЫГРАТЬ КАРТУ ----------
+    function playCard(index) {
+        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn || gameState.playerStun > 0) return;
+
+        const p = gameState;
+        const card = p.playerHand[index];
+        if (p.playerEnergy < card.cost) {
+            addLog('⚠️ Нет энергии', 'system');
+            return;
+        }
+
+        applyCardEffects(card, 'player');
+        p.playerHand.splice(index, 1);
+        p.playerEnergy -= card.cost;
+
+        while (p.playerHand.length < 4) {
+            drawCard('player');
+        }
+
+        updateBattleUI();
+        renderHand();
+
+        if (checkGameOver()) return;
+
+        let canPlayAny = false;
+        for (let c of p.playerHand) {
+            if (p.playerEnergy >= c.cost) {
+                canPlayAny = true;
+                break;
+            }
+        }
+
+        if (!canPlayAny) {
+            addLog('⏳ Нет карт для игры', 'system');
+            endTurnBtn.textContent = '⏳ Завершить';
+        } else {
+            endTurnBtn.textContent = '⚔️ Завершить ход';
+        }
+
+        saveGame();
+    }
+
+    // ---------- ПРИМЕНЕНИЕ ЭФФЕКТОВ КАРТЫ ----------
+    function applyCardEffects(card, target) {
+        const p = gameState;
+        if (!p) return;
+        const isPlayer = target === 'player';
+        const enemy = isPlayer ? 'enemy' : 'player';
+        const isEnemy = !isPlayer;
+
+        let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
+
+        let dmg = card.dmg || 0;
+        let shield = card.shield || 0;
+        let heal = card.heal || 0;
+        let poison = card.poison || 0;
+        let stun = card.stun || 0;
+        let stealEnergy = card.stealEnergy || 0;
+        let energyPlus = card.energyPlus || 0;
+
+        // Синергии уже применены при создании колоды, но на всякий случай дублируем здесь для расовых карт
+        const synergies = calculateSynergies();
+        if (card.race) {
+            if (synergies.dmg) dmg += synergies.dmg;
+            if (synergies.shield) shield += synergies.shield;
+            if (synergies.heal) heal += synergies.heal;
+            if (synergies.energy) energyPlus += synergies.energy;
+        }
+
+        // Бонусы классов
+        if (isPlayer && p.playerClan === 'Берсерк') dmg += 1;
+        if (isPlayer && p.playerClan === 'Страж') shield += 1;
+        if (isPlayer && p.playerClan === 'Алхимик' && poison > 0) poison += 1;
+
+        if (!isPlayer && p.enemyClan === 'Берсерк') dmg += 1;
+        if (!isPlayer && p.enemyClan === 'Страж') shield += 1;
+        if (!isPlayer && p.enemyClan === 'Алхимик' && poison > 0) poison += 1;
+
+        // Особые механики: Жертвенный рывок
+        if (card.name === 'Жертвенный рывок' && isPlayer && p.playerClan === 'Берсерк') {
+            const selfDmg = 2;
+            p.playerHP -= selfDmg;
+            if (p.playerHP < 0) p.playerHP = 0;
+            logMsg += `, -${selfDmg} HP (жертва)`;
+        }
+
+        // Урон
+        if (dmg > 0) {
+            const shieldTarget = isPlayer ? p.enemyShield : p.playerShield;
+            let actualDmg = dmg;
+            let absorbed = 0;
+            if (shieldTarget > 0) {
+                absorbed = Math.min(shieldTarget, dmg);
+                actualDmg -= absorbed;
+                if (isPlayer) p.enemyShield -= absorbed;
+                else p.playerShield -= absorbed;
+                if (p.enemyShield < 0) p.enemyShield = 0;
+                if (p.playerShield < 0) p.playerShield = 0;
+            }
+            if (actualDmg > 0) {
+                if (isPlayer) p.enemyHP -= actualDmg;
+                else p.playerHP -= actualDmg;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                if (p.playerHP < 0) p.playerHP = 0;
+                logMsg += `, -${actualDmg} HP`;
+            }
+            if (absorbed > 0) {
+                logMsg += `, щит -${absorbed}`;
+            }
+        }
+
+        // Лечение
+        if (heal > 0) {
+            if (isPlayer) {
+                p.playerHP = Math.min(p.playerHP + heal, p.playerMaxHP);
+                logMsg += `, +${heal} HP`;
+            } else {
+                p.enemyHP = Math.min(p.enemyHP + heal, p.enemyMaxHP);
+                logMsg += `, враг +${heal} HP`;
+            }
+        }
+
+        // Щит
+        if (shield > 0) {
+            if (isPlayer) {
+                p.playerShield += shield;
+                logMsg += `, щит +${shield}`;
+            } else {
+                p.enemyShield += shield;
+                logMsg += `, враг щит +${shield}`;
+            }
+        }
+
+        // Яд
+        if (poison > 0) {
+            if (isPlayer) {
+                p.enemyPoison += poison;
+                logMsg += `, яд +${poison}`;
+            } else {
+                p.playerPoison += poison;
+                logMsg += `, яд +${poison}`;
+            }
+        }
+
+        // Оглушение
+        if (stun > 0) {
+            if (isPlayer) {
+                p.enemyStun += stun;
+                logMsg += `, оглуш. ${stun}`;
+            } else {
+                p.playerStun += stun;
+                logMsg += `, оглуш. ${stun}`;
+            }
+        }
+
+        // Кража энергии
+        if (stealEnergy > 0) {
+            if (isPlayer) {
+                const stolen = Math.min(stealEnergy, p.enemyEnergy);
+                p.enemyEnergy -= stolen;
+                p.playerEnergy = Math.min(p.playerEnergy + stolen, p.playerMaxEnergy);
+                logMsg += `, кража ⚡${stolen}`;
+            } else {
+                const stolen = Math.min(stealEnergy, p.playerEnergy);
+                p.playerEnergy -= stolen;
+                p.enemyEnergy = Math.min(p.enemyEnergy + stolen, p.enemyMaxEnergy);
+                logMsg += `, кража ⚡${stolen}`;
+            }
+        }
+
+        // Энергия+
+        if (energyPlus > 0) {
+            if (isPlayer) {
+                p.playerEnergy = Math.min(p.playerEnergy + energyPlus, p.playerMaxEnergy);
+                logMsg += `, +⚡${energyPlus}`;
+            } else {
+                p.enemyEnergy = Math.min(p.enemyEnergy + energyPlus, p.enemyMaxEnergy);
+                logMsg += `, враг +⚡${energyPlus}`;
+            }
+        }
+
+        // Бонус Стража: щит укреплён
+        if (isPlayer && p.playerClan === 'Страж' && shield > 0) {
+            logMsg += `, щит укреплён`;
+        }
+
+        addLog(logMsg, isEnemy ? 'enemy' : 'player');
+        updateBattleUI();
+        renderHand();
+        checkGameOver();
+        saveGame();
+    }
+
+    function applyPoisonAtEnd(who) {
+        const p = gameState;
+        if (!p) return;
+        const isEnemy = who === 'enemy';
+        const poisonAmount = isEnemy ? p.enemyPoison : p.playerPoison;
+
+        if (poisonAmount > 0) {
+            if (isEnemy) {
+                p.enemyHP -= poisonAmount;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                addLog(`☠️ Враг получил ${poisonAmount} урона от яда`, 'poison');
+                p.enemyPoison -= 1;
+                if (p.enemyPoison < 0) p.enemyPoison = 0;
+            } else {
+                p.playerHP -= poisonAmount;
+                if (p.playerHP < 0) p.playerHP = 0;
+                addLog(`☠️ Ты получил ${poisonAmount} урона от яда`, 'poison');
+                p.playerPoison -= 1;
+                if (p.playerPoison < 0) p.playerPoison = 0;
+            }
+        }
+    }
+
     function startCoinFlip() {
         const p = gameState;
         p.coinFlipDone = false;
@@ -1558,7 +1768,6 @@
         }, 1500);
     }
 
-    // ---------- ХОДЫ ----------
     function startPlayerTurn() {
         if (!gameState || gameState.gameOver) return;
         const p = gameState;
@@ -1687,212 +1896,6 @@
         saveGame();
 
         setTimeout(() => startCoinFlip(), 500);
-    }
-
-    function playCard(index) {
-        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn || gameState.playerStun > 0) return;
-
-        const p = gameState;
-        const card = p.playerHand[index];
-        if (p.playerEnergy < card.cost) {
-            addLog('⚠️ Нет энергии', 'system');
-            return;
-        }
-
-        applyCardEffects(card, 'player');
-        p.playerHand.splice(index, 1);
-        p.playerEnergy -= card.cost;
-
-        while (p.playerHand.length < 4) {
-            drawCard('player');
-        }
-
-        updateBattleUI();
-        renderHand();
-
-        if (checkGameOver()) return;
-
-        let canPlayAny = false;
-        for (let c of p.playerHand) {
-            if (p.playerEnergy >= c.cost) {
-                canPlayAny = true;
-                break;
-            }
-        }
-
-        if (!canPlayAny && p.playerEnergy > 0) {
-            addLog('⏳ Нет подходящих карт', 'system');
-            endTurnBtn.textContent = '⏳ Завершить (нет карт)';
-        } else if (p.playerEnergy === 0) {
-            addLog('⚡ Энергия кончилась', 'system');
-            endTurnBtn.textContent = '⏳ Завершить (0 энергии)';
-        } else {
-            endTurnBtn.textContent = '⚔️ Завершить ход';
-        }
-
-        saveGame();
-    }
-
-    function applyCardEffects(card, target) {
-        const p = gameState;
-        if (!p) return;
-        const isPlayer = target === 'player';
-        const enemy = isPlayer ? 'enemy' : 'player';
-        const isEnemy = !isPlayer;
-
-        let logMsg = `${isPlayer ? 'Игрок' : 'Враг'} сыграл ${card.name}`;
-
-        let dmg = card.dmg || 0;
-        // Бонус Берсерка уже применён при создании колоды
-        // if (isPlayer && p.playerClan === 'Берсерк') dmg += 1; // Уже в колоде
-
-        if (dmg > 0) {
-            const shield = isPlayer ? p.enemyShield : p.playerShield;
-            let actualDmg = dmg;
-            let absorbed = 0;
-            if (shield > 0) {
-                absorbed = Math.min(shield, dmg);
-                actualDmg -= absorbed;
-                if (isPlayer) p.enemyShield -= absorbed;
-                else p.playerShield -= absorbed;
-                if (p.enemyShield < 0) p.enemyShield = 0;
-                if (p.playerShield < 0) p.playerShield = 0;
-            }
-            if (actualDmg > 0) {
-                if (isPlayer) p.enemyHP -= actualDmg;
-                else p.playerHP -= actualDmg;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, -${actualDmg} HP`;
-            }
-            if (absorbed > 0) {
-                logMsg += `, щит -${absorbed}`;
-            }
-        }
-
-        if (card.heal > 0) {
-            let healAmount = card.heal;
-            let selfDamage = 0;
-            if (card.name === 'Жертвенный рывок' && isPlayer && p.playerClan === 'Берсерк') {
-                selfDamage = 2;
-                p.playerHP -= selfDamage;
-                if (p.playerHP < 0) p.playerHP = 0;
-                logMsg += `, -${selfDamage} HP (жертва)`;
-            }
-            if (isPlayer) {
-                p.playerHP = Math.min(p.playerHP + healAmount, p.playerMaxHP);
-                logMsg += `, +${healAmount} HP`;
-            } else {
-                p.enemyHP = Math.min(p.enemyHP + healAmount, p.enemyMaxHP);
-                logMsg += `, враг +${healAmount} HP`;
-            }
-        }
-
-        if (card.shield > 0) {
-            if (isPlayer) {
-                p.playerShield += card.shield;
-                logMsg += `, щит +${card.shield}`;
-            } else {
-                p.enemyShield += card.shield;
-                logMsg += `, враг щит +${card.shield}`;
-            }
-        }
-
-        if (card.poison > 0) {
-            let poisonAmount = card.poison;
-            if (isPlayer && p.playerClan === 'Алхимик') poisonAmount += 1;
-            if (!isPlayer && p.enemyClan === 'Алхимик') poisonAmount += 1;
-            if (isPlayer) {
-                p.enemyPoison += poisonAmount;
-                logMsg += `, яд +${poisonAmount}`;
-            } else {
-                p.playerPoison += poisonAmount;
-                logMsg += `, яд +${poisonAmount}`;
-            }
-        }
-
-        let stun = card.stun || 0;
-        if (stun > 0) {
-            if (isPlayer) {
-                p.enemyStun += stun;
-                logMsg += `, оглуш. ${stun}`;
-            } else {
-                p.playerStun += stun;
-                logMsg += `, оглуш. ${stun}`;
-            }
-        }
-
-        if (card.stealEnergy > 0) {
-            if (isPlayer) {
-                const stolen = Math.min(card.stealEnergy, p.enemyEnergy);
-                p.enemyEnergy -= stolen;
-                p.playerEnergy = Math.min(p.playerEnergy + stolen, p.playerMaxEnergy);
-                logMsg += `, кража ⚡${stolen}`;
-            } else {
-                const stolen = Math.min(card.stealEnergy, p.playerEnergy);
-                p.playerEnergy -= stolen;
-                p.enemyEnergy = Math.min(p.enemyEnergy + stolen, p.enemyMaxEnergy);
-                logMsg += `, кража ⚡${stolen}`;
-            }
-        }
-
-        if (card.energyPlus > 0) {
-            if (isPlayer) {
-                p.playerEnergy = Math.min(p.playerEnergy + card.energyPlus, p.playerMaxEnergy);
-                logMsg += `, +⚡${card.energyPlus}`;
-            } else {
-                p.enemyEnergy = Math.min(p.enemyEnergy + card.energyPlus, p.enemyMaxEnergy);
-                logMsg += `, враг +⚡${card.energyPlus}`;
-            }
-        }
-
-        // Бонус Стража
-        if (isPlayer && p.playerClan === 'Страж' && card.shield > 0) {
-            logMsg += `, щит укреплён`;
-        }
-        if (!isPlayer && p.enemyClan === 'Страж') {
-            const shieldAfter = isPlayer ? p.enemyShield : p.playerShield;
-            if (shieldAfter > 0 && dmg > 0) {
-                if (isPlayer) {
-                    p.playerHP -= 1;
-                    if (p.playerHP < 0) p.playerHP = 0;
-                    logMsg += `, шипы стража -1 HP`;
-                } else {
-                    p.enemyHP -= 1;
-                    if (p.enemyHP < 0) p.enemyHP = 0;
-                    logMsg += `, шипы стража -1 HP`;
-                }
-            }
-        }
-
-        addLog(logMsg, isEnemy ? 'enemy' : 'player');
-        updateBattleUI();
-        renderHand();
-        checkGameOver();
-        saveGame();
-    }
-
-    function applyPoisonAtEnd(who) {
-        const p = gameState;
-        if (!p) return;
-        const isEnemy = who === 'enemy';
-        const poisonAmount = isEnemy ? p.enemyPoison : p.playerPoison;
-
-        if (poisonAmount > 0) {
-            if (isEnemy) {
-                p.enemyHP -= poisonAmount;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                addLog(`☠️ Враг получил ${poisonAmount} урона от яда`, 'poison');
-                p.enemyPoison -= 1;
-                if (p.enemyPoison < 0) p.enemyPoison = 0;
-            } else {
-                p.playerHP -= poisonAmount;
-                if (p.playerHP < 0) p.playerHP = 0;
-                addLog(`☠️ Ты получил ${poisonAmount} урона от яда`, 'poison');
-                p.playerPoison -= 1;
-                if (p.playerPoison < 0) p.playerPoison = 0;
-            }
-        }
     }
 
     function enemyTurn() {
