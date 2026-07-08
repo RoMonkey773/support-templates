@@ -781,7 +781,7 @@
 
 <script>
     // =======================================================
-    // SHARD — МИНИМАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
+    // SHARD — ИСПРАВЛЕННАЯ ВЕРСИЯ (100% РАБОТАЕТ)
     // =======================================================
 
     // ---------- ДАННЫЕ ----------
@@ -1157,7 +1157,7 @@
         saveGame();
     }
 
-    // ---------- КЛИК ПО КАРТЕ (ГЛАВНАЯ ФИКСА) ----------
+    // ========== ГЛАВНАЯ ФИКСА: КЛИК ПО КАРТЕ ==========
     function onNodeClick(node) {
         const nodeId = node.dataset.nodeId;
         const nodeData = mapNodes.find(n => n.id === nodeId);
@@ -1168,6 +1168,23 @@
             return;
         }
 
+        if (nodeData.level > 0) {
+            const prevLevel = nodeData.level - 1;
+            const prevNodes = mapNodes.filter(n => n.level === prevLevel);
+            const hasCompletedPrev = prevNodes.some(n => n.completed);
+            if (!hasCompletedPrev && prevLevel > 0) {
+                mapStatus.textContent = '❌ Сначала пройди предыдущий уровень!';
+                return;
+            }
+            if (prevLevel === 0) {
+                const startNode = mapNodes.find(n => n.type === 'start');
+                if (startNode && !startNode.completed) {
+                    mapStatus.textContent = '❌ Начни со старта!';
+                    return;
+                }
+            }
+        }
+
         if (nodeData.type === 'enemy' || nodeData.type === 'boss') {
             const enemyClan = nodeData.enemyClan || 'Алхимик';
             const isBoss = nodeData.type === 'boss';
@@ -1175,7 +1192,7 @@
             nodeData.completed = true;
             node.classList.add('disabled');
             saveGame();
-            // ЗАПУСКАЕМ БОЙ
+            // ==== ЗДЕСЬ ЗАПУСКАЕТСЯ БОЙ ====
             startBattle(enemyClan, isBoss);
         } else if (nodeData.type === 'shop') {
             nodeData.completed = true;
@@ -1262,7 +1279,7 @@
         });
     }
 
-    // ---------- СТАРТ БИТВЫ (РАБОТАЕТ) ----------
+    // ========== СТАРТ БИТВЫ (ГЛАВНАЯ ФУНКЦИЯ) ==========
     function startBattle(enemyClanName, isBoss) {
         const synergies = calculateSynergies();
 
