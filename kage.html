@@ -2,10 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Шард — Карточная битва</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #0a0a12;
@@ -16,7 +20,10 @@
             align-items: center;
             padding: 20px;
         }
-        .game-container { max-width: 1100px; width: 100%; }
+        .game-container {
+            max-width: 1100px;
+            width: 100%;
+        }
 
         .menu-screen {
             background: #14141f;
@@ -96,7 +103,9 @@
             margin-bottom: 20px;
             transition: 0.2s;
         }
-        .back-btn:hover { color: #e2e8f0; }
+        .back-btn:hover {
+            color: #e2e8f0;
+        }
         .clan-grid {
             display: flex;
             gap: 20px;
@@ -119,10 +128,27 @@
             background: #28284a;
             box-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
         }
-        .clan-card .icon { font-size: 52px; display: block; margin-bottom: 12px; }
-        .clan-card .name { font-size: 24px; font-weight: bold; color: #e2e8f0; }
-        .clan-card .desc { font-size: 14px; color: #94a3b8; margin-top: 8px; }
-        .clan-card .bonus { font-size: 13px; color: #7c3aed; margin-top: 12px; font-weight: 500; }
+        .clan-card .icon {
+            font-size: 52px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .clan-card .name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+        .clan-card .desc {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+        .clan-card .bonus {
+            font-size: 13px;
+            color: #7c3aed;
+            margin-top: 12px;
+            font-weight: 500;
+        }
 
         .battle-screen {
             display: none;
@@ -131,15 +157,60 @@
             padding: 30px;
             border: 1px solid #2d2d4a;
         }
-        .health-container { display: flex; gap: 20px; margin-bottom: 20px; }
-        .health-box { flex: 1; background: #1e1e32; padding: 14px 18px; border-radius: 12px; border: 1px solid #2d2d4a; }
-        .health-box .hp-text { font-size: 20px; font-weight: bold; }
-        .health-box .hp-bar { height: 8px; background: #2d2d4a; border-radius: 10px; overflow: hidden; margin-top: 6px; }
-        .health-box .hp-bar .fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-        .health-box .hp-bar .fill.player { background: #22c55e; }
-        .health-box .hp-bar .fill.enemy { background: #ef4444; }
-        .health-box .energy { font-size: 18px; font-weight: bold; color: #c4b5fd; }
-        .hand { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0; min-height: 150px; }
+        .battle-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .health-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .health-box {
+            flex: 1;
+            background: #1e1e32;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid #2d2d4a;
+        }
+        .health-box .hp-text {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .health-box .hp-bar {
+            height: 8px;
+            background: #2d2d4a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .health-box .hp-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .health-box .hp-bar .fill.player {
+            background: #22c55e;
+        }
+        .health-box .hp-bar .fill.enemy {
+            background: #ef4444;
+        }
+        .health-box .energy {
+            font-size: 18px;
+            font-weight: bold;
+            color: #c4b5fd;
+        }
+        .hand {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+            min-height: 150px;
+        }
         .card {
             background: #1e1e32;
             border: 2px solid #2d2d4a;
@@ -150,699 +221,785 @@
             transition: all 0.2s;
             text-align: center;
         }
-        .card:hover:not(.disabled) { border-color: #7c3aed; transform: scale(1.05); background: #28284a; }
-        .card .card-name { font-weight: bold; font-size: 14px; }
-        .card .card-cost { display: inline-block; background: #2d2d4a; padding: 0 8px; border-radius: 10px; font-size: 12px; margin-top: 4px; color: #c4b5fd; }
-        .card .card-effect { font-size: 12px; color: #94a3b8; margin-top: 6px; }
-        .card.disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-        .btn-end-turn { background: #2d2d4a; color: #e2e8f0; padding: 12px 50px; font-size: 18px; border: none; border-radius: 10px; cursor: pointer; }
-        .btn-end-turn:hover { background: #3d3d5a; }
-        .btn-end-turn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .battle-log { background: #0a0a12; border-radius: 10px; padding: 12px 16px; margin-top: 15px; max-height: 120px; overflow-y: auto; font-size: 14px; border: 1px solid #1e1e32; }
-        .battle-log .log-entry { padding: 4px 0; border-bottom: 1px solid #1e1e32; color: #cbd5e1; }
-        .battle-log .log-entry.enemy-turn { color: #fbbf24; }
-        .battle-log .log-entry.player-turn { color: #c4b5fd; }
-        .status-text { text-align: center; font-size: 18px; color: #c4b5fd; margin: 10px 0; }
-        .game-over-overlay { text-align: center; padding: 20px; background: #1e1e32; border-radius: 16px; margin-top: 20px; border: 1px solid #7c3aed; }
-        .game-over-overlay .result { font-size: 28px; font-weight: bold; }
-        .game-over-overlay .result.win { color: #22c55e; }
-        .game-over-overlay .result.lose { color: #ef4444; }
+        .card:hover:not(.disabled) {
+            border-color: #7c3aed;
+            transform: scale(1.05);
+            background: #28284a;
+        }
+        .card .card-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .card .card-cost {
+            display: inline-block;
+            background: #2d2d4a;
+            padding: 0 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 4px;
+            color: #c4b5fd;
+        }
+        .card .card-effect {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+        .card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-end-turn {
+            background: #2d2d4a;
+            color: #e2e8f0;
+            padding: 12px 50px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .btn-end-turn:hover {
+            background: #3d3d5a;
+        }
+        .btn-end-turn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .battle-log {
+            background: #0a0a12;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-top: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 14px;
+            border: 1px solid #1e1e32;
+        }
+        .battle-log .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #1e1e32;
+            color: #cbd5e1;
+        }
+        .battle-log .log-entry.enemy-turn {
+            color: #fbbf24;
+        }
+        .battle-log .log-entry.player-turn {
+            color: #c4b5fd;
+        }
+        .status-text {
+            text-align: center;
+            font-size: 18px;
+            color: #c4b5fd;
+            margin: 10px 0;
+        }
+        .game-over-overlay {
+            text-align: center;
+            padding: 20px;
+            background: #1e1e32;
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 1px solid #7c3aed;
+        }
+        .game-over-overlay .result {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .game-over-overlay .result.win {
+            color: #22c55e;
+        }
+        .game-over-overlay .result.lose {
+            color: #ef4444;
+        }
 
         @media (max-width: 700px) {
-            .clan-grid { flex-direction: column; align-items: center; }
-            .clan-card { width: 100%; max-width: 300px; }
-            .card { width: 110px; padding: 10px 12px; }
-            .health-container { flex-direction: column; }
-            .menu-screen h1 { font-size: 48px; letter-spacing: 6px; }
-            .menu-btn { width: 100%; max-width: 280px; }
+            .clan-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .clan-card {
+                width: 100%;
+                max-width: 300px;
+            }
+            .card {
+                width: 110px;
+                padding: 10px 12px;
+            }
+            .health-container {
+                flex-direction: column;
+            }
+            .menu-screen h1 {
+                font-size: 48px;
+                letter-spacing: 6px;
+            }
+            .menu-btn {
+                width: 100%;
+                max-width: 280px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="game-container">
+    <div class="game-container">
 
-    <!-- МЕНЮ -->
-    <div id="menuScreen" class="menu-screen">
-        <h1>ШАРД</h1>
-        <p class="subtitle">Выбери свой путь и начни битву</p>
-        <button class="menu-btn" id="newGameBtn">⚔️ Новая игра</button>
-        <button class="menu-btn small" id="settingsBtn">⚙️ Настройки</button>
-    </div>
-
-    <!-- НАСТРОЙКИ -->
-    <div id="settingsScreen" class="menu-screen" style="display:none;">
-        <h1 style="font-size:40px;">⚙️ Настройки</h1>
-        <p class="subtitle">Звук и управление (в разработке)</p>
-        <button class="menu-btn small" id="soundToggle">🔊 Звук: Вкл</button>
-        <button class="menu-btn small" id="backFromSettings">⬅️ Назад</button>
-    </div>
-
-    <!-- ВЫБОР КЛАНА -->
-    <div id="clanScreen" class="clan-screen">
-        <button class="back-btn" id="backFromClans">⬅️ Назад</button>
-        <h2>Выбери клан</h2>
-        <p class="subtitle">Каждый клан даёт уникальный бонус</p>
-        <div class="clan-grid" id="clanGrid"></div>
-    </div>
-
-    <!-- БОЙ -->
-    <div id="battleScreen" class="battle-screen">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-            <span id="playerClanBadge">⚔️ Клан: Алхимик</span>
-            <span id="turnIndicator">⚔️ Ход игрока</span>
+        <!-- МЕНЮ -->
+        <div id="menuScreen" class="menu-screen">
+            <h1>ШАРД</h1>
+            <p class="subtitle">Выбери свой путь и начни битву</p>
+            <button class="menu-btn" id="newGameBtn">⚔️ Новая игра</button>
+            <button class="menu-btn small" id="settingsBtn">⚙️ Настройки</button>
         </div>
-        <div class="health-container">
-            <div class="health-box">
-                <div>🧑 Игрок</div>
-                <div><span class="hp-text" id="playerHP">30 / 30</span> <span id="playerShieldText">🛡️ 0</span></div>
-                <div class="hp-bar"><div class="fill player" id="playerHPFill" style="width:100%"></div></div>
-                <div>⚡ Энергия: <span class="energy" id="playerEnergy">3</span></div>
-                <div id="playerStatus" style="font-size:13px;color:#94a3b8;"></div>
+
+        <!-- НАСТРОЙКИ -->
+        <div id="settingsScreen" class="menu-screen" style="display:none;">
+            <h1 style="font-size:40px;">⚙️ Настройки</h1>
+            <p class="subtitle">Звук и управление (в разработке)</p>
+            <button class="menu-btn small" id="soundToggle">🔊 Звук: Вкл</button>
+            <button class="menu-btn small" id="backFromSettings">⬅️ Назад</button>
+        </div>
+
+        <!-- ВЫБОР КЛАССА -->
+        <div id="clanScreen" class="clan-screen">
+            <button class="back-btn" id="backFromClans">⬅️ Назад</button>
+            <h2>Выбери класс</h2>
+            <p class="subtitle">Каждый класс даёт уникальный бонус</p>
+            <div class="clan-grid" id="clanGrid"></div>
+        </div>
+
+        <!-- БОЙ -->
+        <div id="battleScreen" class="battle-screen">
+            <div class="battle-header">
+                <span id="playerClanBadge">⚔️ Класс: Алхимик</span>
+                <span id="turnIndicator">⚔️ Ход игрока</span>
             </div>
-            <div class="health-box">
-                <div>👹 Враг</div>
-                <div><span class="hp-text" id="enemyHP">30 / 30</span> <span id="enemyShieldText">🛡️ 0</span></div>
-                <div class="hp-bar"><div class="fill enemy" id="enemyHPFill" style="width:100%"></div></div>
-                <div>⚡ Энергия: <span class="energy" id="enemyEnergy">3</span></div>
-                <div id="enemyStatus" style="font-size:13px;color:#94a3b8;"></div>
+            <div class="health-container">
+                <div class="health-box">
+                    <div>🧑 Игрок</div>
+                    <div><span class="hp-text" id="playerHP">30 / 30</span> <span id="playerShieldText">🛡️ 0</span></div>
+                    <div class="hp-bar"><div class="fill player" id="playerHPFill" style="width:100%"></div></div>
+                    <div>⚡ Энергия: <span class="energy" id="playerEnergy">3</span></div>
+                    <div id="playerStatus" style="font-size:13px;color:#94a3b8;"></div>
+                </div>
+                <div class="health-box">
+                    <div>👹 Враг</div>
+                    <div><span class="hp-text" id="enemyHP">30 / 30</span> <span id="enemyShieldText">🛡️ 0</span></div>
+                    <div class="hp-bar"><div class="fill enemy" id="enemyHPFill" style="width:100%"></div></div>
+                    <div>⚡ Энергия: <span class="energy" id="enemyEnergy">3</span></div>
+                    <div id="enemyStatus" style="font-size:13px;color:#94a3b8;"></div>
+                </div>
+            </div>
+            <div class="status-text" id="statusText">Твой ход. Выбери карту.</div>
+            <div class="hand" id="handContainer"></div>
+            <div style="text-align:center;margin-top:10px;">
+                <button class="btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
+            </div>
+            <div id="gameOverContainer"></div>
+            <div class="battle-log" id="battleLog">
+                <div class="log-entry">⚔️ Битва начинается!</div>
             </div>
         </div>
-        <div class="status-text" id="statusText">Твой ход. Выбери карту.</div>
-        <div class="hand" id="handContainer"></div>
-        <div style="text-align:center;margin-top:10px;">
-            <button class="btn-end-turn" id="endTurnBtn">⚔️ Завершить ход</button>
-        </div>
-        <div id="gameOverContainer"></div>
-        <div class="battle-log" id="battleLog">
-            <div class="log-entry">⚔️ Битва начинается!</div>
-        </div>
+
     </div>
 
-</div>
+    <script>
+        // =======================================================
+        // ШАРД — ПОСЛЕДНЯЯ СТАБИЛЬНАЯ ВЕРСИЯ
+        // =======================================================
 
-<script>
-    // =======================================================
-    // ШАРД — Алхимик, Страж, Берсерк (финальный баланс)
-    // =======================================================
-
-    // ---------- ДАННЫЕ КЛАНОВ (6 КАРТ) ----------
-    const CLAN_DATA = {
-        'Алхимик': {
-            icon: '🧪',
-            bonus: 'Яд наносит +1 урон',
-            cards: [
-                { name: 'Кислотный плевок', dmg: 2, cost: 2, rarity: 'Обычная' },
-                { name: 'Ядовитый туман', dmg: 1, poison: 2, cost: 3, rarity: 'Необычная' },
-                { name: 'Зелье защиты', shield: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Колючая броня', shield: 3, poison: 1, cost: 2, rarity: 'Необычная' },
-                { name: 'Терновый шип', shield: 4, poison: 1, cost: 3, rarity: 'Редкая' },
-                { name: 'Восстановление', heal: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Второе дыхание', heal: 5, cost: 2, rarity: 'Обычная' } // второй хил
-            ]
-        },
-        'Страж': {
-            icon: '🛡️',
-            bonus: 'Все щиты +1',
-            cards: [
-                { name: 'Удар стража', dmg: 4, cost: 3, rarity: 'Обычная' },
-                { name: 'Тяжёлый удар', dmg: 5, cost: 3, rarity: 'Необычная' },
-                { name: 'Каменная стена', shield: 7, cost: 3, rarity: 'Редкая' },
-                { name: 'Щит стража', shield: 5, cost: 2, rarity: 'Обычная' },
-                { name: 'Железная кожа', shield: 4, cost: 2, rarity: 'Обычная' },
-                { name: 'Божественная защита', heal: 4, shield: 3, cost: 2, rarity: 'Необычная' } // хил + щит
-            ]
-        },
-        'Берсерк': {
-            icon: '⚔️',
-            bonus: 'Все карты +1 урон',
-            cards: [
-                { name: 'Яростный удар', dmg: 5, cost: 3, rarity: 'Обычная' },
-                { name: 'Двойной выпад', dmg: 4, cost: 2, rarity: 'Необычная' },
-                { name: 'Боевой клич', shield: 3, cost: 2, rarity: 'Необычная' },
-                { name: 'Ярость берсерка', shield: 4, cost: 3, rarity: 'Редкая' },
-                { name: 'Каменная кожа', shield: 5, cost: 3, rarity: 'Обычная' },
-                { name: 'Кровавая жатва', dmg: 3, cost: 2, rarity: 'Редкая' } // хил = урон
-            ]
-        }
-    };
-
-    // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
-    let gameState = null;
-    let soundEnabled = true;
-    let enemyBaseHP = 15;
-
-    // ---------- ЭЛЕМЕНТЫ DOM ----------
-    const menuScreen = document.getElementById('menuScreen');
-    const settingsScreen = document.getElementById('settingsScreen');
-    const clanScreen = document.getElementById('clanScreen');
-    const battleScreen = document.getElementById('battleScreen');
-    const clanGrid = document.getElementById('clanGrid');
-    const handContainer = document.getElementById('handContainer');
-    const playerHP = document.getElementById('playerHP');
-    const enemyHP = document.getElementById('enemyHP');
-    const playerHPFill = document.getElementById('playerHPFill');
-    const enemyHPFill = document.getElementById('enemyHPFill');
-    const playerEnergy = document.getElementById('playerEnergy');
-    const enemyEnergy = document.getElementById('enemyEnergy');
-    const playerShieldText = document.getElementById('playerShieldText');
-    const enemyShieldText = document.getElementById('enemyShieldText');
-    const playerStatus = document.getElementById('playerStatus');
-    const enemyStatus = document.getElementById('enemyStatus');
-    const statusText = document.getElementById('statusText');
-    const battleLog = document.getElementById('battleLog');
-    const endTurnBtn = document.getElementById('endTurnBtn');
-    const playerClanBadge = document.getElementById('playerClanBadge');
-    const turnIndicator = document.getElementById('turnIndicator');
-    const gameOverContainer = document.getElementById('gameOverContainer');
-
-    // ---------- НАВИГАЦИЯ ----------
-    function showScreen(screen) {
-        [menuScreen, settingsScreen, clanScreen, battleScreen].forEach(s => s.style.display = 'none');
-        screen.style.display = 'block';
-    }
-
-    document.getElementById('newGameBtn').addEventListener('click', () => {
-        enemyBaseHP = 15;
-        showScreen(clanScreen);
-        renderClans();
-    });
-
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-        showScreen(settingsScreen);
-    });
-
-    document.getElementById('backFromSettings').addEventListener('click', () => {
-        showScreen(menuScreen);
-    });
-
-    document.getElementById('backFromClans').addEventListener('click', () => {
-        showScreen(menuScreen);
-    });
-
-    document.getElementById('soundToggle').addEventListener('click', function() {
-        soundEnabled = !soundEnabled;
-        this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
-    });
-
-    // ---------- УТИЛИТЫ ----------
-    function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
-
-    function cloneCard(card) {
-        return { ...card };
-    }
-
-    // ---------- ОТРИСОВКА КЛАНОВ ----------
-    function renderClans() {
-        clanGrid.innerHTML = '';
-        const clanNames = Object.keys(CLAN_DATA);
-        clanNames.forEach(clan => {
-            const data = CLAN_DATA[clan];
-            const card = document.createElement('div');
-            card.className = 'clan-card';
-            card.innerHTML = `
-                <span class="icon">${data.icon}</span>
-                <div class="name">${clan}</div>
-                <div class="desc">${data.cards.length} карт в колоде</div>
-                <div class="bonus">🎯 ${data.bonus}</div>
-            `;
-            card.addEventListener('click', () => startGame(clan));
-            clanGrid.appendChild(card);
-        });
-    }
-
-    // ---------- СТАРТ ИГРЫ ----------
-    function startGame(playerClanName) {
-        const playerData = CLAN_DATA[playerClanName];
-        const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== playerClanName)[0];
-        const enemyData = CLAN_DATA[enemyClanName];
-
-        function createInfiniteDeck(clanName) {
-            const baseCards = CLAN_DATA[clanName].cards;
-            const deck = [];
-            for (let i = 0; i < 3; i++) {
-                baseCards.forEach(c => deck.push(cloneCard(c)));
+        // ---------- ДАННЫЕ КЛАССОВ (6 КАРТ) ----------
+        const CLAN_DATA = {
+            'Алхимик': {
+                icon: '🧪',
+                bonus: 'Яд наносит +1 урон',
+                cards: [
+                    { name: 'Кислотный плевок', dmg: 2, cost: 2 },
+                    { name: 'Ядовитый туман', dmg: 1, poison: 2, cost: 3 },
+                    { name: 'Зелье защиты', shield: 5, cost: 2 },
+                    { name: 'Колючая броня', shield: 3, poison: 1, cost: 2 },
+                    { name: 'Терновый шип', shield: 4, poison: 1, cost: 3 },
+                    { name: 'Восстановление', heal: 5, cost: 2 }
+                ]
+            },
+            'Страж': {
+                icon: '🛡️',
+                bonus: 'Все щиты +1',
+                cards: [
+                    { name: 'Удар стража', dmg: 4, cost: 3 },
+                    { name: 'Тяжёлый удар', dmg: 5, cost: 3 },
+                    { name: 'Каменная стена', shield: 7, cost: 3 },
+                    { name: 'Щит стража', shield: 5, cost: 2 },
+                    { name: 'Железная кожа', shield: 4, cost: 2 },
+                    { name: 'Божественная защита', heal: 4, shield: 3, cost: 2 }
+                ]
+            },
+            'Берсерк': {
+                icon: '⚔️',
+                bonus: 'Все карты +1 урон',
+                cards: [
+                    { name: 'Яростный удар', dmg: 5, cost: 3 },
+                    { name: 'Двойной выпад', dmg: 4, cost: 2 },
+                    { name: 'Боевой клич', shield: 3, cost: 2 },
+                    { name: 'Ярость берсерка', shield: 4, cost: 3 },
+                    { name: 'Каменная кожа', shield: 5, cost: 3 },
+                    { name: 'Кровавая жатва', dmg: 3, cost: 2 }
+                ]
             }
-            return shuffle(deck);
-        }
-
-        const playerDeck = createInfiniteDeck(playerClanName);
-        const enemyDeck = createInfiniteDeck(enemyClanName);
-
-        gameState = {
-            playerClan: playerClanName,
-            enemyClan: enemyClanName,
-            playerHP: 30,
-            playerMaxHP: 30,
-            playerEnergy: 3,
-            playerMaxEnergy: 6,
-            enemyHP: enemyBaseHP,
-            enemyMaxHP: enemyBaseHP,
-            enemyEnergy: 3,
-            enemyMaxEnergy: 6,
-            playerShield: 0,
-            enemyShield: 0,
-            playerStun: 0,
-            enemyStun: 0,
-            playerPoison: 0,
-            enemyPoison: 0,
-            isPlayerTurn: true,
-            gameOver: false,
-            playerDeck: playerDeck,
-            enemyDeck: enemyDeck,
-            playerHand: [],
-            enemyHand: [],
         };
 
-        for (let i = 0; i < 4; i++) {
-            drawCard('player');
-            drawCard('enemy');
+        // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
+        let gameState = null;
+        let soundEnabled = true;
+        let enemyBaseHP = 15;
+
+        // ---------- ЭЛЕМЕНТЫ DOM ----------
+        const menuScreen = document.getElementById('menuScreen');
+        const settingsScreen = document.getElementById('settingsScreen');
+        const clanScreen = document.getElementById('clanScreen');
+        const battleScreen = document.getElementById('battleScreen');
+        const clanGrid = document.getElementById('clanGrid');
+        const handContainer = document.getElementById('handContainer');
+        const playerHP = document.getElementById('playerHP');
+        const enemyHP = document.getElementById('enemyHP');
+        const playerHPFill = document.getElementById('playerHPFill');
+        const enemyHPFill = document.getElementById('enemyHPFill');
+        const playerEnergy = document.getElementById('playerEnergy');
+        const enemyEnergy = document.getElementById('enemyEnergy');
+        const playerShieldText = document.getElementById('playerShieldText');
+        const enemyShieldText = document.getElementById('enemyShieldText');
+        const playerStatus = document.getElementById('playerStatus');
+        const enemyStatus = document.getElementById('enemyStatus');
+        const statusText = document.getElementById('statusText');
+        const battleLog = document.getElementById('battleLog');
+        const endTurnBtn = document.getElementById('endTurnBtn');
+        const playerClanBadge = document.getElementById('playerClanBadge');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const gameOverContainer = document.getElementById('gameOverContainer');
+
+        // ---------- НАВИГАЦИЯ ----------
+        function showScreen(screen) {
+            [menuScreen, settingsScreen, clanScreen, battleScreen].forEach(s => s.style.display = 'none');
+            screen.style.display = 'block';
         }
 
-        showScreen(battleScreen);
-        gameOverContainer.innerHTML = '';
+        document.getElementById('newGameBtn').addEventListener('click', () => {
+            enemyBaseHP = 15;
+            showScreen(clanScreen);
+            renderClans();
+        });
 
-        playerClanBadge.textContent = `⚔️ Клан: ${playerClanName}`;
-        battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
-        addLog(`⚔️ Ты — ${playerClanName}, враг — ${enemyClanName}`);
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            showScreen(settingsScreen);
+        });
 
-        endTurnBtn.disabled = false;
-        updateUI();
-        renderHand();
-    }
+        document.getElementById('backFromSettings').addEventListener('click', () => {
+            showScreen(menuScreen);
+        });
 
-    // ---------- ВЗЯТЬ КАРТУ ----------
-    function drawCard(target) {
-        const isPlayer = target === 'player';
-        const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
-        const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
+        document.getElementById('backFromClans').addEventListener('click', () => {
+            showScreen(menuScreen);
+        });
 
-        if (deck.length === 0) {
-            const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
-            const baseCards = CLAN_DATA[clanName].cards;
-            const newDeck = [];
-            for (let i = 0; i < 3; i++) {
-                baseCards.forEach(c => newDeck.push(cloneCard(c)));
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
+        });
+
+        // ---------- УТИЛИТЫ ----------
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
             }
-            const shuffled = shuffle(newDeck);
-            if (isPlayer) {
-                gameState.playerDeck = shuffled;
-            } else {
-                gameState.enemyDeck = shuffled;
+            return a;
+        }
+
+        function cloneCard(card) {
+            return { ...card };
+        }
+
+        // ---------- ОТРИСОВКА КЛАССОВ ----------
+        function renderClans() {
+            clanGrid.innerHTML = '';
+            const clanNames = Object.keys(CLAN_DATA);
+            clanNames.forEach(clan => {
+                const data = CLAN_DATA[clan];
+                const card = document.createElement('div');
+                card.className = 'clan-card';
+                card.innerHTML = `
+                <span class="icon">${data.icon}</span>
+                <div class="name">${clan}</div>
+                <div class="desc">${data.cards.length} карт</div>
+                <div class="bonus">🎯 ${data.bonus}</div>
+                `;
+                card.addEventListener('click', () => startGame(clan));
+                clanGrid.appendChild(card);
+            });
+        }
+
+        // ---------- СТАРТ ИГРЫ ----------
+        function startGame(playerClanName) {
+            const playerData = CLAN_DATA[playerClanName];
+            const enemyClanName = Object.keys(CLAN_DATA).filter(c => c !== playerClanName)[0];
+            const enemyData = CLAN_DATA[enemyClanName];
+
+            function createDeck(clanName) {
+                const baseCards = CLAN_DATA[clanName].cards;
+                const deck = [];
+                for (let i = 0; i < 3; i++) {
+                    baseCards.forEach(c => deck.push(cloneCard(c)));
+                }
+                return shuffle(deck);
             }
-            addLog(`🔄 ${isPlayer ? 'Игрок' : 'Враг'} перетасовал колоду`);
-            return drawCard(target);
+
+            const playerDeck = createDeck(playerClanName);
+            const enemyDeck = createDeck(enemyClanName);
+
+            gameState = {
+                playerClan: playerClanName,
+                enemyClan: enemyClanName,
+                playerHP: 30,
+                playerMaxHP: 30,
+                playerEnergy: 3,
+                playerMaxEnergy: 6,
+                enemyHP: enemyBaseHP,
+                enemyMaxHP: enemyBaseHP,
+                enemyEnergy: 3,
+                enemyMaxEnergy: 6,
+                playerShield: 0,
+                enemyShield: 0,
+                playerPoison: 0,
+                enemyPoison: 0,
+                isPlayerTurn: true,
+                gameOver: false,
+                playerDeck: playerDeck,
+                enemyDeck: enemyDeck,
+                playerHand: [],
+                enemyHand: [],
+            };
+
+            for (let i = 0; i < 4; i++) {
+                drawCard('player');
+                drawCard('enemy');
+            }
+
+            showScreen(battleScreen);
+            gameOverContainer.innerHTML = '';
+
+            playerClanBadge.textContent = `⚔️ Класс: ${playerClanName}`;
+            battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
+            addLog(`⚔️ Ты — ${playerClanName}, враг — ${enemyClanName}`);
+
+            endTurnBtn.disabled = false;
+            updateUI();
+            renderHand();
         }
 
-        const card = deck.pop();
-        hand.push(card);
-        return card;
-    }
+        // ---------- ВЗЯТЬ КАРТУ ----------
+        function drawCard(target) {
+            const isPlayer = target === 'player';
+            const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
+            const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
 
-    // ---------- ЛОГ ----------
-    function addLog(text, isEnemy = false) {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry' + (isEnemy ? ' enemy-turn' : ' player-turn');
-        entry.textContent = text;
-        battleLog.appendChild(entry);
-        battleLog.scrollTop = battleLog.scrollHeight;
-        while (battleLog.children.length > 100) {
-            battleLog.removeChild(battleLog.firstChild);
-        }
-    }
+            if (deck.length === 0) {
+                const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
+                const baseCards = CLAN_DATA[clanName].cards;
+                const newDeck = [];
+                for (let i = 0; i < 3; i++) {
+                    baseCards.forEach(c => newDeck.push(cloneCard(c)));
+                }
+                const shuffled = shuffle(newDeck);
+                if (isPlayer) {
+                    gameState.playerDeck = shuffled;
+                } else {
+                    gameState.enemyDeck = shuffled;
+                }
+                addLog(`🔄 ${isPlayer ? 'Игрок' : 'Враг'} перетасовал колоду`);
+                return drawCard(target);
+            }
 
-    // ---------- ОБНОВЛЕНИЕ UI ----------
-    function updateUI() {
-        const p = gameState;
-        if (!p) return;
-        playerHP.textContent = `${Math.max(0, p.playerHP)} / ${p.playerMaxHP}`;
-        enemyHP.textContent = `${Math.max(0, p.enemyHP)} / ${p.enemyMaxHP}`;
-        playerHPFill.style.width = `${Math.max(0, (p.playerHP / p.playerMaxHP) * 100)}%`;
-        enemyHPFill.style.width = `${Math.max(0, (p.enemyHP / p.enemyMaxHP) * 100)}%`;
-        playerEnergy.textContent = p.playerEnergy;
-        enemyEnergy.textContent = p.enemyEnergy;
-        playerShieldText.textContent = `🛡️ ${p.playerShield}`;
-        enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
-
-        let pStatus = '';
-        if (p.playerPoison > 0) pStatus += `☠️ Яд (${p.playerPoison}) `;
-        playerStatus.textContent = pStatus;
-
-        let eStatus = '';
-        if (p.enemyPoison > 0) eStatus += `☠️ Яд (${p.enemyPoison}) `;
-        enemyStatus.textContent = eStatus;
-
-        turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
-        statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
-    }
-
-    // ---------- РЕНДЕР РУКИ ----------
-    function renderHand() {
-        handContainer.innerHTML = '';
-        if (!gameState || gameState.gameOver) {
-            handContainer.innerHTML = '<div style="color:#94a3b8;">Игра окончена</div>';
-            return;
+            const card = deck.pop();
+            hand.push(card);
+            return card;
         }
 
-        const p = gameState;
-        p.playerHand.forEach((card, index) => {
-            const cardEl = document.createElement('div');
-            cardEl.className = 'card';
-            const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && !p.gameOver;
-            if (!canPlay) cardEl.classList.add('disabled');
+        // ---------- ЛОГ ----------
+        function addLog(text, isEnemy = false) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry' + (isEnemy ? ' enemy-turn' : ' player-turn');
+            entry.textContent = text;
+            battleLog.appendChild(entry);
+            battleLog.scrollTop = battleLog.scrollHeight;
+            while (battleLog.children.length > 100) {
+                battleLog.removeChild(battleLog.firstChild);
+            }
+        }
 
-            let effects = [];
+        // ---------- ОБНОВЛЕНИЕ UI ----------
+        function updateUI() {
+            const p = gameState;
+            if (!p) return;
+            playerHP.textContent = `${Math.max(0, p.playerHP)} / ${p.playerMaxHP}`;
+            enemyHP.textContent = `${Math.max(0, p.enemyHP)} / ${p.enemyMaxHP}`;
+            playerHPFill.style.width = `${Math.max(0, (p.playerHP / p.playerMaxHP) * 100)}%`;
+            enemyHPFill.style.width = `${Math.max(0, (p.enemyHP / p.enemyMaxHP) * 100)}%`;
+            playerEnergy.textContent = p.playerEnergy;
+            enemyEnergy.textContent = p.enemyEnergy;
+            playerShieldText.textContent = `🛡️ ${p.playerShield}`;
+            enemyShieldText.textContent = `🛡️ ${p.enemyShield}`;
+
+            playerStatus.textContent = p.playerPoison > 0 ? `☠️ Яд ${p.playerPoison}` : '';
+            enemyStatus.textContent = p.enemyPoison > 0 ? `☠️ Яд ${p.enemyPoison}` : '';
+
+            turnIndicator.textContent = p.isPlayerTurn ? '⚔️ Ход игрока' : '⏳ Ход врага';
+            statusText.textContent = p.isPlayerTurn ? 'Твой ход. Выбери карту.' : 'Враг думает...';
+        }
+
+        // ---------- РЕНДЕР РУКИ ----------
+        function renderHand() {
+            handContainer.innerHTML = '';
+            if (!gameState || gameState.gameOver) {
+                handContainer.innerHTML = '<div style="color:#94a3b8;">Игра окончена</div>';
+                return;
+            }
+
+            const p = gameState;
+            p.playerHand.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                const canPlay = p.playerEnergy >= card.cost && p.isPlayerTurn && !p.gameOver;
+                if (!canPlay) cardEl.classList.add('disabled');
+
+                let effects = [];
+                let dmg = card.dmg || 0;
+                let shield = card.shield || 0;
+                let heal = card.heal || 0;
+                let poison = card.poison || 0;
+
+                // Применяем бонусы классов
+                if (p.playerClan === 'Берсерк') dmg += 1;
+                if (p.playerClan === 'Страж') shield += 1;
+                if (p.playerClan === 'Алхимик') {
+                    if (poison > 0) poison += 1;
+                }
+
+                // Особые механики
+                if (p.playerClan === 'Берсерк' && heal > 0) {
+                    // Кровавая жатва: хил = урон
+                    dmg = heal;
+                    heal = 0;
+                }
+
+                if (dmg > 0) effects.push(`⚔️ ${dmg}`);
+                if (heal > 0) effects.push(`❤️ +${heal}`);
+                if (shield > 0) effects.push(`🛡️ ${shield}`);
+                if (poison > 0) effects.push(`☠️ ${poison}`);
+
+                cardEl.innerHTML = `
+                <div class="card-name">${card.name}</div>
+                <div class="card-effect">${effects.join(' ')}</div>
+                <div class="card-cost">⚡ ${card.cost}</div>
+                `;
+
+                cardEl.addEventListener('click', () => {
+                    if (canPlay) playCard(index);
+                });
+
+                handContainer.appendChild(cardEl);
+            });
+        }
+
+        // ---------- РАЗЫГРАТЬ КАРТУ ----------
+        function playCard(index) {
+            if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
+
+            const p = gameState;
+            const card = p.playerHand[index];
+            if (p.playerEnergy < card.cost) {
+                addLog('⚠️ Недостаточно энергии!');
+                return;
+            }
+
+            // Применяем эффекты карты
             let dmg = card.dmg || 0;
             let shield = card.shield || 0;
             let heal = card.heal || 0;
+            let poison = card.poison || 0;
 
-            // Бонусы кланов
+            // Бонусы классов
             if (p.playerClan === 'Берсерк') dmg += 1;
             if (p.playerClan === 'Страж') shield += 1;
-            if (p.playerClan === 'Алхимик' && card.poison) card.poison += 1;
-
-            if (dmg > 0) effects.push(`⚔️ ${dmg}`);
-            if (heal > 0) effects.push(`❤️ +${heal}`);
-            if (shield > 0) effects.push(`🛡️ ${shield}`);
-            if (card.poison > 0) effects.push(`☠️ ${card.poison}`);
-
-            let rarityColor = '#94a3b8';
-            if (card.rarity === 'Необычная') rarityColor = '#22d3ee';
-            if (card.rarity === 'Редкая') rarityColor = '#c084fc';
-
-            cardEl.innerHTML = `
-                <div class="card-name" style="color:${rarityColor};">${card.name}</div>
-                <div class="card-effect">${effects.join(' ')}</div>
-                <div class="card-cost">⚡ ${card.cost}</div>
-            `;
-
-            cardEl.addEventListener('click', () => {
-                if (canPlay) playCard(index);
-            });
-
-            handContainer.appendChild(cardEl);
-        });
-    }
-
-    // ---------- РАЗЫГРАТЬ КАРТУ ----------
-    function playCard(index) {
-        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
-
-        const p = gameState;
-        const card = p.playerHand[index];
-        if (p.playerEnergy < card.cost) {
-            addLog('⚠️ Недостаточно энергии!');
-            return;
-        }
-
-        // Применяем эффекты карты
-        let dmg = card.dmg || 0;
-        let shield = card.shield || 0;
-        let heal = card.heal || 0;
-        let poison = card.poison || 0;
-
-        // Бонусы кланов
-        if (p.playerClan === 'Берсерк') dmg += 1;
-        if (p.playerClan === 'Страж') shield += 1;
-        if (p.playerClan === 'Алхимик' && poison > 0) poison += 1;
-
-        // Особые механики
-        if (p.playerClan === 'Берсерк' && heal > 0) {
-            // Кровавая жатва: хил = урон
-            dmg = heal;
-            heal = 0;
-        }
-        if (p.playerClan === 'Страж' && heal > 0 && card.shield) {
-            // Божественная защита: хил + щит
-            // shield уже добавлен
-        }
-
-        let logMsg = `Игрок сыграл ${card.name}`;
-
-        // Урон
-        if (dmg > 0) {
-            const shieldTarget = p.enemyShield;
-            let actualDmg = dmg;
-            let absorbed = 0;
-            if (shieldTarget > 0) {
-                absorbed = Math.min(shieldTarget, dmg);
-                actualDmg -= absorbed;
-                p.enemyShield -= absorbed;
-                if (p.enemyShield < 0) p.enemyShield = 0;
+            if (p.playerClan === 'Алхимик') {
+                if (poison > 0) poison += 1;
             }
-            if (actualDmg > 0) {
-                p.enemyHP -= actualDmg;
-                if (p.enemyHP < 0) p.enemyHP = 0;
-                logMsg += `, нанёс ${actualDmg} урона`;
+
+            // Особые механики
+            if (p.playerClan === 'Берсерк' && heal > 0) {
+                dmg = heal;
+                heal = 0;
             }
-            if (absorbed > 0) {
-                logMsg += `, щит поглотил ${absorbed} урона`;
-            }
-        }
 
-        // Лечение
-        if (heal > 0) {
-            p.playerHP = Math.min(p.playerHP + heal, p.playerMaxHP);
-            logMsg += `, восстановил ${heal} HP`;
-        }
+            let logMsg = `Игрок сыграл ${card.name}`;
 
-        // Щит
-        if (shield > 0) {
-            p.playerShield += shield;
-            logMsg += `, получил щит ${shield}`;
-        }
-
-        // Яд
-        if (poison > 0) {
-            p.enemyPoison += poison;
-            logMsg += `, наложил яд ${poison}`;
-        }
-
-        p.playerHand.splice(index, 1);
-        p.playerEnergy -= card.cost;
-
-        while (p.playerHand.length < 4) {
-            drawCard('player');
-        }
-
-        addLog(logMsg);
-        updateUI();
-        renderHand();
-
-        if (checkGameOver()) return;
-
-        p.isPlayerTurn = false;
-        updateUI();
-        setTimeout(() => enemyTurn(), 600);
-    }
-
-    // ---------- ХОД ВРАГА ----------
-    function enemyTurn() {
-        if (!gameState || gameState.gameOver) return;
-        const p = gameState;
-
-        // Яд срабатывает в конце хода врага
-        if (p.enemyPoison > 0) {
-            p.enemyHP -= p.enemyPoison;
-            if (p.enemyHP < 0) p.enemyHP = 0;
-            addLog(`☠️ Враг получил ${p.enemyPoison} урона от яда`, true);
-            if (checkGameOver()) return;
-        }
-
-        p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
-        addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy}/${p.enemyMaxEnergy})`, true);
-
-        while (p.enemyHand.length < 4) {
-            drawCard('enemy');
-        }
-
-        let cardPlayed = false;
-        if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
-            const sortedHand = [...p.enemyHand].sort((a, b) => {
-                if (a.cost !== b.cost) return a.cost - b.cost;
-                return (b.dmg || 0) - (a.dmg || 0);
-            });
-
-            for (let i = 0; i < sortedHand.length; i++) {
-                const card = sortedHand[i];
-                const originalIndex = p.enemyHand.indexOf(card);
-                if (originalIndex === -1) continue;
-
-                if (p.enemyEnergy >= card.cost) {
-                    // Враг разыгрывает карту
-                    let dmg = card.dmg || 0;
-                    let shield = card.shield || 0;
-                    let heal = card.heal || 0;
-                    let poison = card.poison || 0;
-
-                    // Бонусы врага
-                    if (p.enemyClan === 'Берсерк') dmg += 1;
-                    if (p.enemyClan === 'Страж') shield += 1;
-                    if (p.enemyClan === 'Алхимик' && poison > 0) poison += 1;
-
-                    if (p.enemyClan === 'Берсерк' && heal > 0) {
-                        dmg = heal;
-                        heal = 0;
-                    }
-
-                    let logMsg = `Враг сыграл ${card.name}`;
-
-                    if (dmg > 0) {
-                        const shieldTarget = p.playerShield;
-                        let actualDmg = dmg;
-                        let absorbed = 0;
-                        if (shieldTarget > 0) {
-                            absorbed = Math.min(shieldTarget, dmg);
-                            actualDmg -= absorbed;
-                            p.playerShield -= absorbed;
-                            if (p.playerShield < 0) p.playerShield = 0;
-                        }
-                        if (actualDmg > 0) {
-                            p.playerHP -= actualDmg;
-                            if (p.playerHP < 0) p.playerHP = 0;
-                            logMsg += `, нанёс ${actualDmg} урона`;
-                        }
-                        if (absorbed > 0) {
-                            logMsg += `, щит поглотил ${absorbed} урона`;
-                        }
-                    }
-
-                    if (heal > 0) {
-                        p.enemyHP = Math.min(p.enemyHP + heal, p.enemyMaxHP);
-                        logMsg += `, восстановил ${heal} HP`;
-                    }
-
-                    if (shield > 0) {
-                        p.enemyShield += shield;
-                        logMsg += `, получил щит ${shield}`;
-                    }
-
-                    if (poison > 0) {
-                        p.playerPoison += poison;
-                        logMsg += `, наложил яд ${poison}`;
-                    }
-
-                    p.enemyHand.splice(originalIndex, 1);
-                    p.enemyEnergy -= card.cost;
-                    cardPlayed = true;
-                    addLog(logMsg, true);
-                    break;
+            // Урон
+            if (dmg > 0) {
+                const shieldTarget = p.enemyShield;
+                let actualDmg = dmg;
+                let absorbed = 0;
+                if (shieldTarget > 0) {
+                    absorbed = Math.min(shieldTarget, dmg);
+                    actualDmg -= absorbed;
+                    p.enemyShield -= absorbed;
+                    if (p.enemyShield < 0) p.enemyShield = 0;
+                }
+                if (actualDmg > 0) {
+                    p.enemyHP -= actualDmg;
+                    if (p.enemyHP < 0) p.enemyHP = 0;
+                    logMsg += `, нанёс ${actualDmg} урона`;
+                }
+                if (absorbed > 0) {
+                    logMsg += `, щит поглотил ${absorbed} урона`;
                 }
             }
+
+            // Лечение
+            if (heal > 0) {
+                p.playerHP = Math.min(p.playerHP + heal, p.playerMaxHP);
+                logMsg += `, восстановил ${heal} HP`;
+            }
+
+            // Щит
+            if (shield > 0) {
+                p.playerShield += shield;
+                logMsg += `, получил щит ${shield}`;
+            }
+
+            // Яд
+            if (poison > 0) {
+                p.enemyPoison += poison;
+                logMsg += `, наложил яд ${poison}`;
+            }
+
+            p.playerHand.splice(index, 1);
+            p.playerEnergy -= card.cost;
+
+            while (p.playerHand.length < 4) {
+                drawCard('player');
+            }
+
+            addLog(logMsg);
+            updateUI();
+            renderHand();
+
+            if (checkGameOver()) return;
+
+            p.isPlayerTurn = false;
+            updateUI();
+            setTimeout(() => enemyTurn(), 600);
         }
 
-        if (!cardPlayed) {
-            if (p.enemyEnergy < 1) {
-                addLog(`⏳ Враг копит энергию...`, true);
-            } else {
-                addLog(`⏳ Враг не нашёл подходящей карты`, true);
+        // ---------- ХОД ВРАГА ----------
+        function enemyTurn() {
+            if (!gameState || gameState.gameOver) return;
+            const p = gameState;
+
+            // Яд срабатывает в конце хода врага
+            if (p.enemyPoison > 0) {
+                p.enemyHP -= p.enemyPoison;
+                if (p.enemyHP < 0) p.enemyHP = 0;
+                addLog(`☠️ Враг получил ${p.enemyPoison} урона от яда`, true);
+                if (checkGameOver()) return;
+            }
+
+            p.enemyEnergy = Math.min(p.enemyEnergy + 1, p.enemyMaxEnergy);
+            addLog(`⚡ Враг восстановил 1 энергию (${p.enemyEnergy}/${p.enemyMaxEnergy})`, true);
+
+            while (p.enemyHand.length < 4) {
+                drawCard('enemy');
+            }
+
+            let cardPlayed = false;
+            if (p.enemyHand.length > 0 && p.enemyEnergy > 0) {
+                const sortedHand = [...p.enemyHand].sort((a, b) => {
+                    if (a.cost !== b.cost) return a.cost - b.cost;
+                    return (b.dmg || 0) - (a.dmg || 0);
+                });
+
+                for (let i = 0; i < sortedHand.length; i++) {
+                    const card = sortedHand[i];
+                    const originalIndex = p.enemyHand.indexOf(card);
+                    if (originalIndex === -1) continue;
+
+                    if (p.enemyEnergy >= card.cost) {
+                        // Враг разыгрывает карту
+                        let dmg = card.dmg || 0;
+                        let shield = card.shield || 0;
+                        let heal = card.heal || 0;
+                        let poison = card.poison || 0;
+
+                        // Бонусы врага
+                        if (p.enemyClan === 'Берсерк') dmg += 1;
+                        if (p.enemyClan === 'Страж') shield += 1;
+                        if (p.enemyClan === 'Алхимик') {
+                            if (poison > 0) poison += 1;
+                        }
+
+                        if (p.enemyClan === 'Берсерк' && heal > 0) {
+                            dmg = heal;
+                            heal = 0;
+                        }
+
+                        let logMsg = `Враг сыграл ${card.name}`;
+
+                        if (dmg > 0) {
+                            const shieldTarget = p.playerShield;
+                            let actualDmg = dmg;
+                            let absorbed = 0;
+                            if (shieldTarget > 0) {
+                                absorbed = Math.min(shieldTarget, dmg);
+                                actualDmg -= absorbed;
+                                p.playerShield -= absorbed;
+                                if (p.playerShield < 0) p.playerShield = 0;
+                            }
+                            if (actualDmg > 0) {
+                                p.playerHP -= actualDmg;
+                                if (p.playerHP < 0) p.playerHP = 0;
+                                logMsg += `, нанёс ${actualDmg} урона`;
+                            }
+                            if (absorbed > 0) {
+                                logMsg += `, щит поглотил ${absorbed} урона`;
+                            }
+                        }
+
+                        if (heal > 0) {
+                            p.enemyHP = Math.min(p.enemyHP + heal, p.enemyMaxHP);
+                            logMsg += `, восстановил ${heal} HP`;
+                        }
+
+                        if (shield > 0) {
+                            p.enemyShield += shield;
+                            logMsg += `, получил щит ${shield}`;
+                        }
+
+                        if (poison > 0) {
+                            p.playerPoison += poison;
+                            logMsg += `, наложил яд ${poison}`;
+                        }
+
+                        p.enemyHand.splice(originalIndex, 1);
+                        p.enemyEnergy -= card.cost;
+                        cardPlayed = true;
+                        addLog(logMsg, true);
+                        break;
+                    }
+                }
+            }
+
+            if (!cardPlayed) {
+                if (p.enemyEnergy < 1) {
+                    addLog(`⏳ Враг копит энергию...`, true);
+                } else {
+                    addLog(`⏳ Враг не нашёл подходящей карты`, true);
+                }
+            }
+
+            if (checkGameOver()) return;
+
+            p.isPlayerTurn = true;
+            p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
+            updateUI();
+            renderHand();
+            if (!checkGameOver()) {
+                addLog(`⚔️ Твой ход!`);
             }
         }
 
-        if (checkGameOver()) return;
-
-        p.isPlayerTurn = true;
-        p.playerEnergy = Math.min(p.playerEnergy + 1, p.playerMaxEnergy);
-        updateUI();
-        renderHand();
-        if (!checkGameOver()) {
-            addLog(`⚔️ Твой ход!`);
+        // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
+        function checkGameOver() {
+            if (!gameState) return false;
+            const p = gameState;
+            if (p.playerHP <= 0) {
+                p.playerHP = 0;
+                p.gameOver = true;
+                addLog(`💀 Ты проиграл!`);
+                statusText.textContent = '💀 Ты проиграл!';
+                endTurnBtn.disabled = true;
+                renderHand();
+                showGameOver(false);
+                return true;
+            }
+            if (p.enemyHP <= 0) {
+                p.enemyHP = 0;
+                p.gameOver = true;
+                addLog(`🏆 Ты победил!`);
+                statusText.textContent = '🏆 Ты победил!';
+                endTurnBtn.disabled = true;
+                renderHand();
+                showGameOver(true);
+                return true;
+            }
+            return false;
         }
-    }
 
-    // ---------- ПРОВЕРКА КОНЦА ИГРЫ ----------
-    function checkGameOver() {
-        if (!gameState) return false;
-        const p = gameState;
-        if (p.playerHP <= 0) {
-            p.playerHP = 0;
-            p.gameOver = true;
-            addLog(`💀 Ты проиграл!`);
-            statusText.textContent = '💀 Ты проиграл!';
-            endTurnBtn.disabled = true;
-            renderHand();
-            showGameOver(false);
-            return true;
-        }
-        if (p.enemyHP <= 0) {
-            p.enemyHP = 0;
-            p.gameOver = true;
-            addLog(`🏆 Ты победил!`);
-            statusText.textContent = '🏆 Ты победил!';
-            endTurnBtn.disabled = true;
-            renderHand();
-            showGameOver(true);
-            return true;
-        }
-        return false;
-    }
-
-    // ---------- ЭКРАН КОНЦА ИГРЫ ----------
-    function showGameOver(win) {
-        if (win) {
-            gameOverContainer.innerHTML = `
+        // ---------- ЭКРАН КОНЦА ИГРЫ ----------
+        function showGameOver(win) {
+            if (win) {
+                gameOverContainer.innerHTML = `
                 <div class="game-over-overlay">
                     <div class="result win">🏆 ПОБЕДА!</div>
                     <button class="menu-btn" style="margin:10px auto; width:200px; padding:12px; font-size:16px;" onclick="continueGame()">⚔️ Продолжить</button>
                     <button class="menu-btn" style="margin:0 auto; width:200px; padding:12px; font-size:16px; background:#2d2d4a;" onclick="goToMenu()">🏠 Меню</button>
                 </div>
-            `;
-        } else {
-            gameOverContainer.innerHTML = `
+                `;
+            } else {
+                gameOverContainer.innerHTML = `
                 <div class="game-over-overlay">
                     <div class="result lose">💀 ПОРАЖЕНИЕ</div>
                     <button class="menu-btn" style="margin:10px auto; width:200px; padding:12px; font-size:16px;" onclick="restartGame()">🔄 Играть снова</button>
                     <button class="menu-btn" style="margin:0 auto; width:200px; padding:12px; font-size:16px; background:#2d2d4a;" onclick="goToMenu()">🏠 Меню</button>
                 </div>
-            `;
+                `;
+            }
         }
-    }
 
-    // ---------- ПРОДОЛЖИТЬ (НОВЫЙ ВРАГ) ----------
-    function continueGame() {
-        enemyBaseHP += 5;
-        gameOverContainer.innerHTML = '';
-        battleScreen.style.display = 'none';
-        startGame(gameState.playerClan);
-    }
+        // ---------- ПРОДОЛЖИТЬ ----------
+        function continueGame() {
+            enemyBaseHP += 5;
+            gameOverContainer.innerHTML = '';
+            battleScreen.style.display = 'none';
+            startGame(gameState.playerClan);
+        }
 
-    // ---------- ПЕРЕЗАПУСК ----------
-    function restartGame() {
-        enemyBaseHP = 15;
-        gameOverContainer.innerHTML = '';
-        battleScreen.style.display = 'none';
-        showScreen(clanScreen);
-        gameState = null;
+        // ---------- ПЕРЕЗАПУСК ----------
+        function restartGame() {
+            enemyBaseHP = 15;
+            gameOverContainer.innerHTML = '';
+            battleScreen.style.display = 'none';
+            showScreen(clanScreen);
+            gameState = null;
+            renderClans();
+        }
+
+        function goToMenu() {
+            gameOverContainer.innerHTML = '';
+            battleScreen.style.display = 'none';
+            showScreen(menuScreen);
+            gameState = null;
+        }
+
+        // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
+        endTurnBtn.addEventListener('click', function() {
+            if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
+            const p = gameState;
+
+            p.isPlayerTurn = false;
+            updateUI();
+            setTimeout(() => enemyTurn(), 600);
+        });
+
+        // ---------- ЗАПУСК ----------
         renderClans();
-    }
-
-    function goToMenu() {
-        gameOverContainer.innerHTML = '';
-        battleScreen.style.display = 'none';
-        showScreen(menuScreen);
-        gameState = null;
-    }
-
-    // ---------- КНОПКА ЗАВЕРШИТЬ ХОД ----------
-    endTurnBtn.addEventListener('click', function() {
-        if (!gameState || gameState.gameOver || !gameState.isPlayerTurn) return;
-        const p = gameState;
-
-        p.isPlayerTurn = false;
-        updateUI();
-        setTimeout(() => enemyTurn(), 600);
-    });
-
-    // ---------- ЗАПУСК ----------
-    showScreen(menuScreen);
-</script>
+    </script>
 
 </body>
 </html>
