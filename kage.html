@@ -781,26 +781,10 @@
 
 <script>
     // =======================================================
-    // SHARD — ИСПРАВЛЕННАЯ ВЕРСИЯ (РАБОТАЮТ КНОПКИ)
+    // SHARD — МИНИМАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
     // =======================================================
 
-    function createSakura() {
-        const container = document.getElementById('sakura-container');
-        for (let i = 0; i < 40; i++) {
-            const petal = document.createElement('div');
-            petal.className = 'sakura-petal';
-            petal.style.left = Math.random() * 100 + '%';
-            petal.style.animationDuration = (8 + Math.random() * 12) + 's';
-            petal.style.animationDelay = (Math.random() * 20) + 's';
-            petal.style.width = (10 + Math.random() * 10) + 'px';
-            petal.style.height = (6 + Math.random() * 8) + 'px';
-            petal.style.opacity = 0.2 + Math.random() * 0.2;
-            container.appendChild(petal);
-        }
-    }
-    createSakura();
-
-    // ---------- БАЗОВЫЕ КАРТЫ КЛАССОВ ----------
+    // ---------- ДАННЫЕ ----------
     const CLASS_CARDS = {
         'Алхимик': [
             { name: 'Кислотный плевок', dmg: 1, poison: 1, cost: 2, rarity: 'common' },
@@ -828,7 +812,6 @@
         ]
     };
 
-    // ---------- РАСОВЫЕ КАРТЫ ----------
     const RACE_CARDS_POOL = [
         { name: 'Лесной лучник', dmg: 2, poison: 1, cost: 2, race: 'Эльфы', rarity: 'uncommon' },
         { name: 'Друид', dmg: 3, cost: 3, race: 'Эльфы', rarity: 'uncommon' },
@@ -848,17 +831,8 @@
         { name: 'Фея-энерджайзер', energyPlus: 2, cost: 1, race: 'Феи', rarity: 'rare' }
     ];
 
-    // ---------- СИНЕРГИИ ----------
-    const RACE_SYNERGIES = {
-        'Эльфы': { 2: { shield: 1 }, 4: { shield: 2 } },
-        'Орки': { 2: { dmg: 1 }, 4: { dmg: 2 } },
-        'Звери': { 2: { heal: 1 }, 4: { heal: 2 } },
-        'Феи': { 2: { energy: 1 }, 4: { energy: 2 } }
-    };
-
-    // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
+    // ---------- ПЕРЕМЕННЫЕ ----------
     let gameState = null;
-    let soundEnabled = true;
     let playerClanName = null;
     let mapWins = 0;
     let mapCoins = 0;
@@ -866,10 +840,8 @@
     let playerDeck = [];
     let shopCards = [];
     let activeSynergies = { shield: 0, dmg: 0, heal: 0, energy: 0 };
-    let currentEnemyClan = 'Алхимик';
-    let isBossFight = false;
 
-    // ---------- ЭЛЕМЕНТЫ DOM ----------
+    // ---------- DOM ----------
     const menuScreen = document.getElementById('menuScreen');
     const settingsScreen = document.getElementById('settingsScreen');
     const clanSelectScreen = document.getElementById('clanSelectScreen');
@@ -913,7 +885,7 @@
         logToggle.textContent = logOpen ? '📜 Скрыть лог' : '📜 Лог боя';
     });
 
-    // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+    // ---------- ВСПОМОГАТЕЛЬНОЕ ----------
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -925,6 +897,31 @@
 
     function cloneCard(card) { return { ...card }; }
 
+    function showScreen(screen) {
+        [menuScreen, settingsScreen, clanSelectScreen, mapScreen, shopScreen, battleScreen].forEach(s => s.style.display = 'none');
+        screen.style.display = 'flex';
+    }
+
+    function addLog(text, type = 'player') {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        if (type === 'enemy') entry.classList.add('enemy-turn');
+        else if (type === 'player') entry.classList.add('player-turn');
+        else if (type === 'poison') entry.classList.add('poison');
+        else entry.classList.add('system');
+        entry.textContent = text;
+        battleLog.appendChild(entry);
+        battleLog.scrollTop = battleLog.scrollHeight;
+        while (battleLog.children.length > 30) {
+            battleLog.removeChild(battleLog.firstChild);
+        }
+        if (!logOpen && battleLog.children.length > 2) {
+            logOpen = true;
+            battleLog.classList.add('open');
+            logToggle.textContent = '📜 Скрыть лог';
+        }
+    }
+
     function calculateSynergies() {
         const counts = { 'Эльфы': 0, 'Орки': 0, 'Звери': 0, 'Феи': 0 };
         playerDeck.forEach(card => {
@@ -933,7 +930,12 @@
             }
         });
         activeSynergies = { shield: 0, dmg: 0, heal: 0, energy: 0 };
-
+        const RACE_SYNERGIES = {
+            'Эльфы': { 2: { shield: 1 }, 4: { shield: 2 } },
+            'Орки': { 2: { dmg: 1 }, 4: { dmg: 2 } },
+            'Звери': { 2: { heal: 1 }, 4: { heal: 2 } },
+            'Феи': { 2: { energy: 1 }, 4: { energy: 2 } }
+        };
         Object.keys(RACE_SYNERGIES).forEach(race => {
             const count = counts[race] || 0;
             const synergy = RACE_SYNERGIES[race];
@@ -947,7 +949,6 @@
                 });
             }
         });
-
         let synText = 'Синергии: ';
         if (activeSynergies.dmg > 0) synText += `⚔+${activeSynergies.dmg} `;
         if (activeSynergies.shield > 0) synText += `🛡+${activeSynergies.shield} `;
@@ -956,8 +957,15 @@
         if (synText === 'Синергии: ') synText += 'нет';
         synergyDisplay.textContent = synText;
         shopSynergyDisplay.textContent = synText;
-
         return activeSynergies;
+    }
+
+    function updateUI() {
+        mapHP.textContent = gameState ? gameState.playerHP : 30;
+        mapWinsEl.textContent = mapWins;
+        mapCoinsEl.textContent = mapCoins;
+        shopCoinsEl.textContent = mapCoins;
+        calculateSynergies();
     }
 
     function saveGame() {
@@ -989,18 +997,7 @@
         continueBtn.style.display = save ? 'block' : 'none';
     }
 
-    function showScreen(screen) {
-        const screens = [menuScreen, settingsScreen, clanSelectScreen, mapScreen, shopScreen, battleScreen];
-        screens.forEach(s => s.style.display = 'none');
-        screen.style.display = 'flex';
-        checkContinueButton();
-        if (screen === mapScreen || screen === shopScreen) {
-            calculateSynergies();
-            updateUI();
-        }
-    }
-
-    // ---------- НАВИГАЦИЯ ----------
+    // ---------- МЕНЮ ----------
     document.getElementById('newGameBtn').addEventListener('click', () => {
         deleteSave();
         showScreen(clanSelectScreen);
@@ -1138,7 +1135,6 @@
             mapGrid.appendChild(rowDiv);
         }
 
-        // Если магазин не появился, добавляем его на уровень 2
         if (merchantCount === 0) {
             const level2Nodes = mapNodes.filter(n => n.level === 2);
             if (level2Nodes.length > 0) {
@@ -1161,7 +1157,7 @@
         saveGame();
     }
 
-    // ---------- КЛИК ПО НОДЕ ----------
+    // ---------- КЛИК ПО КАРТЕ (ГЛАВНАЯ ФИКСА) ----------
     function onNodeClick(node) {
         const nodeId = node.dataset.nodeId;
         const nodeData = mapNodes.find(n => n.id === nodeId);
@@ -1172,24 +1168,6 @@
             return;
         }
 
-        // Проверка доступности
-        if (nodeData.level > 0) {
-            const prevLevel = nodeData.level - 1;
-            const prevNodes = mapNodes.filter(n => n.level === prevLevel);
-            const hasCompletedPrev = prevNodes.some(n => n.completed);
-            if (!hasCompletedPrev && prevLevel > 0) {
-                mapStatus.textContent = '❌ Сначала пройди предыдущий уровень!';
-                return;
-            }
-            if (prevLevel === 0) {
-                const startNode = mapNodes.find(n => n.type === 'start');
-                if (startNode && !startNode.completed) {
-                    mapStatus.textContent = '❌ Начни со старта!';
-                    return;
-                }
-            }
-        }
-
         if (nodeData.type === 'enemy' || nodeData.type === 'boss') {
             const enemyClan = nodeData.enemyClan || 'Алхимик';
             const isBoss = nodeData.type === 'boss';
@@ -1198,8 +1176,6 @@
             node.classList.add('disabled');
             saveGame();
             // ЗАПУСКАЕМ БОЙ
-            currentEnemyClan = enemyClan;
-            isBossFight = isBoss;
             startBattle(enemyClan, isBoss);
         } else if (nodeData.type === 'shop') {
             nodeData.completed = true;
@@ -1286,37 +1262,152 @@
         });
     }
 
-    // ---------- ОБНОВЛЕНИЕ UI ----------
-    function updateUI() {
-        mapHP.textContent = gameState ? gameState.playerHP : 30;
-        mapWinsEl.textContent = mapWins;
-        mapCoinsEl.textContent = mapCoins;
-        shopCoinsEl.textContent = mapCoins;
-        calculateSynergies();
+    // ---------- СТАРТ БИТВЫ (РАБОТАЕТ) ----------
+    function startBattle(enemyClanName, isBoss) {
+        const synergies = calculateSynergies();
+
+        function createInfiniteDeck(clanName) {
+            const baseCards = CLASS_CARDS[clanName];
+            const deck = [];
+            for (let i = 0; i < 3; i++) {
+                baseCards.forEach(c => deck.push(cloneCard(c)));
+            }
+            if (clanName === playerClanName) {
+                playerDeck.forEach(c => {
+                    if (c.race) {
+                        const cloned = cloneCard(c);
+                        if (synergies.dmg) cloned.dmg = (cloned.dmg || 0) + synergies.dmg;
+                        if (synergies.shield) cloned.shield = (cloned.shield || 0) + synergies.shield;
+                        if (synergies.heal) cloned.heal = (cloned.heal || 0) + synergies.heal;
+                        if (synergies.energy) cloned.energyPlus = (cloned.energyPlus || 0) + synergies.energy;
+                        deck.push(cloned);
+                    }
+                });
+            }
+            return shuffle(deck);
+        }
+
+        const currentHP = gameState ? gameState.playerHP : 30;
+        const enemyMaxHP = isBoss ? 45 : 30;
+
+        const playerDeck = createInfiniteDeck(playerClanName);
+        const enemyDeck = createInfiniteDeck(enemyClanName);
+
+        gameState = {
+            playerClan: playerClanName,
+            enemyClan: enemyClanName,
+            playerHP: currentHP,
+            playerMaxHP: 30,
+            playerEnergy: 3,
+            playerMaxEnergy: 6,
+            enemyHP: enemyMaxHP,
+            enemyMaxHP: enemyMaxHP,
+            enemyEnergy: 3,
+            enemyMaxEnergy: 6,
+            playerShield: 0,
+            enemyShield: 0,
+            playerStun: 0,
+            enemyStun: 0,
+            playerPoison: 0,
+            enemyPoison: 0,
+            isPlayerTurn: false,
+            gameOver: false,
+            playerDeck: playerDeck,
+            enemyDeck: enemyDeck,
+            playerHand: [],
+            enemyHand: [],
+            coinFlipDone: false,
+            playerStarted: false,
+            isBoss: isBoss,
+        };
+
+        for (let i = 0; i < 4; i++) {
+            drawCard('player');
+            drawCard('enemy');
+        }
+
+        showScreen(battleScreen);
+        gameOverContainer.style.display = 'none';
+        gameOverContainer.innerHTML = '';
+
+        battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
+        addLog(`⚔️ Ты — ${playerClanName}, враг — ${enemyClanName}${isBoss ? ' (БОСС)' : ''}`, 'system');
+
+        endTurnBtn.disabled = true;
+        endTurnBtn.textContent = '⏳ Бросок...';
+        updateBattleUI();
+        renderHand();
         saveGame();
+
+        setTimeout(() => startCoinFlip(), 500);
     }
 
-    // ---------- БОЕВАЯ СИСТЕМА ----------
-    function addLog(text, type = 'player') {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        if (type === 'enemy') entry.classList.add('enemy-turn');
-        else if (type === 'player') entry.classList.add('player-turn');
-        else if (type === 'poison') entry.classList.add('poison');
-        else entry.classList.add('system');
-        entry.textContent = text;
-        battleLog.appendChild(entry);
-        battleLog.scrollTop = battleLog.scrollHeight;
-        while (battleLog.children.length > 30) {
-            battleLog.removeChild(battleLog.firstChild);
-        }
-        if (!logOpen && battleLog.children.length > 2) {
-            logOpen = true;
-            battleLog.classList.add('open');
-            logToggle.textContent = '📜 Скрыть лог';
-        }
+    // ---------- МОНЕТКА ----------
+    function startCoinFlip() {
+        const p = gameState;
+        p.coinFlipDone = false;
+        endTurnBtn.disabled = true;
+        endTurnBtn.textContent = '⏳ Бросок...';
+
+        battleField.innerHTML = `
+            <div style="text-align:center;">
+                <div class="coin-flip">🪙</div>
+                <div style="margin-top:10px; font-size:16px; color:#e2b8a0;">Кто ходит первым?</div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const playerStarts = Math.random() > 0.5;
+            p.playerStarted = playerStarts;
+            p.isPlayerTurn = playerStarts;
+            p.coinFlipDone = true;
+
+            battleField.innerHTML = `
+                <div class="turn-indicator" id="turnIndicator">${playerStarts ? '⚔️ Твой ход' : '⏳ Ход врага'}</div>
+                <div class="battle-status" id="battleStatus">${playerStarts ? 'Выбери карту' : 'Враг думает...'}</div>
+            `;
+
+            if (playerStarts) {
+                addLog('🪙 Ты ходишь первым!', 'system');
+                endTurnBtn.textContent = '⚔️ Завершить ход';
+                endTurnBtn.disabled = false;
+                startPlayerTurn();
+            } else {
+                addLog('🪙 Враг ходит первым!', 'system');
+                endTurnBtn.textContent = '⏳ Ход врага...';
+                endTurnBtn.disabled = true;
+                enemyTurn();
+            }
+            saveGame();
+        }, 1500);
     }
 
+    // ---------- ВЗЯТЬ КАРТУ ----------
+    function drawCard(target) {
+        const isPlayer = target === 'player';
+        const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
+        const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
+
+        if (deck.length === 0) {
+            const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
+            const baseCards = CLASS_CARDS[clanName];
+            const newDeck = [];
+            for (let i = 0; i < 3; i++) {
+                baseCards.forEach(c => newDeck.push(cloneCard(c)));
+            }
+            const shuffled = shuffle(newDeck);
+            if (isPlayer) { gameState.playerDeck = shuffled; } 
+            else { gameState.enemyDeck = shuffled; }
+            addLog(`🔄 Перетасовка`, 'system');
+            return drawCard(target);
+        }
+
+        const card = deck.pop();
+        hand.push(card);
+        return card;
+    }
+
+    // ---------- ОБНОВЛЕНИЕ UI БОЯ ----------
     function updateBattleUI() {
         const p = gameState;
         if (!p) return;
@@ -1588,151 +1679,6 @@
         renderHand();
         checkGameOver();
         saveGame();
-    }
-
-    // ---------- ВЗЯТЬ КАРТУ ----------
-    function drawCard(target) {
-        const isPlayer = target === 'player';
-        const deck = isPlayer ? gameState.playerDeck : gameState.enemyDeck;
-        const hand = isPlayer ? gameState.playerHand : gameState.enemyHand;
-
-        if (deck.length === 0) {
-            const clanName = isPlayer ? gameState.playerClan : gameState.enemyClan;
-            const baseCards = CLASS_CARDS[clanName];
-            const newDeck = [];
-            for (let i = 0; i < 3; i++) {
-                baseCards.forEach(c => newDeck.push(cloneCard(c)));
-            }
-            const shuffled = shuffle(newDeck);
-            if (isPlayer) { gameState.playerDeck = shuffled; } 
-            else { gameState.enemyDeck = shuffled; }
-            addLog(`🔄 Перетасовка`, 'system');
-            return drawCard(target);
-        }
-
-        const card = deck.pop();
-        hand.push(card);
-        return card;
-    }
-
-    // ---------- СТАРТ БИТВЫ ----------
-    function startBattle(enemyClanName, isBoss) {
-        const synergies = calculateSynergies();
-
-        function createInfiniteDeck(clanName) {
-            const baseCards = CLASS_CARDS[clanName];
-            const deck = [];
-            for (let i = 0; i < 3; i++) {
-                baseCards.forEach(c => deck.push(cloneCard(c)));
-            }
-            if (clanName === playerClanName) {
-                playerDeck.forEach(c => {
-                    if (c.race) {
-                        const cloned = cloneCard(c);
-                        if (synergies.dmg) cloned.dmg = (cloned.dmg || 0) + synergies.dmg;
-                        if (synergies.shield) cloned.shield = (cloned.shield || 0) + synergies.shield;
-                        if (synergies.heal) cloned.heal = (cloned.heal || 0) + synergies.heal;
-                        if (synergies.energy) cloned.energyPlus = (cloned.energyPlus || 0) + synergies.energy;
-                        deck.push(cloned);
-                    }
-                });
-            }
-            return shuffle(deck);
-        }
-
-        const currentHP = gameState ? gameState.playerHP : 30;
-        const enemyMaxHP = isBoss ? 45 : 30;
-
-        const playerDeck = createInfiniteDeck(playerClanName);
-        const enemyDeck = createInfiniteDeck(enemyClanName);
-
-        gameState = {
-            playerClan: playerClanName,
-            enemyClan: enemyClanName,
-            playerHP: currentHP,
-            playerMaxHP: 30,
-            playerEnergy: 3,
-            playerMaxEnergy: 6,
-            enemyHP: enemyMaxHP,
-            enemyMaxHP: enemyMaxHP,
-            enemyEnergy: 3,
-            enemyMaxEnergy: 6,
-            playerShield: 0,
-            enemyShield: 0,
-            playerStun: 0,
-            enemyStun: 0,
-            playerPoison: 0,
-            enemyPoison: 0,
-            isPlayerTurn: false,
-            gameOver: false,
-            playerDeck: playerDeck,
-            enemyDeck: enemyDeck,
-            playerHand: [],
-            enemyHand: [],
-            coinFlipDone: false,
-            playerStarted: false,
-            isBoss: isBoss,
-        };
-
-        for (let i = 0; i < 4; i++) {
-            drawCard('player');
-            drawCard('enemy');
-        }
-
-        showScreen(battleScreen);
-        gameOverContainer.style.display = 'none';
-        gameOverContainer.innerHTML = '';
-
-        battleLog.innerHTML = '<div class="log-entry">⚔️ Битва начинается!</div>';
-        addLog(`⚔️ Ты — ${playerClanName}, враг — ${enemyClanName}${isBoss ? ' (БОСС)' : ''}`, 'system');
-
-        endTurnBtn.disabled = true;
-        endTurnBtn.textContent = '⏳ Бросок...';
-        updateBattleUI();
-        renderHand();
-        saveGame();
-
-        setTimeout(() => startCoinFlip(), 500);
-    }
-
-    // ---------- МОНЕТКА ----------
-    function startCoinFlip() {
-        const p = gameState;
-        p.coinFlipDone = false;
-        endTurnBtn.disabled = true;
-        endTurnBtn.textContent = '⏳ Бросок...';
-
-        battleField.innerHTML = `
-            <div style="text-align:center;">
-                <div class="coin-flip">🪙</div>
-                <div style="margin-top:10px; font-size:16px; color:#e2b8a0;">Кто ходит первым?</div>
-            </div>
-        `;
-
-        setTimeout(() => {
-            const playerStarts = Math.random() > 0.5;
-            p.playerStarted = playerStarts;
-            p.isPlayerTurn = playerStarts;
-            p.coinFlipDone = true;
-
-            battleField.innerHTML = `
-                <div class="turn-indicator" id="turnIndicator">${playerStarts ? '⚔️ Твой ход' : '⏳ Ход врага'}</div>
-                <div class="battle-status" id="battleStatus">${playerStarts ? 'Выбери карту' : 'Враг думает...'}</div>
-            `;
-
-            if (playerStarts) {
-                addLog('🪙 Ты ходишь первым!', 'system');
-                endTurnBtn.textContent = '⚔️ Завершить ход';
-                endTurnBtn.disabled = false;
-                startPlayerTurn();
-            } else {
-                addLog('🪙 Враг ходит первым!', 'system');
-                endTurnBtn.textContent = '⏳ Ход врага...';
-                endTurnBtn.disabled = true;
-                enemyTurn();
-            }
-            saveGame();
-        }, 1500);
     }
 
     // ---------- ХОД ИГРОКА ----------
