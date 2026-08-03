@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WB База знаний</title>
-    <!-- Библиотека для надежного чтения CSV (чтобы запятые в текстах не ломали всё) -->
+    <!-- Подключаем PapaParse для надежного чтения CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
       :root {
-        /* Светлая тема (WB стиль) */
+        /* Светлая тема */
         --bg-page: #f5f6f8;
         --bg-sidebar: #ffffff;
         --text-main: #131313;
@@ -21,7 +21,7 @@
       }
 
       [data-theme="dark"] {
-        /* Тёмная тема (WB стиль) */
+        /* Тёмная тема (WB Style) */
         --bg-page: #1e1e24;
         --bg-sidebar: #2a2a32;
         --text-main: #f0f0f2;
@@ -169,7 +169,7 @@
       }
     </style>
   </head>
-  <!-- По умолчанию ставим тёмную тему -->
+  <!-- По умолчанию запускаем в тёмной теме -->
   <body data-theme="dark">
     <header>
       <div style="font-weight:600; color:var(--accent);">WB База знаний</div>
@@ -194,8 +194,7 @@
     </main>
 
     <script>
-      // !!! ВСТАВЬ СЮДА СВОЮ CSV ССЫЛКУ !!!
-      // Она должна заканчиваться на /pub?output=csv
+      // ВСТАВЛЕНА ТВОЯ ПРАВИЛЬНАЯ ССЫЛКА
       const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWriQhXiQaFnRHtBPiqIpBT1LUUF2-cBnsXJvu4OKP4zycIc4dLvjVZ1abiF-RrsvaeL2Sgw_ZSUcB/pub?output=csv';
 
       const categoriesListEl = document.getElementById('categoriesList');
@@ -220,7 +219,6 @@
 
           const text = await response.text();
           
-          // Используем PapaParse для надежного парсинга CSV
           const result = Papa.parse(text, {
             header: true,
             skipEmptyLines: true
@@ -232,7 +230,6 @@
 
           templatesData = result.data;
 
-          // Проверка на правильный формат
           const firstRow = templatesData;
           if (!firstRow || !('category' in firstRow) || !('title' in firstRow) || !('text' in firstRow)) {
             throw new Error('Неверный формат CSV. Нужны колонки: category, title, text');
@@ -246,7 +243,7 @@
           templatesContainerEl.innerHTML = `
             <div class="error">
               <strong>Ошибка загрузки:</strong> \${error.message}<br/>
-              <small>Проверь, что таблица опубликована как CSV (а не HTML) и в первой строке есть колонки: category, title, text.</small>
+              <small>Проверь, что таблица опубликована как CSV и в первой строке есть колонки: category, title, text.</small>
             </div>`;
         } finally {
           refreshBtnEl.disabled = false;
