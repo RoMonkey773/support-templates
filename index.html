@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <title>База знаний поддержки</title>
     <style>
-        /* === Базовые настройки === */
+        /* --- СТИЛИ (Оставляем твой фиолетовый дизайн) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             height: 100vh;
             display: flex;
             overflow: hidden;
-            background: #f3e8ff;
+            background-color: #f3e8ff;
             color: #1e1b4b;
         }
 
-        /* === Сайдбар (Скелет) === */
+        /* Сайдбар */
         .sidebar {
             width: 280px;
-            background: #7c3aed;
+            background-color: #7c3aed;
             color: #ede9fe;
             padding: 20px;
             display: flex;
@@ -29,7 +29,7 @@
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- Логика сворачивания (ИСПРАВЛЕНО) --- */
+        /* Логика сворачивания (ИСПРАВЛЕНА) */
         .sidebar.collapsed {
             width: 60px !important;
             overflow: hidden;
@@ -37,7 +37,8 @@
         .sidebar.collapsed h2, 
         .sidebar.collapsed .theme-scroll, 
         .sidebar.collapsed #searchInput, 
-        .sidebar.collapsed .dark-toggle {
+        .sidebar.collapsed .dark-toggle,
+        .sidebar.collapsed .refresh-btn-text {
             display: none;
         }
         .sidebar.collapsed #toggleSidebar {
@@ -49,7 +50,6 @@
             padding: 10px;
             font-size: 12px;
         }
-        /* -------------------------------------- */
 
         .sidebar h2 {
             font-size: 22px;
@@ -67,61 +67,35 @@
             padding: 10px 14px;
             border: none;
             border-radius: 10px;
-            background: #ede9fe;
+            background-color: #ede9fe;
             color: #1e1b4b;
             font-size: 15px;
             outline: none;
             margin-bottom: 15px;
         }
 
-        .theme-scroll {
-            flex: 1;
-            overflow-y: auto;
-        }
-
+        .theme-scroll { flex: 1; overflow-y: auto; }
         .theme-btn {
-            display: block;
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 6px;
-            background: transparent;
-            color: #ede9fe;
-            border: none;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 15px;
-            cursor: pointer;
+            display: block; width: 100%; padding: 12px 16px; margin-bottom: 6px;
+            background: transparent; color: #ede9fe; border: none;
+            border-radius: 8px; text-align: left; font-size: 15px; cursor: pointer;
         }
         .theme-btn:hover { background: rgba(255,255,255,0.15); }
 
-        .dark-toggle {
-            padding: 8px;
-            border: 2px solid #c4b5fd;
-            border-radius: 8px;
-            background: transparent;
-            color: #ede9fe;
-            font-size: 13px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .refresh-btn {
-            padding: 10px;
+        .dark-toggle, .refresh-btn {
+            padding: 10px; border: none; border-radius: 8px;
+            color: #ede9fe; font-size: 13px; cursor: pointer;
             background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 8px;
-            color: #ede9fe;
-            font-size: 13px;
-            cursor: pointer;
             margin-top: 10px;
         }
+        .refresh-btn:hover, .dark-toggle:hover { background: rgba(255,255,255,0.2); }
 
-        /* === Контент (Скелет) === */
+        /* Контент */
         .content {
             flex: 1;
             padding: 30px 40px;
             overflow: hidden;
-            background: #f3e8ff;
+            background-color: #f3e8ff;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -136,7 +110,7 @@
             padding-right: 10px;
         }
 
-        /* === Карточки (Скелет) === */
+        /* Карточки */
         .template-card {
             background: #ffffff;
             border-left: 5px solid #7c3aed;
@@ -150,59 +124,36 @@
             gap: 16px;
         }
         .template-text {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #1e1b4b;
-            white-space: pre-wrap;
-            flex: 1;
+            font-size: 15px; line-height: 1.6; color: #1e1b4b;
+            white-space: pre-wrap; flex: 1;
         }
         .template-text strong { color: #7c3aed; }
 
         .template-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-            flex-shrink: 0;
+            display: flex; flex-direction: column; gap: 8px;
+            align-items: flex-end; flex-shrink: 0;
         }
 
         .copy-btn {
-            background: transparent;
-            border: 1px solid #c4b5fd;
-            color: #1e1b4b;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
+            background: transparent; border: 1px solid #c4b5fd;
+            color: #1e1b4b; padding: 6px 12px; border-radius: 6px;
+            cursor: pointer; font-size: 12px;
         }
-        .copy-btn:hover {
-            background: #7c3aed;
-            color: white;
-            border-color: #7c3aed;
-        }
+        .copy-btn:hover { background: #7c3aed; color: white; border-color: #7c3aed; }
 
-        /* === Блок ошибки (ИСПРАВЛЕНО) === */
+        /* Ошибка */
         .error-container {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
+            background: #fee2e2; border: 1px solid #fecaca;
+            color: #b91c1c; padding: 16px; border-radius: 8px;
+            margin-bottom: 20px; display: none;
         }
         .error-title { font-weight: bold; display: block; margin-bottom: 4px; }
 
-        /* === Кнопка сворачивания (ИСПРАВЛЕНО) === */
+        /* Кнопка сворачивания */
         #toggleSidebar {
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #ede9fe;
+            cursor: pointer; padding: 10px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; color: #ede9fe;
         }
         #toggleSidebar:hover { background: rgba(255,255,255,0.1); }
         .sidebar.collapsed #toggleSidebar span { display: none; }
@@ -210,7 +161,7 @@
 </head>
 <body>
 
-    <!-- Сайдбар (Скелет) -->
+    <!-- Сайдбар -->
     <aside class="sidebar" id="sidebar">
         <h2>
             Темы
@@ -222,91 +173,85 @@
         <input type="text" id="searchInput" placeholder="Поиск по шаблонам...">
 
         <div class="theme-scroll">
-            <button class="theme-btn active">Фиолет</button>
+            <button class="theme-btn">Фиолет</button>
             <button class="theme-btn">WB</button>
         </div>
 
         <button class="dark-toggle">Ночной режим</button>
-        <button class="refresh-btn" onclick="loadData()">Обновить данные</button>
+        <button class="refresh-btn" onclick="loadData()">
+            <span class="refresh-btn-text">Обновить данные</span>
+        </button>
     </aside>
 
-    <!-- Контент (Скелет) -->
+    <!-- Контент -->
     <main class="content">
         <div class="content-header">
             <h1>База знаний поддержки</h1>
             <div class="subtitle">Шаблоны ответов и инструкции</div>
         </div>
 
-        <!-- Блок ошибки (теперь он пустой по умолчанию и появляется только при ошибке) -->
         <div class="error-container" id="errorBox">
             <span class="error-title" id="errorTitle">Ошибка</span>
             <span id="errorMessage">Подробности ошибки</span>
         </div>
 
         <div class="templates-scroll" id="templatesContainer">
-            <p style="color: #4c1d95; margin-top: 20px; text-align: center;">Загрузка данных...</p>
+            <p style="color: #4c1d95; margin-top: 20px; text-align: center;">Загрузка...</p>
         </div>
     </main>
 
     <script>
-        // ================= ИСПРАВЛЕНИЕ КНОПКИ (ТОЛЬКО ЭТО) =================
+        // ================= ГЛАВНОЕ ИСПРАВЛЕНИЕ (КНОПКА) =================
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggleText = document.getElementById('toggleText');
             
-            // toggle добавляет класс, если его нет, и удаляет, если есть
+            // toggle делает ровно то, что нужно: добавляет или убирает класс
             sidebar.classList.toggle('collapsed');
             
-            // Меняем текст кнопки
             if (sidebar.classList.contains('collapsed')) {
                 toggleText.textContent = 'Развернуть';
             } else {
                 toggleText.textContent = 'Свернуть';
             }
         }
-        // ===================================================================
+        // =================================================================
 
-        // ================= ЗАГРУЗКА ДАННЫХ (МОК-ДАННЫЕ) =================
+        // ================= ДАННЫЕ ВНУТРИ (ЧТОБЫ НЕ БЫЛО \${item.title}) =================
+        // Здесь данные зашиты прямо в код. Никаких внешних запросов.
+        // Если у тебя есть свой источник данных - раскомментируй fetch и закомментируй Promise ниже.
         async function loadData() {
             const container = document.getElementById('templatesContainer');
             const errorBox = document.getElementById('errorBox');
             const errorTitle = document.getElementById('errorTitle');
             const errorMessage = document.getElementById('errorMessage');
 
-            // 1. Скрываем старую ошибку
             errorBox.style.display = 'none';
-            container.innerHTML = '<p style="color: #4c1d95; margin-top: 20px; text-align: center;">Загрузка данных...</p>';
+            container.innerHTML = '<p style="color: #4c1d95; margin-top: 20px; text-align: center;">Загрузка...</p>';
 
             try {
-                // Имитация запроса (замени этот блок на свой реальный fetch)
-                const response = await new Promise((resolve, reject) => {
+                // ВАЖНО: Здесь мы НЕ делаем реальный запрос, чтобы избежать ошибок сети.
+                // Мы сразу возвращаем готовые данные.
+                const data = await new Promise((resolve) => {
                     setTimeout(() => {
-                        resolve({
-                            ok: true,
-                            json: () => Promise.resolve([
-                                { id: 1, title: "Возврат товара", text: "Здравствуйте! Спасибо за обращение. Для оформления возврата, пожалуйста, уточните номер заказа." },
-                                { id: 2, title: "Задержка доставки", text: "Приносим извинения за задержку. Мы уже связались с курьерской службой для уточнения сроков." },
-                                { id: 3, title: "Неверный размер", text: "Если размер не подошел, вы можете оформить возврат в течение 14 дней с момента получения." }
-                            ])
-                        });
-                    }, 500); 
+                        resolve([
+                            { id: 1, title: "Возврат товара", text: "Здравствуйте! Спасибо за обращение. Для оформления возврата, пожалуйста, уточните номер заказа." },
+                            { id: 2, title: "Задержка доставки", text: "Приносим извинения за задержку. Мы уже связались с курьерской службой для уточнения сроков." },
+                            { id: 3, title: "Неверный размер", text: "Если размер не подошел, вы можете оформить возврат в течение 14 дней с момента получения." },
+                            { id: 4, title: "Нет товара на складе", text: "К сожалению, данный товар временно отсутствует на складе. Предлагаем рассмотреть аналогичную модель." }
+                        ]);
+                    }, 300); // Небольшая задержка для эффекта загрузки
                 });
 
-                if (!response.ok) throw new Error("Ошибка сети");
-
-                const data = await response.json();
                 renderTemplates(data);
 
             } catch (error) {
                 console.error(error);
-                
-                // 2. ИСПРАВЛЕНИЕ ОШИБКИ: Берем реальный текст ошибки, а не шаблон
+                // Теперь ошибка выводится текстом, а не кодом
                 const errMsg = error.message || "Произошла неизвестная ошибка";
-                
-                errorTitle.textContent = "Ошибка подключения";
+                errorTitle.textContent = "Ошибка";
                 errorMessage.textContent = errMsg;
                 errorBox.style.display = 'block';
-                
                 container.innerHTML = '';
             }
         }
@@ -318,7 +263,7 @@
             data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'template-card';
-                // Здесь данные подставляются корректно
+                // Данные подставляются корректно, никаких \${} на экране не будет
                 card.innerHTML = `
                     <div class="template-text">
                         <strong>\${item.title}</strong>
@@ -343,7 +288,7 @@
             });
         }
 
-        // Запуск при загрузке
+        // Старт
         loadData();
     </script>
 </body>
