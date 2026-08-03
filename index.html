@@ -1,368 +1,636 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WB База знаний</title>
-    <!-- Подключаем PapaParse для надежного чтения CSV -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>База знаний поддержки</title>
     <style>
-      :root {
-        /* Светлая тема */
-        --bg-page: #f5f6f8;
-        --bg-sidebar: #ffffff;
-        --text-main: #131313;
-        --text-secondary: #6b6f7c;
-        --border: #e0e2e6;
-        --accent: #9d22ee;
-        --accent-hover: #821ad1;
-        --accent-light: #f4eef9;
-        --card-bg: #ffffff;
-      }
-
-      [data-theme="dark"] {
-        /* Тёмная тема (WB Style) */
-        --bg-page: #1e1e24;
-        --bg-sidebar: #2a2a32;
-        --text-main: #f0f0f2;
-        --text-secondary: #9ca3af;
-        --border: #374151;
-        --accent: #c97bf5;
-        --accent-hover: #a656d6;
-        --accent-light: #3a2d5e;
-        --card-bg: #2a2a32;
-      }
-
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-
-      body {
-        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-        background-color: var(--bg-page);
-        color: var(--text-main);
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        transition: background 0.3s, color 0.3s;
-      }
-
-      header {
-        padding: 12px 20px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--bg-sidebar);
-        z-index: 10;
-      }
-
-      .toolbar { display: flex; gap: 12px; align-items: center; }
-
-      input[type="search"] {
-        padding: 8px 12px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        background: var(--bg-sidebar);
-        color: var(--text-main);
-        min-width: 220px;
-      }
-      input[type="search"]:focus { outline: 2px solid var(--accent); }
-
-      button.btn {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s;
-      }
-      .btn-primary { background: var(--accent); color: #fff; }
-      .btn-primary:hover { background: var(--accent-hover); }
-      .btn-outline {
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-main);
-      }
-      .btn-outline:hover { border-color: var(--accent); }
-      .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-      main {
-        display: flex;
-        flex: 1;
-        overflow: hidden;
-        height: 0;
-      }
-
-      aside {
-        width: 260px;
-        border-right: 1px solid var(--border);
-        background: var(--bg-sidebar);
-        display: flex;
-        flex-direction: column;
-        min-width: 200px;
-        max-width: 400px;
-      }
-      aside.resizing { pointer-events: none; user-select: none; }
-
-      .aside-header {
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--border);
-        font-weight: 600;
-        color: var(--text-main);
-      }
-
-      .categories-list {
-        flex: 1;
-        overflow-y: auto;
-      }
-      .category-item {
-        padding: 10px 16px;
-        cursor: pointer;
-        color: var(--text-main);
-        border-left: 3px solid transparent;
-      }
-      .category-item.active {
-        border-left-color: var(--accent);
-        background: var(--accent-light);
-        color: var(--accent);
-      }
-      .category-item:hover { background: rgba(255,255,255,0.05); }
-
-      .resizer {
-        width: 6px;
-        cursor: col-resize;
-        background: var(--border);
-        flex-shrink: 0;
-      }
-      .resizer:hover { background: var(--accent); }
-
-      .content-area {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto;
-        background: var(--bg-page);
-      }
-
-      .results-count { margin-bottom: 16px; color: var(--text-secondary); }
-
-      .card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 18px;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      }
-      .card h3 { margin-bottom: 8px; color: var(--text-main); }
-      .card .text { color: var(--text-secondary); line-height: 1.5; }
-
-      .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
-      .error { color: #ef4444; text-align: center; padding: 20px; }
-
-      @media (max-width: 768px) {
-        aside { width: 70px; padding: 0; }
-        .categories-list { display: none; }
-        .aside-header span { display: none; }
-        main { flex-direction: column; }
-        aside { border-right: none; border-bottom: 1px solid var(--border); }
-        .resizer { display: none; }
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            transition: background 0.3s, color 0.3s;
+        }
+        /* ===== ТЕМЫ ===== */
+        body.theme-purple {
+            --bg-main: #f3e8ff;
+            --bg-sidebar: #7c3aed;
+            --bg-card: #ffffff;
+            --text-primary: #1e1b4b;
+            --text-secondary: #4c1d95;
+            --text-sidebar: #ede9fe;
+            --border-color: #c4b5fd;
+            --shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --input-bg: #ede9fe;
+            --scrollbar-track: rgba(255,255,255,0.15);
+        }
+        body.theme-purple.dark {
+            --bg-main: #1e1b4b;
+            --bg-sidebar: #2e1065;
+            --bg-card: #4c1d95;
+            --text-primary: #ede9fe;
+            --text-secondary: #c4b5fd;
+            --text-sidebar: #ede9fe;
+            --border-color: #5b21b6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --input-bg: #5b21b6;
+            --scrollbar-track: rgba(255,255,255,0.1);
+        }
+        body.theme-wb {
+            --bg-main: #f8f9fa;
+            --bg-sidebar: #1a1a2e;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --text-sidebar: #e2e8f0;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --accent: #6c3eb8;
+            --accent-hover: #5a2d9e;
+            --input-bg: #f1f3f5;
+            --scrollbar-track: rgba(255,255,255,0.1);
+        }
+        body.theme-wb.dark {
+            --bg-main: #0f0f1a;
+            --bg-sidebar: #1a1a2e;
+            --bg-card: #252540;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-sidebar: #e2e8f0;
+            --border-color: #2d2d4a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --input-bg: #2d2d4a;
+            --scrollbar-track: rgba(255,255,255,0.08);
+        }
+        body {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+        /* ===== САЙДБАР ===== */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            color: var(--text-sidebar);
+            padding: 20px;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+        }
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 15px;
+            color: var(--text-sidebar);
+            flex-shrink: 0;
+        }
+        /* ===== СКРОЛЛ ДЛЯ ТЕМ ===== */
+        .sidebar .theme-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+            margin-right: -5px;
+        }
+        .sidebar .theme-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar .theme-scroll::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 10px;
+        }
+        .sidebar .theme-scroll::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+        #searchInput::placeholder {
+            color: var(--text-secondary);
+        }
+        .theme-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            background: transparent;
+            color: var(--text-sidebar);
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .theme-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .theme-btn.active {
+            background: var(--accent);
+            color: white;
+            font-weight: bold;
+        }
+        .theme-switcher {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .theme-switcher button {
+            flex: 1;
+            padding: 6px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-sidebar);
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .theme-switcher button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .theme-switcher button.active-switch {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .dark-toggle {
+            padding: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-sidebar);
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 10px;
+        }
+        .dark-toggle:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .dark-toggle.active-dark {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .sidebar .refresh-btn {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-sidebar);
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-top: 10px;
+        }
+        .sidebar .refresh-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        /* ===== ОСНОВНАЯ ОБЛАСТЬ ===== */
+        .content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow: hidden;
+            background: var(--bg-main);
+            transition: background 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .content .content-header {
+            flex-shrink: 0;
+        }
+        .content h1 {
+            font-size: 26px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            transition: color 0.3s;
+        }
+        .content .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        /* ===== СКРОЛЛ ДЛЯ ШАБЛОНОВ ===== */
+        .content .templates-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-right: -10px;
+        }
+        .content .templates-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content .templates-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.06);
+            border-radius: 10px;
+        }
+        .content .templates-scroll::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        /* ===== СКРОЛЛ ДЛЯ ВСЕГО САЙТА (Firefox) ===== */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--scrollbar-track, rgba(255,255,255,0.1));
+        }
+        .template-card {
+            background: var(--bg-card);
+            border-left: 5px solid var(--accent);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .template-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            flex: 1;
+            transition: color 0.3s;
+        }
+        .template-text strong {
+            color: var(--accent);
+        }
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            height: 32px;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background: #22c55e;
+        }
+        .empty-state {
+            color: var(--text-secondary);
+            font-size: 18px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 17px;
+            color: var(--text-secondary);
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        @media (max-width: 700px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; max-height: 50vh; }
+            .content { height: auto; padding: 20px; }
+        }
     </style>
-  </head>
-  <!-- По умолчанию запускаем в тёмной теме -->
-  <body data-theme="dark">
-    <header>
-      <div style="font-weight:600; color:var(--accent);">WB База знаний</div>
-      <div class="toolbar">
-        <input type="search" id="searchInput" placeholder="Поиск шаблона..." />
-        <button class="btn btn-outline" id="refreshBtn" title="Обновить данные">🔄 Обновить</button>
-        <button class="btn btn-primary" id="themeToggle">Светлая тема</button>
-      </div>
-    </header>
+</head>
+<body class="theme-purple">
 
-    <main>
-      <aside id="aside">
-        <div class="aside-header"><span>Категории</span></div>
-        <div class="categories-list" id="categoriesList"></div>
-        <div class="resizer" id="resizer"></div>
-      </aside>
+    <div class="sidebar">
+        <h2>📂 Темы</h2>
+        <div class="theme-switcher">
+            <button class="active-switch" data-theme="purple">💜 Фиолет</button>
+            <button data-theme="wb">🟣 WB</button>
+        </div>
+        <button class="dark-toggle" id="darkToggle">🌙 Ночной режим</button>
+        <input type="text" id="searchInput" placeholder="🔍 Поиск по шаблонам...">
+        <div class="theme-scroll">
+            <div id="themeList">
+                <div style="color:var(--text-sidebar);padding:10px;">Загрузка...</div>
+            </div>
+        </div>
+        <button class="refresh-btn" id="refreshBtn">🔄 Обновить данные</button>
+    </div>
 
-      <div class="content-area">
-        <div class="results-count" id="resultsCount">Загружено шаблонов: 0</div>
-        <div id="templatesContainer"></div>
-      </div>
-    </main>
+    <div class="content" id="contentArea">
+        <div class="content-header">
+            <h1 id="themeTitle">Загрузка...</h1>
+            <div class="subtitle" id="themeDesc">Подождите, идёт загрузка данных</div>
+        </div>
+        <div class="templates-scroll">
+            <div id="templatesContainer">
+                <div class="loading">⏳ Загрузка шаблонов...</div>
+            </div>
+        </div>
+    </div>
 
     <script>
-      // ВСТАВЛЕНА ТВОЯ ПРАВИЛЬНАЯ ССЫЛКА
-      const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWriQhXiQaFnRHtBPiqIpBT1LUUF2-cBnsXJvu4OKP4zycIc4dLvjVZ1abiF-RrsvaeL2Sgw_ZSUcB/pub?output=csv';
+        // ====== ССЫЛКА НА APP SCRIPT ======
+        const API_URL = 'https://script.google.com/macros/s/AKfycbynFsvoNtkTVPF15uX4nOZlIYppMTmBsrv17F1GqTsTHvJli5sv13sRWBUmrWJJrkO6XA/exec?callback=?';
 
-      const categoriesListEl = document.getElementById('categoriesList');
-      const templatesContainerEl = document.getElementById('templatesContainer');
-      const searchInputEl = document.getElementById('searchInput');
-      const refreshBtnEl = document.getElementById('refreshBtn');
-      const themeToggleEl = document.getElementById('themeToggle');
-      const asideEl = document.getElementById('aside');
-      const resizerEl = document.getElementById('resizer');
-      const resultsCountEl = document.getElementById('resultsCount');
+        let currentTheme = null;
+        let allData = {};
+        let searchQuery = '';
+        let currentColorTheme = 'purple';
+        let isDark = false;
 
-      let templatesData = [];
-      let currentCategory = null;
-
-      async function loadTemplates() {
-        refreshBtnEl.disabled = true;
-        templatesContainerEl.innerHTML = '<div class="loading">Загрузка данных из таблицы…</div>';
-
-        try {
-          const response = await fetch(csvUrl);
-          if (!response.ok) throw new Error('Ошибка сети или таблица недоступна');
-
-          const text = await response.text();
-          
-          const result = Papa.parse(text, {
-            header: true,
-            skipEmptyLines: true
-          });
-
-          if (result.errors && result.errors.length > 0) {
-            throw new Error('Ошибка парсинга CSV: ' + result.errors.message);
-          }
-
-          templatesData = result.data;
-
-          const firstRow = templatesData;
-          if (!firstRow || !('category' in firstRow) || !('title' in firstRow) || !('text' in firstRow)) {
-            throw new Error('Неверный формат CSV. Нужны колонки: category, title, text');
-          }
-
-          renderCategories();
-          renderTemplates();
-          resultsCountEl.textContent = `Загружено шаблонов: \${templatesData.length}`;
-        } catch (error) {
-          console.error(error);
-          templatesContainerEl.innerHTML = `
-            <div class="error">
-              <strong>Ошибка загрузки:</strong> \${error.message}<br/>
-              <small>Проверь, что таблица опубликована как CSV и в первой строке есть колонки: category, title, text.</small>
-            </div>`;
-        } finally {
-          refreshBtnEl.disabled = false;
-        }
-      }
-
-      function renderCategories() {
-        const categories = [...new Set(templatesData.map(t => t.category || 'Без категории'))];
-        categoriesListEl.innerHTML = '';
-
-        categories.forEach(cat => {
-          const el = document.createElement('div');
-          el.className = 'category-item' + (currentCategory === cat ? ' active' : '');
-          el.textContent = cat;
-          el.onclick = () => {
-            currentCategory = cat;
-            updateActiveCategory();
-            renderTemplates();
-          };
-          categoriesListEl.appendChild(el);
-        });
-      }
-
-      function updateActiveCategory() {
-        const items = categoriesListEl.querySelectorAll('.category-item');
-        items.forEach(el => {
-          if (currentCategory && el.textContent === currentCategory) {
-            el.classList.add('active');
-          } else {
-            el.classList.remove('active');
-          }
-        });
-      }
-
-      function filterTemplates(query, category) {
-        return templatesData.filter(t => {
-          const catMatch = !category || (t.category || '') === category;
-          const q = query.toLowerCase();
-          const titleMatch = (t.title || '').toLowerCase().includes(q);
-          const textMatch = (t.text || '').toLowerCase().includes(q);
-          return catMatch && (titleMatch || textMatch);
-        });
-      }
-
-      function renderTemplates() {
-        const query = searchInputEl.value.toLowerCase();
-        const filtered = filterTemplates(query, currentCategory);
-
-        templatesContainerEl.innerHTML = '';
-        if (filtered.length === 0) {
-          templatesContainerEl.innerHTML = '<div style="padding:20px;color:var(--text-secondary)">Ничего не найдено</div>';
-          return;
+        // ====== ПЕРЕКЛЮЧЕНИЕ ТЕМ ======
+        function applyTheme() {
+            const body = document.body;
+            body.classList.remove('theme-purple', 'theme-wb', 'dark');
+            body.classList.add('theme-' + currentColorTheme);
+            if (isDark) body.classList.add('dark');
+            document.querySelectorAll('.theme-switcher button').forEach(btn => {
+                btn.classList.toggle('active-switch', btn.dataset.theme === currentColorTheme);
+            });
+            document.getElementById('darkToggle').classList.toggle('active-dark', isDark);
+            document.getElementById('darkToggle').textContent = isDark ? '☀️ Дневной режим' : '🌙 Ночной режим';
         }
 
-        filtered.forEach(t => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <h3>\${escapeHtml(t.title)}</h3>
-            <div class="text">\${escapeHtml(t.text)}</div>
-          `;
-          templatesContainerEl.appendChild(card);
+        document.querySelectorAll('.theme-switcher button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentColorTheme = this.dataset.theme;
+                applyTheme();
+            });
         });
 
-        resultsCountEl.textContent = `Найдено: \${filtered.length}`;
-      }
+        document.getElementById('darkToggle').addEventListener('click', function() {
+            isDark = !isDark;
+            applyTheme();
+        });
 
-      function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
+        // ====== ЗАГРУЗКА ДАННЫХ ======
+        async function loadData() {
+            const themeList = document.getElementById('themeList');
+            const container = document.getElementById('templatesContainer');
+            const title = document.getElementById('themeTitle');
+            const desc = document.getElementById('themeDesc');
 
-      searchInputEl.addEventListener('input', renderTemplates);
-      refreshBtnEl.addEventListener('click', loadTemplates);
+            themeList.innerHTML = '<div style="color:var(--text-sidebar);padding:10px;">⏳ Загрузка...</div>';
+            container.innerHTML = '<div class="loading">⏳ Загрузка шаблонов...</div>';
+            title.textContent = 'Загрузка...';
+            desc.textContent = 'Подождите, идёт загрузка данных';
 
-      // Переключение темы
-      themeToggleEl.addEventListener('click', () => {
-        const body = document.body;
-        const isDark = body.getAttribute('data-theme') === 'dark';
-        
-        if (isDark) {
-          body.setAttribute('data-theme', 'light');
-          themeToggleEl.textContent = 'Тёмная тема';
-        } else {
-          body.setAttribute('data-theme', 'dark');
-          themeToggleEl.textContent = 'Светлая тема';
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 15000);
+                const response = await fetch(API_URL, { signal: controller.signal });
+                clearTimeout(timeout);
+
+                if (!response.ok) throw new Error('Ошибка загрузки: ' + response.status);
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    throw new Error('В таблице нет данных');
+                }
+
+                const newData = {};
+                data.forEach(row => {
+                    const topic = row.topic || 'Без темы';
+                    const template = row.template || '';
+                    const description = row.description || '';
+                    if (!template) return;
+                    if (!newData[topic]) {
+                        newData[topic] = { desc: description, templates: [] };
+                    }
+                    if (description && !newData[topic].desc) {
+                        newData[topic].desc = description;
+                    }
+                    newData[topic].templates.push(template);
+                });
+
+                if (Object.keys(newData).length === 0) {
+                    throw new Error('Не найдено ни одной темы с шаблонами');
+                }
+
+                allData = newData;
+                const themeKeys = Object.keys(allData);
+                if (!currentTheme || !allData[currentTheme]) {
+                    currentTheme = themeKeys[0];
+                }
+
+                renderSidebar();
+                renderContent();
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                let errorMsg = 'Не удалось загрузить данные. ';
+                if (error.name === 'AbortError') {
+                    errorMsg += 'Запрос слишком долгий. Проверьте интернет.';
+                } else {
+                    errorMsg += 'Проверьте ссылку и интернет.';
+                }
+                themeList.innerHTML = `<div style="color:#ef4444;padding:10px;">❌ Ошибка</div>`;
+                container.innerHTML = `
+                    <div class="error">
+                        ❌ ${errorMsg}<br>
+                        <b>Подробности:</b> ${error.message}
+                    </div>
+                `;
+                title.textContent = 'Ошибка';
+                desc.textContent = 'Проверьте подключение';
+            }
         }
-      });
 
-      // Ресайз боковой панели
-      let isResizing = false;
-      let startX, startWidth;
+        // ====== ОТРИСОВКА МЕНЮ ======
+        function renderSidebar() {
+            const container = document.getElementById('themeList');
+            container.innerHTML = '';
+            const keys = Object.keys(allData);
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-sidebar);padding:10px;">Нет тем</div>';
+                return;
+            }
+            keys.forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'theme-btn' + (key === currentTheme ? ' active' : '');
+                btn.textContent = key;
+                btn.dataset.theme = key;
+                btn.addEventListener('click', function() {
+                    currentTheme = this.dataset.theme;
+                    searchQuery = '';
+                    document.getElementById('searchInput').value = '';
+                    renderSidebar();
+                    renderContent();
+                });
+                container.appendChild(btn);
+            });
+        }
 
-      resizerEl.addEventListener('mousedown', e => {
-        isResizing = true;
-        startX = e.clientX;
-        startWidth = asideEl.offsetWidth;
-        asideEl.classList.add('resizing');
-        document.body.style.userSelect = 'none';
-      });
+        // ====== ОТРИСОВКА ШАБЛОНОВ ======
+        function renderContent() {
+            const container = document.getElementById('templatesContainer');
+            const title = document.getElementById('themeTitle');
+            const desc = document.getElementById('themeDesc');
 
-      window.addEventListener('mousemove', e => {
-        if (!isResizing) return;
-        const dx = e.clientX - startX;
-        const newWidth = Math.max(200, Math.min(400, startWidth + dx));
-        asideEl.style.width = newWidth + 'px';
-      });
+            if (searchQuery) {
+                let allTemplates = [];
+                const themeKeys = Object.keys(allData);
+                themeKeys.forEach(themeKey => {
+                    const theme = allData[themeKey];
+                    if (theme && theme.templates) {
+                        theme.templates.forEach(text => {
+                            allTemplates.push({
+                                theme: themeKey,
+                                text: text,
+                                desc: theme.desc || ''
+                            });
+                        });
+                    }
+                });
 
-      window.addEventListener('mouseup', () => {
-        if (!isResizing) return;
-        isResizing = false;
-        asideEl.classList.remove('resizing');
-        document.body.style.userSelect = '';
-      });
+                const filtered = allTemplates.filter(item =>
+                    item.text.toLowerCase().includes(searchQuery) ||
+                    item.theme.toLowerCase().includes(searchQuery) ||
+                    item.desc.toLowerCase().includes(searchQuery)
+                );
 
-      // Старт
-      loadTemplates();
+                if (filtered.length === 0) {
+                    title.textContent = '🔍 Результаты поиска';
+                    desc.textContent = 'Ничего не найдено';
+                    container.innerHTML = '<div class="empty-state">😕 По вашему запросу ничего не найдено</div>';
+                    return;
+                }
+
+                title.textContent = '🔍 Результаты поиска';
+                desc.textContent = `Найдено ${filtered.length} шаблонов`;
+
+                container.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'template-text';
+                    textDiv.innerHTML = `<strong>${item.theme}</strong><br>${item.text}`;
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Копировать';
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(item.text).then(() => {
+                            this.textContent = '✅ Скопировано!';
+                            this.classList.add('copied');
+                            setTimeout(() => {
+                                this.textContent = '📋 Копировать';
+                                this.classList.remove('copied');
+                            }, 2000);
+                        }).catch(() => {
+                            alert('Не удалось скопировать текст.');
+                        });
+                    });
+                    card.appendChild(textDiv);
+                    card.appendChild(copyBtn);
+                    container.appendChild(card);
+                });
+                return;
+            }
+
+            // Обычный режим
+            if (!currentTheme || !allData[currentTheme]) {
+                const keys = Object.keys(allData);
+                if (keys.length > 0) {
+                    currentTheme = keys[0];
+                } else {
+                    title.textContent = 'Нет данных';
+                    desc.textContent = 'Загрузите данные через кнопку "Обновить данные"';
+                    container.innerHTML = '<div class="empty-state">📭 Нет шаблонов для отображения</div>';
+                    return;
+                }
+            }
+
+            const theme = allData[currentTheme];
+            title.textContent = currentTheme;
+            desc.textContent = theme.desc || 'Шаблоны ответов';
+
+            container.innerHTML = '';
+            if (theme && theme.templates) {
+                theme.templates.forEach((text) => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'template-text';
+                    textDiv.textContent = text;
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Копировать';
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(text).then(() => {
+                            this.textContent = '✅ Скопировано!';
+                            this.classList.add('copied');
+                            setTimeout(() => {
+                                this.textContent = '📋 Копировать';
+                                this.classList.remove('copied');
+                            }, 2000);
+                        }).catch(() => {
+                            alert('Не удалось скопировать текст.');
+                        });
+                    });
+                    card.appendChild(textDiv);
+                    card.appendChild(copyBtn);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        // ====== ПОИСК ======
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchQuery = this.value.toLowerCase().trim();
+            if (searchQuery) {
+                document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            } else {
+                renderSidebar();
+            }
+            renderContent();
+        });
+
+        // ====== ОБНОВЛЕНИЕ ======
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.textContent = '⏳ Загрузка...';
+            loadData().finally(() => {
+                this.textContent = '🔄 Обновить данные';
+            });
+        });
+
+        // ====== ПЕРВАЯ ЗАГРУЗКА ======
+        loadData();
+        applyTheme();
     </script>
-  </body>
+
+</body>
 </html>
