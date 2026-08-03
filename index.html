@@ -1,50 +1,222 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8">
-    <title>База знаний поддержки</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-        min-height: 100vh;
-        display: flex;
-        transition: background 0.3s, color 0.3s;
-        background-color: var(--bg-main, #f5f5f5);
-        color: var(--text-primary, #333);
-      }
-      /* ===== ТЕМЫ ===== */
-      body.theme-purple {
-        --bg-main: #f3e8ff;
-        --bg-sidebar: #7c3aed;
-        --bg-card: #ffffff;
-        --text-primary: #1e1b4b;
-      }
-      .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .card {
-        background: var(--bg-card, #ffffff);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body class="theme-purple">
-    <div class="container">
-      <h1>База знаний поддержки</h1>
-      <div class="card">
-        <p>Здесь будет контент базы знаний.</p>
+<head>
+  <meta charset="UTF-8">
+  <title>База шаблонов поддержки</title>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --bg: #f3e8ff;
+      --text: #1e1b4b;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 { text-align: center; margin-bottom: 30px; }
+
+    /* Стили формы */
+    .form-group { margin-bottom: 15px; }
+    
+    label { display: block; margin-bottom: 5px; font-weight: 600; }
+    
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box; /* Важно: чтобы padding не ломал ширину */
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+
+    button:hover { background-color: #6d28d9; }
+
+    /* Стили карточек */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card h3 { margin-top: 0; color: var(--primary); }
+    
+    .card p { line-height: 1.5; margin-bottom: 15px; }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn-delete {
+      background-color: #ef4444;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .btn-delete:hover { background-color: #dc2626; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Мои шаблоны ответов</h1>
+
+    <!-- Форма добавления -->
+    <div class="add-form">
+      <div class="form-group">
+        <label for="templateTitle">Заголовок шаблона</label>
+        <input type="text" id="templateTitle" placeholder="Например: Проблема с оплатой">
       </div>
+      <div class="form-group">
+        <label for="templateText">Текст ответа</label>
+        <textarea id="templateText" placeholder="Здесь пиши готовый текст ответа..."></textarea>
+      </div>
+      <button type="button" onclick="addTemplate()">Добавить шаблон</button>
     </div>
-  </body>
+
+    <!-- Список карточек -->
+    <div class="cards-grid" id="cardsContainer">
+      <!-- Сюда JavaScript будет вставлять карточки -->
+    </div>
+  </div>
+
+  <script>
+    const TEMPLATES_KEY = 'support_templates_v1';
+
+    // 1. При загрузке страницы: берем данные из localStorage и рисуем карточки
+    document.addEventListener('DOMContentLoaded', loadTemplates);
+
+    // 2. Функция добавления нового шаблона
+    function addTemplate() {
+      const titleInput = document.getElementById('templateTitle');
+      const textInput = document.getElementById('templateText');
+
+      const title = titleInput.value.trim();
+      const text = textInput.value.trim();
+
+      if (!title || !text) {
+        alert('Заполни и заголовок, и текст!');
+        return;
+      }
+
+      const newTemplate = {
+        id: Date.now(), // Уникальный ID на основе времени
+        title: title,
+        text: text
+      };
+
+      // Получаем старые данные или создаем пустой массив
+      let templates = JSON.parse(localStorage.getItem(TEMPLATES_KEY)) || [];
+      
+      // Добавляем новый
+      templates.push(newTemplate);
+      
+      // Сохраняем обратно в браузер
+      localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
+
+      // Очищаем поля
+      titleInput.value = '';
+      textInput.value = '';
+
+      // Перерисовываем список
+      renderTemplates(templates);
+    }
+
+    // 3. Функция отрисовки карточек на странице
+    function renderTemplates(templates) {
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = ''; // Очищаем контейнер
+
+      if (templates.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#666;">Пока нет шаблонов. Добавь первый!</p>';
+        return;
+      }
+
+      templates.forEach(tpl => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div>
+            <h3>\${escapeHtml(tpl.title)}</h3>
+            <p>\${escapeHtml(tpl.text)}</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-delete" onclick="deleteTemplate(\${tpl.id})">Удалить</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 4. Функция загрузки и отрисовки при старте
+    function loadTemplates() {
+      const stored = localStorage.getItem(TEMPLATES_KEY);
+      const templates = stored ? JSON.parse(stored) : [];
+      renderTemplates(templates);
+    }
+
+    // 5. Функция удаления шаблона
+    function deleteTemplate(id) {
+      if(!confirm('Точно удалить этот шаблон?')) return;
+
+      let templates = JSON.parse(localStorage.getItem(TEMPLATES_KEY)) || [];
+      
+      // Фильтруем массив, убирая элемент с нужным ID
+      const updated = templates.filter(tpl => tpl.id !== id);
+      
+      localStorage.setItem(TEMPLATES_KEY, JSON.stringify(updated));
+      
+      // Обновляем вид
+      renderTemplates(updated);
+    }
+
+    // Защита от XSS (чтобы нельзя было вставить вредоносный скрипт через поле ввода)
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
 </html>
