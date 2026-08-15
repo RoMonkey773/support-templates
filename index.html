@@ -40,6 +40,21 @@
             color: var(--success);
         }
 
+        .status-bar {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .status-bar.success {
+            color: var(--success);
+        }
+
+        .status-bar.error {
+            color: #ff6b6b;
+        }
+
         .search-box {
             width: 100%;
             padding: 15px 20px;
@@ -163,11 +178,16 @@
             color: #ff6b6b;
         }
 
-        .error small {
-            display: block;
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 0.8em;
+        .retry-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: var(--success);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         @media (max-width: 600px) {
@@ -188,6 +208,8 @@
     <div class="container">
         <h1>📋 Шаблоны для поддержки</h1>
         
+        <div class="status-bar" id="statusBar">Загрузка...</div>
+        
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск по шаблонам...">
         
         <div class="category-buttons" id="categoryButtons"></div>
@@ -199,68 +221,140 @@
 
     <script>
         // ============================================
-        // НАСТРОЙКА: ССЫЛКА НА GOOGLE SHEETS
+        // НАСТРОЙКА
         // ============================================
         const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWriQhXiQaFnRHtBPiqIpBT1LUUF2-cBnsXJvu4OKP4zycIc4dLvjVZ1abiF-RrsvaeL2Sgw_ZSUcB/pub?output=csv';
 
-        // Прокси для обхода CORS (можно менять на запасные)
-        const CORS_PROXIES = [
-            'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?url=',
-            'https://api.codetabs.com/v1/proxy?quest='
+        // Резервные шаблоны (на случай, если Google недоступен)
+        const FALLBACK_TEMPLATES = [
+            {
+                'Название': 'Приветствие',
+                'Категория': 'Общение',
+                'Текст': 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.'
+            },
+            {
+                'Название': 'Прощание',
+                'Категория': 'Общение',
+                'Текст': 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!'
+            },
+            {
+                'Название': 'Ожидание ответа',
+                'Категория': 'Общение',
+                'Текст': 'Пожалуйста, подождите немного — я проверяю информацию по вашему вопросу. Это займёт не более 2-3 минут.'
+            },
+            {
+                'Название': 'Проблема с оплатой',
+                'Категория': 'Оплата',
+                'Текст': 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.'
+            },
+            {
+                'Название': 'Возврат средств',
+                'Категория': 'Оплата',
+                'Текст': 'Я оформил(а) запрос на возврат средств. Деньги вернутся на карту в течение 3-10 рабочих дней, в зависимости от вашего банка.'
+            },
+            {
+                'Название': 'Не пришёл заказ',
+                'Категория': 'Доставка',
+                'Текст': 'Мне жаль, что ваш заказ ещё не доставлен. Давайте я проверю его статус. Подскажите, пожалуйста, номер заказа.'
+            },
+            {
+                'Название': 'Заказ задерживается',
+                'Категория': 'Доставка',
+                'Текст': 'Приносим извинения за задержку. Курьерская служба иногда сталкивается с непредвиденными обстоятельствами. Я проверю, где сейчас ваш заказ, и сообщу вам.'
+            }
         ];
 
-        let currentProxyIndex = 0;
         let allTemplates = [];
         let currentCategory = 'Все';
+        let dataSource = '';
 
-        // Загрузка данных из Google Sheets с обходом CORS
+        // Загрузка данных
         async function loadTemplates() {
             const container = document.getElementById('templatesContainer');
+            const statusBar = document.getElementById('statusBar');
             container.innerHTML = '<div class="loading">Загрузка шаблонов...</div>';
+            statusBar.textContent = 'Загрузка...';
+            statusBar.className = 'status-bar';
             
+            // Пробуем прямой запрос к Google
+            try {
+                const csvText = await fetchDirect(GOOGLE_SHEETS_URL);
+                if (csvText && csvText.trim().length > 0 && csvText.includes(',')) {
+                    parseCSV(csvText);
+                    dataSource = 'Данные загружены из Google Sheets';
+                    statusBar.textContent = '✓ ' + dataSource;
+                    statusBar.className = 'status-bar success';
+                    renderCategories();
+                    renderTemplates();
+                    return;
+                }
+            } catch (error) {
+                console.log('Прямой запрос не сработал:', error.message);
+            }
+            
+            // Пробуем через прокси
             try {
                 const csvText = await fetchWithProxy(GOOGLE_SHEETS_URL);
-                parseCSV(csvText);
-                renderCategories();
-                renderTemplates();
+                if (csvText && csvText.trim().length > 0 && csvText.includes(',')) {
+                    parseCSV(csvText);
+                    dataSource = 'Данные загружены через прокси';
+                    statusBar.textContent = '✓ ' + dataSource;
+                    statusBar.className = 'status-bar success';
+                    renderCategories();
+                    renderTemplates();
+                    return;
+                }
             } catch (error) {
-                container.innerHTML = `
-                    <div class="error">
-                        ❌ Не удалось загрузить данные. Проверьте ссылку и интернет.<br>
-                        <small>Подробности: ${error.message}</small>
-                    </div>
-                `;
+                console.log('Прокси не сработал:', error.message);
             }
+            
+            // Используем резервные шаблоны
+            allTemplates = FALLBACK_TEMPLATES;
+            dataSource = 'Резервные шаблоны (Google недоступен)';
+            statusBar.textContent = '⚠ ' + dataSource;
+            statusBar.className = 'status-bar error';
+            renderCategories();
+            renderTemplates();
         }
 
-        // Функция с попыткой загрузки через разные прокси
+        // Прямой запрос
+        async function fetchDirect(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return await response.text();
+        }
+
+        // Запрос через прокси
         async function fetchWithProxy(url) {
-            let lastError;
+            const proxies = [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?url=',
+                'https://api.codetabs.com/v1/proxy?quest='
+            ];
             
-            for (let i = 0; i < CORS_PROXIES.length; i++) {
+            let lastError;
+            for (const proxy of proxies) {
                 try {
-                    const proxyUrl = CORS_PROXIES[i] + encodeURIComponent(url);
+                    const proxyUrl = proxy + encodeURIComponent(url);
                     const response = await fetch(proxyUrl);
-                    
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}`);
                     }
-                    
-                    const text = await response.text();
-                    return text;
+                    return await response.text();
                 } catch (error) {
                     lastError = error;
-                    currentProxyIndex = (currentProxyIndex + 1) % CORS_PROXIES.length;
                 }
             }
-            
             throw lastError;
         }
 
         // Парсинг CSV
         function parseCSV(csvText) {
             const rows = csvText.split('\n').filter(row => row.trim() !== '');
+            if (rows.length < 2) return;
+            
             const headers = parseCSVLine(rows[0]);
             
             allTemplates = [];
@@ -272,14 +366,13 @@
                     template[header] = values[index] ? values[index].trim() : '';
                 });
                 
-                // Добавляем только если есть хоть какие-то данные
                 if (Object.values(template).some(v => v !== '')) {
                     allTemplates.push(template);
                 }
             }
         }
 
-        // Правильный парсинг CSV строк (учитывает кавычки)
+        // Правильный парсинг CSV строки
         function parseCSVLine(line) {
             const result = [];
             let current = '';
@@ -340,7 +433,7 @@
             const container = document.getElementById('templatesContainer');
             
             if (allTemplates.length === 0) {
-                container.innerHTML = '<div class="error">В таблице не найдено данных</div>';
+                container.innerHTML = '<div class="error">Нет данных для отображения</div>';
                 return;
             }
             
@@ -362,7 +455,6 @@
             container.innerHTML = '';
             
             filtered.forEach(template => {
-                // Находим основные поля
                 const title = template['Название'] || 
                               template['Заголовок'] || 
                               template['Шаблон'] || 
@@ -386,14 +478,11 @@
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 
-                // Экранируем кавычки для безопасного JavaScript
-                const safeText = text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
-                
                 card.innerHTML = `
                     <div class="template-category">${escapeHtml(category)}</div>
                     <div class="template-title">${escapeHtml(title)}</div>
                     <div class="template-text">${escapeHtml(text)}</div>
-                    <button class="copy-btn" onclick="copyTemplate(this, '${safeText}')">
+                    <button class="copy-btn" onclick="copyTemplate(this, '${escapeForJs(text)}')">
                         📋 Копировать
                     </button>
                 `;
@@ -409,20 +498,23 @@
             return div.innerHTML;
         }
 
+        // Экранирование для JavaScript строки
+        function escapeForJs(text) {
+            return text.replace(/\\/g, '\\\\')
+                       .replace(/'/g, "\\'")
+                       .replace(/\n/g, '\\n')
+                       .replace(/\r/g, '');
+        }
+
         // Копирование в буфер обмена
         function copyTemplate(button, text) {
             const decodedText = text.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
             
-            // Современный способ
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(decodedText).then(() => {
-                    showCopied(button);
-                }).catch(() => {
-                    // Запасной способ
-                    fallbackCopy(decodedText, button);
-                });
+                navigator.clipboard.writeText(decodedText)
+                    .then(() => showCopied(button))
+                    .catch(() => fallbackCopy(decodedText, button));
             } else {
-                // Запасной способ для старых браузеров
                 fallbackCopy(decodedText, button);
             }
         }
@@ -440,7 +532,7 @@
                 document.execCommand('copy');
                 showCopied(button);
             } catch (error) {
-                alert('Не удалось скопировать текст. Скопируйте вручную.');
+                alert('Не удалось скопировать. Скопируйте текст вручную.');
             }
             
             document.body.removeChild(textarea);
@@ -463,14 +555,7 @@
             renderTemplates(e.target.value);
         });
 
-        // Кнопка "Обновить" при ошибке
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'retryBtn') {
-                loadTemplates();
-            }
-        });
-
-        // Загрузка при открытии страницы
+        // Загрузка при открытии
         loadTemplates();
     </script>
 </body>
