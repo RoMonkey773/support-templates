@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template Hub — Менеджер шаблонов</title>
+    <title>Template Hub — Космический менеджер шаблонов</title>
     <style>
         :root {
-            --bg-primary: #0f0f1a;
-            --bg-secondary: #1a1a2e;
-            --bg-card: #16213e;
-            --bg-hover: #1e2d4a;
-            --accent: #6c63ff;
-            --accent-hover: #7b73ff;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0b0;
-            --success: #4ecca3;
-            --warning: #ffd700;
-            --danger: #ff6b6b;
-            --border: #2a2a3e;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --gradient: linear-gradient(135deg, #6c63ff 0%, #3f3d9e 100%);
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0d1117;
+            --bg-card: #111827;
+            --bg-hover: #1a2332;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --border: #1f2937;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --star-color: #ffffff;
+            --nebula-purple: rgba(139, 92, 246, 0.1);
+            --nebula-blue: rgba(59, 130, 246, 0.1);
+            --nebula-pink: rgba(236, 72, 153, 0.1);
         }
 
         * {
@@ -35,11 +39,53 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
+            position: relative;
+        }
+
+        /* Animated stars background */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: var(--star-color);
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: var(--opacity);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity); }
+            50% { opacity: calc(var(--opacity) * 0.3); }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            animation: nebulaFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
         .app-container {
             display: flex;
             height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
         /* ============ SIDEBAR ============ */
@@ -50,6 +96,7 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .sidebar-header {
@@ -65,6 +112,20 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            -webkit-text-fill-color: initial;
+            font-size: 1.3em;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .btn-new-template {
@@ -82,9 +143,27 @@
             overflow: hidden;
         }
 
+        .btn-new-template::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-new-template:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
         .btn-new-template:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(108, 99, 255, 0.4);
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
         }
 
         .categories-section {
@@ -116,7 +195,7 @@
 
         .btn-add-category:hover {
             color: var(--accent-hover);
-            transform: scale(1.2);
+            transform: scale(1.2) rotate(90deg);
         }
 
         .category-item {
@@ -130,20 +209,39 @@
             justify-content: space-between;
             position: relative;
             border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .category-item:hover {
             background: var(--bg-hover);
+            transform: translateX(5px);
         }
 
         .category-item.active {
             background: var(--bg-hover);
             border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
 
         .category-item.drag-over {
             border-color: var(--success);
-            background: rgba(78, 204, 163, 0.1);
+            background: rgba(52, 211, 153, 0.1);
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.3);
+        }
+
+        .category-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .category-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .category-item:hover .category-icon {
+            transform: scale(1.2);
         }
 
         .category-name {
@@ -159,11 +257,14 @@
             border-radius: 12px;
             font-size: 0.8em;
             margin-left: 10px;
+            min-width: 24px;
+            text-align: center;
         }
 
         .category-actions {
             display: none;
             gap: 5px;
+            margin-left: 10px;
         }
 
         .category-item:hover .category-actions {
@@ -182,10 +283,19 @@
 
         .btn-category-action:hover {
             color: var(--text-primary);
+            transform: scale(1.2);
         }
 
         .btn-category-action.delete:hover {
             color: var(--danger);
+        }
+
+        .btn-category-action.move {
+            cursor: grab;
+        }
+
+        .btn-category-action.move:active {
+            cursor: grabbing;
         }
 
         .sidebar-footer {
@@ -205,11 +315,32 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .btn-icon:hover::before {
+            width: 100px;
+            height: 100px;
         }
 
         .btn-icon:hover {
             background: var(--bg-hover);
             border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
         /* ============ MAIN CONTENT ============ */
@@ -227,6 +358,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .search-wrapper {
@@ -240,6 +372,8 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-secondary);
+            pointer-events: none;
+            transition: all 0.3s;
         }
 
         .search-input {
@@ -256,7 +390,12 @@
         .search-input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-input:focus + .search-icon {
+            color: var(--accent);
+            transform: translateY(-50%) scale(1.2);
         }
 
         .header-actions {
@@ -278,6 +417,7 @@
         .btn-header:hover {
             background: var(--bg-hover);
             border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
         .templates-container {
@@ -299,6 +439,25 @@
             position: relative;
             border: 2px solid transparent;
             animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .template-card:hover::before {
+            opacity: 1;
         }
 
         @keyframes fadeIn {
@@ -328,6 +487,8 @@
             justify-content: space-between;
             align-items: start;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
 
         .template-card-title {
@@ -356,6 +517,8 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
 
         .template-card-actions {
@@ -363,6 +526,8 @@
             gap: 8px;
             opacity: 0;
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         .template-card:hover .template-card-actions {
@@ -377,6 +542,26 @@
             font-size: 0.85em;
             transition: all 0.3s;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-card-action::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .btn-card-action:hover::before {
+            width: 50px;
+            height: 50px;
         }
 
         .btn-copy {
@@ -386,6 +571,7 @@
 
         .btn-copy:hover {
             transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
         }
 
         .btn-edit {
@@ -395,6 +581,7 @@
 
         .btn-edit:hover {
             transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
         }
 
         .btn-delete {
@@ -404,6 +591,7 @@
 
         .btn-delete:hover {
             transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(248, 113, 113, 0.4);
         }
 
         .empty-state {
@@ -417,6 +605,12 @@
             font-size: 4em;
             margin-bottom: 20px;
             opacity: 0.5;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .empty-state h3 {
@@ -453,6 +647,20 @@
             overflow-y: auto;
             border: 1px solid var(--border);
             animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 16px;
+            background: var(--gradient);
+            z-index: -1;
+            opacity: 0.3;
         }
 
         @keyframes slideUp {
@@ -523,7 +731,7 @@
         .form-select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .form-textarea {
@@ -555,7 +763,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(108, 99, 255, 0.4);
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
         }
 
         .btn-secondary {
@@ -582,6 +790,7 @@
             transition: all 0.5s;
             z-index: 3000;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .toast.show {
@@ -643,13 +852,24 @@
     </style>
 </head>
 <body>
+    <!-- Stars background -->
+    <div class="stars-container" id="starsContainer"></div>
+    
+    <!-- Nebula effects -->
+    <div class="nebula" style="width: 300px; height: 300px; background: var(--nebula-purple); top: 10%; left: 5%;"></div>
+    <div class="nebula" style="width: 400px; height: 400px; background: var(--nebula-blue); bottom: 20%; right: 10%; animation-delay: -7s;"></div>
+    <div class="nebula" style="width: 250px; height: 250px; background: var(--nebula-pink); top: 50%; left: 50%; animation-delay: -14s;"></div>
+    
     <div class="app-container">
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">📋 Template Hub</div>
+                <div class="logo">
+                    <span class="logo-icon">🌌</span>
+                    <span>Template Hub</span>
+                </div>
                 <button class="btn-new-template" onclick="openTemplateModal()">
-                    <span>➕ Новый шаблон</span>
+                    <span>✨ Новый шаблон</span>
                 </button>
             </div>
             
@@ -743,6 +963,32 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ============ STARS GENERATION ============
+        function generateStars() {
+            const container = document.getElementById('starsContainer');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const size = Math.random() * 2 + 1;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = Math.random() * 3 + 2;
+                const opacity = Math.random() * 0.7 + 0.3;
+                
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = x + '%';
+                star.style.top = y + '%';
+                star.style.setProperty('--duration', duration + 's');
+                star.style.setProperty('--opacity', opacity);
+                
+                container.appendChild(star);
+            }
+        }
+        
         // ============ DATA LAYER ============
         const STORAGE_KEY = 'templateHubData';
         let data = {
@@ -754,6 +1000,7 @@
         
         let editingTemplateId = null;
         let editingCategoryName = null;
+        let draggedCategory = null;
         
         // Load from localStorage
         function loadData() {
@@ -778,28 +1025,32 @@
                     name: 'Приветствие клиента',
                     category: 'Общее',
                     text: 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.',
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    icon: '👋'
                 },
                 {
                     id: 't2',
                     name: 'Прощание',
                     category: 'Общее',
                     text: 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!',
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    icon: '👋'
                 },
                 {
                     id: 't3',
                     name: 'Проблема с оплатой',
                     category: 'Оплата',
                     text: 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.',
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    icon: '💳'
                 },
                 {
                     id: 't4',
                     name: 'Задержка доставки',
                     category: 'Доставка',
                     text: 'Приносим извинения за задержку. Курьерская служба иногда сталкивается с непредвиденными обстоятельствами. Я проверю, где сейчас ваш заказ, и сообщу вам.',
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    icon: '📦'
                 }
             ];
             
@@ -817,63 +1068,110 @@
             container.innerHTML = '';
             
             // "Все" category
-            const allItem = createCategoryElement('Все', data.templates.length, true);
+            const allItem = createCategoryElement('Все', data.templates.length, true, 0);
             container.appendChild(allItem);
             
             // Other categories
-            data.categories.forEach(category => {
+            data.categories.forEach((category, index) => {
                 const count = data.templates.filter(t => t.category === category).length;
-                const item = createCategoryElement(category, count, false);
+                const item = createCategoryElement(category, count, false, index + 1);
                 container.appendChild(item);
             });
         }
         
-        function createCategoryElement(name, count, isAll) {
+        function createCategoryElement(name, count, isAll, index) {
             const div = document.createElement('div');
             div.className = 'category-item' + (data.currentCategory === name ? ' active' : '');
-            div.draggable = !isAll;
+            div.draggable = true;
+            
+            const icons = ['📁', '💬', '💳', '📦', '🔧', '🎯', '📞', '✉️', '🌐', '⚙️'];
+            const icon = isAll ? '🌌' : (icons[index % icons.length] || '📂');
             
             div.innerHTML = `
-                <span class="category-name">${isAll ? '📁' : '📂'} ${name}</span>
+                <span class="category-icon">${icon}</span>
+                <span class="category-name">${name}</span>
                 <span class="category-count">${count}</span>
                 ${!isAll ? `
                     <div class="category-actions">
+                        <button class="btn-category-action move" title="Перетащить">⠿</button>
                         <button class="btn-category-action" onclick="editCategory('${name}')" title="Переименовать">✏️</button>
                         <button class="btn-category-action delete" onclick="deleteCategory('${name}')" title="Удалить">🗑️</button>
                     </div>
                 ` : ''}
             `;
             
-            div.onclick = () => {
+            div.onclick = (e) => {
+                // Don't trigger if clicking on action buttons
+                if (e.target.closest('.category-actions')) return;
+                
                 data.currentCategory = name;
                 saveData();
                 renderCategories();
                 renderTemplates();
             };
             
-            // Drag and drop for categories
-            if (!isAll) {
-                div.addEventListener('dragover', (e) => {
-                    e.preventDefault();
+            // Drag and drop for categories reordering
+            div.addEventListener('dragstart', (e) => {
+                draggedCategory = name;
+                div.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', name);
+            });
+            
+            div.addEventListener('dragend', () => {
+                div.classList.remove('dragging');
+                draggedCategory = null;
+            });
+            
+            div.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                // Check if dragging template or category
+                if (draggedCategory && draggedCategory !== 'Все') {
                     div.classList.add('drag-over');
-                });
+                } else if (e.dataTransfer.types.includes('templateId')) {
+                    div.classList.add('drag-over');
+                }
+            });
+            
+            div.addEventListener('dragleave', () => {
+                div.classList.remove('drag-over');
+            });
+            
+            div.addEventListener('drop', (e) => {
+                e.preventDefault();
+                div.classList.remove('drag-over');
                 
-                div.addEventListener('dragleave', () => {
-                    div.classList.remove('drag-over');
-                });
-                
-                div.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    div.classList.remove('drag-over');
-                    
+                // If dropping a category
+                if (draggedCategory && draggedCategory !== 'Все' && !isAll) {
+                    reorderCategories(draggedCategory, name);
+                }
+                // If dropping a template
+                else if (!isAll) {
                     const templateId = e.dataTransfer.getData('templateId');
                     if (templateId) {
                         moveTemplateToCategory(templateId, name);
                     }
-                });
-            }
+                }
+            });
             
             return div;
+        }
+        
+        function reorderCategories(fromCategory, toCategory) {
+            const fromIndex = data.categories.indexOf(fromCategory);
+            const toIndex = data.categories.indexOf(toCategory);
+            
+            if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+                const [movedCategory] = data.categories.splice(fromIndex, 1);
+                data.categories.splice(toIndex, 0, movedCategory);
+                
+                saveData();
+                renderCategories();
+                renderTemplates();
+                showToast('Категории переставлены', 'success');
+            }
         }
         
         function renderTemplates(searchTerm = '') {
@@ -898,7 +1196,7 @@
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">📝</div>
+                        <div class="empty-state-icon">🌠</div>
                         <h3>Нет шаблонов</h3>
                         <p>${searchTerm ? 'Попробуйте изменить поиск' : 'Создайте новый шаблон или выберите другую категорию'}</p>
                     </div>
@@ -917,9 +1215,11 @@
             card.className = 'template-card';
             card.draggable = true;
             
+            const icon = template.icon || '📝';
+            
             card.innerHTML = `
                 <div class="template-card-header">
-                    <span class="template-card-title">${escapeHtml(template.name)}</span>
+                    <span class="template-card-title">${icon} ${escapeHtml(template.name)}</span>
                     <span class="template-card-badge">${escapeHtml(template.category)}</span>
                 </div>
                 <div class="template-card-text">${escapeHtml(template.text)}</div>
@@ -997,6 +1297,15 @@
                 return;
             }
             
+            // Choose icon based on category
+            const categoryIcons = {
+                'Общее': '💬',
+                'Оплата': '💳',
+                'Доставка': '📦',
+                'Техническая поддержка': '🔧'
+            };
+            const icon = categoryIcons[category] || '📝';
+            
             if (editingTemplateId) {
                 // Update existing
                 const template = data.templates.find(t => t.id === editingTemplateId);
@@ -1004,6 +1313,7 @@
                 template.category = category;
                 template.text = text;
                 template.updatedAt = Date.now();
+                template.icon = icon;
             } else {
                 // Create new
                 data.templates.push({
@@ -1012,7 +1322,8 @@
                     category: category,
                     text: text,
                     createdAt: Date.now(),
-                    updatedAt: Date.now()
+                    updatedAt: Date.now(),
+                    icon: icon
                 });
             }
             
@@ -1285,6 +1596,7 @@
         });
         
         // ============ INITIALIZATION ============
+        generateStars();
         loadData();
         renderCategories();
         renderTemplates();
