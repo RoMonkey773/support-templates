@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шаблоны для поддержки</title>
+    <title>Мои шаблоны для поддержки</title>
     <style>
         :root {
             --bg: #1a1a2e;
@@ -12,6 +12,8 @@
             --text: #e0e0e0;
             --highlight: #e94560;
             --success: #4ecca3;
+            --warning: #ffd700;
+            --danger: #ff6b6b;
         }
 
         * {
@@ -29,7 +31,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -40,19 +42,46 @@
             color: var(--success);
         }
 
-        .status-bar {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 0.85em;
-            color: #aaa;
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .status-bar.success {
-            color: var(--success);
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
         }
 
-        .status-bar.error {
-            color: #ff6b6b;
+        .btn-primary {
+            background: var(--success);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #ff4444;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
         }
 
         .search-box {
@@ -79,6 +108,7 @@
             gap: 10px;
             margin-bottom: 20px;
             justify-content: center;
+            align-items: center;
         }
 
         .category-btn {
@@ -96,6 +126,16 @@
         .category-btn.active {
             background: var(--accent);
             border-color: var(--success);
+        }
+
+        .category-btn-edit {
+            padding: 4px 8px;
+            border: 1px solid var(--warning);
+            border-radius: 15px;
+            background: transparent;
+            color: var(--warning);
+            cursor: pointer;
+            font-size: 0.7em;
         }
 
         .template-card {
@@ -118,7 +158,7 @@
             font-size: 1.2em;
             margin-bottom: 10px;
             color: var(--highlight);
-            padding-right: 100px;
+            padding-right: 150px;
         }
 
         .template-category {
@@ -138,6 +178,12 @@
             background: rgba(0,0,0,0.3);
             padding: 15px;
             border-radius: 5px;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .copy-btn {
@@ -160,34 +206,108 @@
             background: #ffd700;
         }
 
-        .loading {
-            text-align: center;
-            font-size: 1.2em;
-            padding: 50px;
-            color: var(--success);
-        }
-
-        .error {
-            text-align: center;
-            font-size: 1.1em;
-            padding: 30px;
-            background: var(--card);
-            border-radius: 10px;
-            border: 1px solid var(--highlight);
-            margin: 20px 0;
-            color: #ff6b6b;
-        }
-
-        .retry-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: var(--success);
-            color: #000;
+        .edit-btn {
+            background: var(--accent);
+            color: #fff;
             border: none;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--accent);
+            border-radius: 5px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--success);
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background: var(--card);
+            border-radius: 10px;
+            color: #aaa;
         }
 
         @media (max-width: 600px) {
@@ -201,214 +321,128 @@
                 padding-right: 0;
                 margin-bottom: 30px;
             }
+            .modal-content {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 Шаблоны для поддержки</h1>
+        <h1>📋 Мои шаблоны для поддержки</h1>
         
-        <div class="status-bar" id="statusBar">Загрузка...</div>
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openAddModal()">➕ Новый шаблон</button>
+            <button class="btn btn-warning" onclick="exportData()">📤 Экспорт</button>
+            <button class="btn btn-warning" onclick="importData()">📥 Импорт</button>
+            <button class="btn btn-danger" onclick="clearAll()">🗑️ Очистить всё</button>
+        </div>
         
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск по шаблонам...">
         
         <div class="category-buttons" id="categoryButtons"></div>
         
-        <div id="templatesContainer">
-            <div class="loading">Загрузка шаблонов...</div>
+        <div id="templatesContainer"></div>
+    </div>
+
+    <!-- Модальное окно для добавления/редактирования -->
+    <div class="modal" id="templateModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Новый шаблон</h2>
+            
+            <div class="form-group">
+                <label for="templateName">Название шаблона</label>
+                <input type="text" id="templateName" placeholder="Например: Приветствие клиента">
+            </div>
+            
+            <div class="form-group">
+                <label for="templateCategory">Категория</label>
+                <input type="text" id="templateCategory" list="categoriesList" placeholder="Например: Общение, Оплата, Доставка">
+                <datalist id="categoriesList"></datalist>
+            </div>
+            
+            <div class="form-group">
+                <label for="templateText">Текст шаблона</label>
+                <textarea id="templateText" placeholder="Введите текст шаблона..."></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="saveTemplate()">💾 Сохранить</button>
+                <button class="btn btn-danger" onclick="closeModal()">❌ Отмена</button>
+            </div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // НАСТРОЙКА
+        // ХРАНИЛИЩЕ ДАННЫХ (localStorage)
         // ============================================
-        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWriQhXiQaFnRHtBPiqIpBT1LUUF2-cBnsXJvu4OKP4zycIc4dLvjVZ1abiF-RrsvaeL2Sgw_ZSUcB/pub?output=csv';
-
-        // Резервные шаблоны (на случай, если Google недоступен)
-        const FALLBACK_TEMPLATES = [
-            {
-                'Название': 'Приветствие',
-                'Категория': 'Общение',
-                'Текст': 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.'
-            },
-            {
-                'Название': 'Прощание',
-                'Категория': 'Общение',
-                'Текст': 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!'
-            },
-            {
-                'Название': 'Ожидание ответа',
-                'Категория': 'Общение',
-                'Текст': 'Пожалуйста, подождите немного — я проверяю информацию по вашему вопросу. Это займёт не более 2-3 минут.'
-            },
-            {
-                'Название': 'Проблема с оплатой',
-                'Категория': 'Оплата',
-                'Текст': 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.'
-            },
-            {
-                'Название': 'Возврат средств',
-                'Категория': 'Оплата',
-                'Текст': 'Я оформил(а) запрос на возврат средств. Деньги вернутся на карту в течение 3-10 рабочих дней, в зависимости от вашего банка.'
-            },
-            {
-                'Название': 'Не пришёл заказ',
-                'Категория': 'Доставка',
-                'Текст': 'Мне жаль, что ваш заказ ещё не доставлен. Давайте я проверю его статус. Подскажите, пожалуйста, номер заказа.'
-            },
-            {
-                'Название': 'Заказ задерживается',
-                'Категория': 'Доставка',
-                'Текст': 'Приносим извинения за задержку. Курьерская служба иногда сталкивается с непредвиденными обстоятельствами. Я проверю, где сейчас ваш заказ, и сообщу вам.'
-            }
-        ];
-
+        const STORAGE_KEY = 'supportTemplates';
         let allTemplates = [];
         let currentCategory = 'Все';
-        let dataSource = '';
+        let editingIndex = -1;
 
-        // Загрузка данных
-        async function loadTemplates() {
-            const container = document.getElementById('templatesContainer');
-            const statusBar = document.getElementById('statusBar');
-            container.innerHTML = '<div class="loading">Загрузка шаблонов...</div>';
-            statusBar.textContent = 'Загрузка...';
-            statusBar.className = 'status-bar';
-            
-            // Пробуем прямой запрос к Google
-            try {
-                const csvText = await fetchDirect(GOOGLE_SHEETS_URL);
-                if (csvText && csvText.trim().length > 0 && csvText.includes(',')) {
-                    parseCSV(csvText);
-                    dataSource = 'Данные загружены из Google Sheets';
-                    statusBar.textContent = '✓ ' + dataSource;
-                    statusBar.className = 'status-bar success';
-                    renderCategories();
-                    renderTemplates();
-                    return;
-                }
-            } catch (error) {
-                console.log('Прямой запрос не сработал:', error.message);
-            }
-            
-            // Пробуем через прокси
-            try {
-                const csvText = await fetchWithProxy(GOOGLE_SHEETS_URL);
-                if (csvText && csvText.trim().length > 0 && csvText.includes(',')) {
-                    parseCSV(csvText);
-                    dataSource = 'Данные загружены через прокси';
-                    statusBar.textContent = '✓ ' + dataSource;
-                    statusBar.className = 'status-bar success';
-                    renderCategories();
-                    renderTemplates();
-                    return;
-                }
-            } catch (error) {
-                console.log('Прокси не сработал:', error.message);
-            }
-            
-            // Используем резервные шаблоны
-            allTemplates = FALLBACK_TEMPLATES;
-            dataSource = 'Резервные шаблоны (Google недоступен)';
-            statusBar.textContent = '⚠ ' + dataSource;
-            statusBar.className = 'status-bar error';
-            renderCategories();
-            renderTemplates();
-        }
-
-        // Прямой запрос
-        async function fetchDirect(url) {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            return await response.text();
-        }
-
-        // Запрос через прокси
-        async function fetchWithProxy(url) {
-            const proxies = [
-                'https://api.allorigins.win/raw?url=',
-                'https://corsproxy.io/?url=',
-                'https://api.codetabs.com/v1/proxy?quest='
-            ];
-            
-            let lastError;
-            for (const proxy of proxies) {
+        // Загрузка из localStorage
+        function loadFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
                 try {
-                    const proxyUrl = proxy + encodeURIComponent(url);
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    return await response.text();
+                    allTemplates = JSON.parse(saved);
                 } catch (error) {
-                    lastError = error;
+                    console.error('Ошибка загрузки данных:', error);
+                    allTemplates = getDefaultTemplates();
                 }
-            }
-            throw lastError;
-        }
-
-        // Парсинг CSV
-        function parseCSV(csvText) {
-            const rows = csvText.split('\n').filter(row => row.trim() !== '');
-            if (rows.length < 2) return;
-            
-            const headers = parseCSVLine(rows[0]);
-            
-            allTemplates = [];
-            for (let i = 1; i < rows.length; i++) {
-                const values = parseCSVLine(rows[i]);
-                const template = {};
-                
-                headers.forEach((header, index) => {
-                    template[header] = values[index] ? values[index].trim() : '';
-                });
-                
-                if (Object.values(template).some(v => v !== '')) {
-                    allTemplates.push(template);
-                }
+            } else {
+                allTemplates = getDefaultTemplates();
+                saveToStorage();
             }
         }
 
-        // Правильный парсинг CSV строки
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-            
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            
-            result.push(current);
-            return result;
+        // Сохранение в localStorage
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allTemplates));
         }
 
-        // Отображение категорий
+        // Шаблоны по умолчанию (для первого запуска)
+        function getDefaultTemplates() {
+            return [
+                {
+                    name: 'Приветствие',
+                    category: 'Общение',
+                    text: 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.'
+                },
+                {
+                    name: 'Прощание',
+                    category: 'Общение',
+                    text: 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!'
+                },
+                {
+                    name: 'Ожидание ответа',
+                    category: 'Общение',
+                    text: 'Пожалуйста, подождите немного — я проверяю информацию по вашему вопросу. Это займёт не более 2-3 минут.'
+                },
+                {
+                    name: 'Проблема с оплатой',
+                    category: 'Оплата',
+                    text: 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.'
+                },
+                {
+                    name: 'Не пришёл заказ',
+                    category: 'Доставка',
+                    text: 'Мне жаль, что ваш заказ ещё не доставлен. Давайте я проверю его статус. Подскажите, пожалуйста, номер заказа.'
+                }
+            ];
+        }
+
+        // ============================================
+        // ОТОБРАЖЕНИЕ
+        // ============================================
         function renderCategories() {
             const categories = ['Все'];
             
             allTemplates.forEach(template => {
-                const categoryKey = Object.keys(template).find(key => 
-                    key.toLowerCase().includes('категор') || 
-                    key.toLowerCase().includes('раздел') || 
-                    key.toLowerCase().includes('тема') ||
-                    key.toLowerCase().includes('тип')
-                );
-                
-                if (categoryKey && template[categoryKey] && !categories.includes(template[categoryKey])) {
-                    categories.push(template[categoryKey]);
+                if (template.category && !categories.includes(template.category)) {
+                    categories.push(template.category);
                 }
             });
             
@@ -422,105 +456,157 @@
                 button.onclick = () => {
                     currentCategory = category;
                     renderCategories();
-                    renderTemplates(document.getElementById('searchInput').value);
+                    renderTemplates();
                 };
                 container.appendChild(button);
             });
+            
+            // Обновляем список категорий в модальном окне
+            const datalist = document.getElementById('categoriesList');
+            datalist.innerHTML = '';
+            categories.forEach(category => {
+                if (category !== 'Все') {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    datalist.appendChild(option);
+                }
+            });
         }
 
-        // Отображение шаблонов
         function renderTemplates(searchTerm = '') {
             const container = document.getElementById('templatesContainer');
             
             if (allTemplates.length === 0) {
-                container.innerHTML = '<div class="error">Нет данных для отображения</div>';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Нет ни одного шаблона</h3>
+                        <p>Нажмите "➕ Новый шаблон", чтобы создать первый</p>
+                    </div>
+                `;
                 return;
             }
             
             const filtered = allTemplates.filter(template => {
-                const searchableText = Object.values(template).join(' ').toLowerCase();
+                const searchableText = `${template.name} ${template.category} ${template.text}`.toLowerCase();
                 const matchesSearch = searchTerm === '' || searchableText.includes(searchTerm.toLowerCase());
-                const matchesCategory = currentCategory === 'Все' || 
-                    Object.values(template).some(value => 
-                        value.toLowerCase() === currentCategory.toLowerCase()
-                    );
+                const matchesCategory = currentCategory === 'Все' || template.category === currentCategory;
                 return matchesSearch && matchesCategory;
             });
             
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="error">Ничего не найдено. Попробуйте изменить запрос.</div>';
+                container.innerHTML = '<div class="empty-state">Ничего не найдено. Попробуйте изменить запрос.</div>';
                 return;
             }
             
             container.innerHTML = '';
             
             filtered.forEach(template => {
-                const title = template['Название'] || 
-                              template['Заголовок'] || 
-                              template['Шаблон'] || 
-                              template['Название шаблона'] ||
-                              Object.values(template)[0] || 
-                              'Без названия';
-                              
-                const text = template['Текст'] || 
-                             template['Содержание'] || 
-                             template['Ответ'] || 
-                             template['Текст шаблона'] ||
-                             Object.values(template)[1] || 
-                             '';
-                             
-                const category = template['Категория'] || 
-                                 template['Раздел'] || 
-                                 template['Тема'] || 
-                                 template['Тип'] ||
-                                 'Общее';
-                
+                const originalIndex = allTemplates.indexOf(template);
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 
                 card.innerHTML = `
-                    <div class="template-category">${escapeHtml(category)}</div>
-                    <div class="template-title">${escapeHtml(title)}</div>
-                    <div class="template-text">${escapeHtml(text)}</div>
-                    <button class="copy-btn" onclick="copyTemplate(this, '${escapeForJs(text)}')">
-                        📋 Копировать
-                    </button>
+                    <div class="template-category">${escapeHtml(template.category || 'Без категории')}</div>
+                    <div class="template-title">${escapeHtml(template.name)}</div>
+                    <div class="template-text">${escapeHtml(template.text)}</div>
+                    <div class="template-actions">
+                        <button class="copy-btn" onclick="copyTemplate(${originalIndex})">📋 Копировать</button>
+                        <button class="edit-btn" onclick="openEditModal(${originalIndex})">✏️ Редактировать</button>
+                        <button class="delete-btn" onclick="deleteTemplate(${originalIndex})">🗑️ Удалить</button>
+                    </div>
                 `;
                 
                 container.appendChild(card);
             });
         }
 
-        // Экранирование HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        // ============================================
+        // CRUD ОПЕРАЦИИ
+        // ============================================
+        function openAddModal() {
+            editingIndex = -1;
+            document.getElementById('modalTitle').textContent = 'Новый шаблон';
+            document.getElementById('templateName').value = '';
+            document.getElementById('templateCategory').value = '';
+            document.getElementById('templateText').value = '';
+            document.getElementById('templateModal').classList.add('active');
+            document.getElementById('templateName').focus();
         }
 
-        // Экранирование для JavaScript строки
-        function escapeForJs(text) {
-            return text.replace(/\\/g, '\\\\')
-                       .replace(/'/g, "\\'")
-                       .replace(/\n/g, '\\n')
-                       .replace(/\r/g, '');
+        function openEditModal(index) {
+            editingIndex = index;
+            const template = allTemplates[index];
+            document.getElementById('modalTitle').textContent = 'Редактировать шаблон';
+            document.getElementById('templateName').value = template.name;
+            document.getElementById('templateCategory').value = template.category || '';
+            document.getElementById('templateText').value = template.text;
+            document.getElementById('templateModal').classList.add('active');
+            document.getElementById('templateName').focus();
         }
 
-        // Копирование в буфер обмена
-        function copyTemplate(button, text) {
-            const decodedText = text.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+        function closeModal() {
+            document.getElementById('templateModal').classList.remove('active');
+        }
+
+        function saveTemplate() {
+            const name = document.getElementById('templateName').value.trim();
+            const category = document.getElementById('templateCategory').value.trim();
+            const text = document.getElementById('templateText').value.trim();
             
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(decodedText)
-                    .then(() => showCopied(button))
-                    .catch(() => fallbackCopy(decodedText, button));
+            if (!name || !text) {
+                alert('Пожалуйста, заполните название и текст шаблона');
+                return;
+            }
+            
+            if (editingIndex === -1) {
+                // Добавление нового
+                allTemplates.push({
+                    name: name,
+                    category: category || 'Общее',
+                    text: text
+                });
             } else {
-                fallbackCopy(decodedText, button);
+                // Редактирование существующего
+                allTemplates[editingIndex] = {
+                    name: name,
+                    category: category || 'Общее',
+                    text: text
+                };
+            }
+            
+            saveToStorage();
+            closeModal();
+            renderCategories();
+            renderTemplates(document.getElementById('searchInput').value);
+        }
+
+        function deleteTemplate(index) {
+            const template = allTemplates[index];
+            if (confirm(`Удалить шаблон "${template.name}"?`)) {
+                allTemplates.splice(index, 1);
+                saveToStorage();
+                renderCategories();
+                renderTemplates(document.getElementById('searchInput').value);
             }
         }
 
-        // Запасной способ копирования
-        function fallbackCopy(text, button) {
+        // ============================================
+        // КОПИРОВАНИЕ
+        // ============================================
+        function copyTemplate(index) {
+            const template = allTemplates[index];
+            const text = template.text;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showCopied(index))
+                    .catch(() => fallbackCopy(text, index));
+            } else {
+                fallbackCopy(text, index);
+            }
+        }
+
+        function fallbackCopy(text, index) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
@@ -530,7 +616,7 @@
             
             try {
                 document.execCommand('copy');
-                showCopied(button);
+                showCopied(index);
             } catch (error) {
                 alert('Не удалось скопировать. Скопируйте текст вручную.');
             }
@@ -538,25 +624,116 @@
             document.body.removeChild(textarea);
         }
 
-        // Показать "Скопировано"
-        function showCopied(button) {
-            const originalText = button.textContent;
-            button.textContent = '✅ Скопировано!';
-            button.classList.add('copied');
-            
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.classList.remove('copied');
-            }, 2000);
+        function showCopied(index) {
+            const buttons = document.querySelectorAll('.copy-btn');
+            if (buttons[index]) {
+                const originalText = buttons[index].textContent;
+                buttons[index].textContent = '✅ Скопировано!';
+                buttons[index].classList.add('copied');
+                
+                setTimeout(() => {
+                    buttons[index].textContent = originalText;
+                    buttons[index].classList.remove('copied');
+                }, 2000);
+            }
         }
 
-        // Поиск
+        // ============================================
+        // ЭКСПОРТ / ИМПОРТ
+        // ============================================
+        function exportData() {
+            const data = JSON.stringify(allTemplates, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my_templates_backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (Array.isArray(imported)) {
+                            allTemplates = imported;
+                            saveToStorage();
+                            renderCategories();
+                            renderTemplates();
+                            alert('Данные успешно импортированы!');
+                        } else {
+                            alert('Неверный формат файла');
+                        }
+                    } catch (error) {
+                        alert('Ошибка импорта: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function clearAll() {
+            if (confirm('Вы уверены, что хотите удалить ВСЕ шаблоны? Это действие нельзя отменить!')) {
+                allTemplates = [];
+                saveToStorage();
+                renderCategories();
+                renderTemplates();
+            }
+        }
+
+        // ============================================
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // ============================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // ОБРАБОТЧИКИ СОБЫТИЙ
+        // ============================================
         document.getElementById('searchInput').addEventListener('input', (e) => {
             renderTemplates(e.target.value);
         });
 
-        // Загрузка при открытии
-        loadTemplates();
+        // Закрытие модального окна по клику вне
+        document.getElementById('templateModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('templateModal')) {
+                closeModal();
+            }
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Сохранение по Ctrl+Enter
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (document.getElementById('templateModal').classList.contains('active')) {
+                    saveTemplate();
+                }
+            }
+        });
+
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+        loadFromStorage();
+        renderCategories();
+        renderTemplates();
     </script>
 </body>
 </html>
