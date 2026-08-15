@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои шаблоны для поддержки</title>
+    <title>Template Hub — Менеджер шаблонов</title>
     <style>
         :root {
-            --bg: #1a1a2e;
-            --card: #16213e;
-            --accent: #0f3460;
-            --text: #e0e0e0;
-            --highlight: #e94560;
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-hover: #1e2d4a;
+            --accent: #6c63ff;
+            --accent-hover: #7b73ff;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0b0;
             --success: #4ecca3;
             --warning: #ffd700;
             --danger: #ff6b6b;
+            --border: #2a2a3e;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --gradient: linear-gradient(135deg, #6c63ff 0%, #3f3d9e 100%);
         }
 
         * {
@@ -23,211 +29,402 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2em;
-            color: var(--success);
-        }
-
-        .toolbar {
+        .app-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+            height: 100vh;
         }
 
-        .btn {
-            padding: 10px 20px;
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .btn-new-template {
+            width: 100%;
+            padding: 12px;
+            background: var(--gradient);
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-primary {
-            background: var(--success);
-            color: #000;
+        .btn-new-template:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 99, 255, 0.4);
         }
 
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+        .categories-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        .btn-danger {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #ff4444;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: #000;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            border: 2px solid var(--accent);
-            border-radius: 10px;
-            background: var(--card);
-            color: var(--text);
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .search-box:focus {
-            border-color: var(--success);
-            box-shadow: 0 0 15px rgba(78, 204, 163, 0.3);
-        }
-
-        .category-buttons {
+        .categories-header {
+            padding: 10px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .category-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--accent);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--text);
+        .btn-add-category {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-add-category:hover {
+            color: var(--accent-hover);
+            transform: scale(1.2);
+        }
+
+        .category-item {
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .category-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .category-item.active {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        .category-item.drag-over {
+            border-color: var(--success);
+            background: rgba(78, 204, 163, 0.1);
+        }
+
+        .category-name {
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .category-count {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .category-actions {
+            display: none;
+            gap: 5px;
+        }
+
+        .category-item:hover .category-actions {
+            display: flex;
+        }
+
+        .btn-category-action {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 2px 5px;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+
+        .btn-category-action:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-category-action.delete:hover {
+            color: var(--danger);
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9em;
         }
 
-        .category-btn:hover,
-        .category-btn.active {
-            background: var(--accent);
-            border-color: var(--success);
+        .btn-icon:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
         }
 
-        .category-btn-edit {
-            padding: 4px 8px;
-            border: 1px solid var(--warning);
-            border-radius: 15px;
-            background: transparent;
-            color: var(--warning);
-            cursor: pointer;
-            font-size: 0.7em;
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .template-card {
-            background: var(--card);
-            border-radius: 10px;
+        .main-header {
             padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--accent);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-header {
+            padding: 10px 15px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
             transition: all 0.3s;
             position: relative;
         }
 
+        .btn-header:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        .templates-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            align-content: start;
+        }
+
+        .template-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .template-card:hover {
-            transform: translateX(5px);
-            border-left-color: var(--success);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
         }
 
-        .template-title {
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            color: var(--highlight);
-            padding-right: 150px;
+        .template-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
         }
 
-        .template-category {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--accent);
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-        }
-
-        .template-text {
-            white-space: pre-wrap;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 5px;
-        }
-
-        .template-actions {
+        .template-card-header {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
         }
 
-        .copy-btn {
+        .template-card-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .template-card-badge {
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .template-card-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 0.9em;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .template-card-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .template-card:hover .template-card-actions {
+            opacity: 1;
+        }
+
+        .btn-card-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-copy {
             background: var(--success);
             color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
         }
 
-        .copy-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+        .btn-copy:hover {
+            transform: scale(1.1);
         }
 
-        .copy-btn.copied {
-            background: #ffd700;
-        }
-
-        .edit-btn {
+        .btn-edit {
             background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            color: white;
         }
 
-        .delete-btn {
+        .btn-edit:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-delete {
             background: var(--danger);
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            color: white;
         }
 
+        .btn-delete:hover {
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        /* ============ MODAL ============ */
         .modal {
             display: none;
             position: fixed;
@@ -235,10 +432,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
 
         .modal.active {
@@ -246,412 +444,774 @@
         }
 
         .modal-content {
-            background: var(--card);
-            border-radius: 10px;
+            background: var(--bg-secondary);
+            border-radius: 15px;
             padding: 30px;
-            max-width: 600px;
+            max-width: 700px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid var(--border);
+            animation: slideUp 0.3s ease;
         }
 
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: var(--success);
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
-            margin-bottom: 5px;
-            color: var(--text);
-            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-input,
+        .form-textarea,
+        .form-select {
             width: 100%;
-            padding: 10px;
-            border: 2px solid var(--accent);
-            border-radius: 5px;
-            background: var(--bg);
-            color: var(--text);
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
             font-size: 1em;
+            transition: all 0.3s;
             font-family: inherit;
         }
 
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: var(--success);
-            outline: none;
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
         }
 
         .modal-actions {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            margin-top: 25px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 50px;
-            background: var(--card);
-            border-radius: 10px;
-            color: #aaa;
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1em;
         }
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transform: translateX(120%);
+            transition: all 0.5s;
+            z-index: 3000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* ============ SCROLLBAR ============ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
             }
-            .template-text {
-                font-size: 0.9em;
+            
+            .logo,
+            .categories-header span,
+            .category-name,
+            .category-count,
+            .category-actions,
+            .btn-new-template span {
+                display: none;
             }
-            .template-title {
-                padding-right: 0;
-                margin-bottom: 30px;
+            
+            .btn-new-template {
+                padding: 12px;
+                font-size: 1.2em;
             }
-            .modal-content {
-                padding: 20px;
+            
+            .category-item {
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .templates-container {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .template-card-actions {
+                opacity: 1;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📋 Мои шаблоны для поддержки</h1>
-        
-        <div class="toolbar">
-            <button class="btn btn-primary" onclick="openAddModal()">➕ Новый шаблон</button>
-            <button class="btn btn-warning" onclick="exportData()">📤 Экспорт</button>
-            <button class="btn btn-warning" onclick="importData()">📥 Импорт</button>
-            <button class="btn btn-danger" onclick="clearAll()">🗑️ Очистить всё</button>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">📋 Template Hub</div>
+                <button class="btn-new-template" onclick="openTemplateModal()">
+                    <span>➕ Новый шаблон</span>
+                </button>
+            </div>
+            
+            <div class="categories-section" id="categoriesSection">
+                <div class="categories-header">
+                    <span>Категории</span>
+                    <button class="btn-add-category" onclick="openCategoryModal()" title="Добавить категорию">+</button>
+                </div>
+                <div id="categoriesList"></div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="btn-icon" onclick="exportData()" title="Экспорт">📤</button>
+                <button class="btn-icon" onclick="importData()" title="Импорт">📥</button>
+                <button class="btn-icon" onclick="showRandomTemplate()" title="Случайный шаблон">🎲</button>
+                <button class="btn-icon" onclick="clearAll()" title="Очистить всё">🗑️</button>
+            </div>
         </div>
         
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск по шаблонам...">
-        
-        <div class="category-buttons" id="categoryButtons"></div>
-        
-        <div id="templatesContainer"></div>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="main-header">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Поиск шаблонов...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-header" onclick="showStats()" title="Статистика">📊</button>
+                </div>
+            </div>
+            
+            <div class="templates-container" id="templatesContainer">
+                <!-- Templates will be rendered here -->
+            </div>
+        </div>
     </div>
-
-    <!-- Модальное окно для добавления/редактирования -->
+    
+    <!-- TEMPLATE MODAL -->
     <div class="modal" id="templateModal">
         <div class="modal-content">
-            <h2 id="modalTitle">Новый шаблон</h2>
-            
-            <div class="form-group">
-                <label for="templateName">Название шаблона</label>
-                <input type="text" id="templateName" placeholder="Например: Приветствие клиента">
+            <div class="modal-header">
+                <h2 class="modal-title" id="templateModalTitle">Новый шаблон</h2>
+                <button class="btn-close" onclick="closeModal('templateModal')">×</button>
             </div>
             
             <div class="form-group">
-                <label for="templateCategory">Категория</label>
-                <input type="text" id="templateCategory" list="categoriesList" placeholder="Например: Общение, Оплата, Доставка">
-                <datalist id="categoriesList"></datalist>
+                <label class="form-label">Название шаблона</label>
+                <input type="text" class="form-input" id="templateName" placeholder="Введите название...">
             </div>
             
             <div class="form-group">
-                <label for="templateText">Текст шаблона</label>
-                <textarea id="templateText" placeholder="Введите текст шаблона..."></textarea>
+                <label class="form-label">Категория</label>
+                <select class="form-select" id="templateCategory">
+                    <!-- Categories will be populated -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Текст шаблона</label>
+                <textarea class="form-textarea" id="templateText" placeholder="Введите текст шаблона..."></textarea>
             </div>
             
             <div class="modal-actions">
                 <button class="btn btn-primary" onclick="saveTemplate()">💾 Сохранить</button>
-                <button class="btn btn-danger" onclick="closeModal()">❌ Отмена</button>
+                <button class="btn btn-secondary" onclick="closeModal('templateModal')">Отмена</button>
             </div>
         </div>
     </div>
+    
+    <!-- CATEGORY MODAL -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryModalTitle">Новая категория</h2>
+                <button class="btn-close" onclick="closeModal('categoryModal')">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Название категории</label>
+                <input type="text" class="form-input" id="categoryName" placeholder="Например: Техническая поддержка">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="saveCategory()">💾 Сохранить</button>
+                <button class="btn btn-secondary" onclick="closeModal('categoryModal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
 
     <script>
-        // ============================================
-        // ХРАНИЛИЩЕ ДАННЫХ (localStorage)
-        // ============================================
-        const STORAGE_KEY = 'supportTemplates';
-        let allTemplates = [];
-        let currentCategory = 'Все';
-        let editingIndex = -1;
-
-        // Загрузка из localStorage
-        function loadFromStorage() {
+        // ============ DATA LAYER ============
+        const STORAGE_KEY = 'templateHubData';
+        let data = {
+            templates: [],
+            categories: ['Общее', 'Оплата', 'Доставка', 'Техническая поддержка'],
+            stats: {},
+            currentCategory: 'Все'
+        };
+        
+        let editingTemplateId = null;
+        let editingCategoryName = null;
+        
+        // Load from localStorage
+        function loadData() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
-                    allTemplates = JSON.parse(saved);
-                } catch (error) {
-                    console.error('Ошибка загрузки данных:', error);
-                    allTemplates = getDefaultTemplates();
+                    const parsed = JSON.parse(saved);
+                    data = { ...data, ...parsed };
+                } catch (e) {
+                    console.error('Failed to parse saved data:', e);
+                    initializeDefaultData();
                 }
             } else {
-                allTemplates = getDefaultTemplates();
-                saveToStorage();
+                initializeDefaultData();
             }
         }
-
-        // Сохранение в localStorage
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(allTemplates));
-        }
-
-        // Шаблоны по умолчанию (для первого запуска)
-        function getDefaultTemplates() {
-            return [
+        
+        function initializeDefaultData() {
+            const defaults = [
                 {
-                    name: 'Приветствие',
-                    category: 'Общение',
-                    text: 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.'
+                    id: 't1',
+                    name: 'Приветствие клиента',
+                    category: 'Общее',
+                    text: 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.',
+                    createdAt: Date.now()
                 },
                 {
+                    id: 't2',
                     name: 'Прощание',
-                    category: 'Общение',
-                    text: 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!'
+                    category: 'Общее',
+                    text: 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!',
+                    createdAt: Date.now()
                 },
                 {
-                    name: 'Ожидание ответа',
-                    category: 'Общение',
-                    text: 'Пожалуйста, подождите немного — я проверяю информацию по вашему вопросу. Это займёт не более 2-3 минут.'
-                },
-                {
+                    id: 't3',
                     name: 'Проблема с оплатой',
                     category: 'Оплата',
-                    text: 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.'
+                    text: 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.',
+                    createdAt: Date.now()
                 },
                 {
-                    name: 'Не пришёл заказ',
+                    id: 't4',
+                    name: 'Задержка доставки',
                     category: 'Доставка',
-                    text: 'Мне жаль, что ваш заказ ещё не доставлен. Давайте я проверю его статус. Подскажите, пожалуйста, номер заказа.'
+                    text: 'Приносим извинения за задержку. Курьерская служба иногда сталкивается с непредвиденными обстоятельствами. Я проверю, где сейчас ваш заказ, и сообщу вам.',
+                    createdAt: Date.now()
                 }
             ];
+            
+            data.templates = defaults;
+            saveData();
         }
-
-        // ============================================
-        // ОТОБРАЖЕНИЕ
-        // ============================================
+        
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        // ============ RENDER FUNCTIONS ============
         function renderCategories() {
-            const categories = ['Все'];
-            
-            allTemplates.forEach(template => {
-                if (template.category && !categories.includes(template.category)) {
-                    categories.push(template.category);
-                }
-            });
-            
-            const container = document.getElementById('categoryButtons');
+            const container = document.getElementById('categoriesList');
             container.innerHTML = '';
             
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.className = 'category-btn' + (category === currentCategory ? ' active' : '');
-                button.textContent = category;
-                button.onclick = () => {
-                    currentCategory = category;
-                    renderCategories();
-                    renderTemplates();
-                };
-                container.appendChild(button);
-            });
+            // "Все" category
+            const allItem = createCategoryElement('Все', data.templates.length, true);
+            container.appendChild(allItem);
             
-            // Обновляем список категорий в модальном окне
-            const datalist = document.getElementById('categoriesList');
-            datalist.innerHTML = '';
-            categories.forEach(category => {
-                if (category !== 'Все') {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    datalist.appendChild(option);
-                }
+            // Other categories
+            data.categories.forEach(category => {
+                const count = data.templates.filter(t => t.category === category).length;
+                const item = createCategoryElement(category, count, false);
+                container.appendChild(item);
             });
         }
-
+        
+        function createCategoryElement(name, count, isAll) {
+            const div = document.createElement('div');
+            div.className = 'category-item' + (data.currentCategory === name ? ' active' : '');
+            div.draggable = !isAll;
+            
+            div.innerHTML = `
+                <span class="category-name">${isAll ? '📁' : '📂'} ${name}</span>
+                <span class="category-count">${count}</span>
+                ${!isAll ? `
+                    <div class="category-actions">
+                        <button class="btn-category-action" onclick="editCategory('${name}')" title="Переименовать">✏️</button>
+                        <button class="btn-category-action delete" onclick="deleteCategory('${name}')" title="Удалить">🗑️</button>
+                    </div>
+                ` : ''}
+            `;
+            
+            div.onclick = () => {
+                data.currentCategory = name;
+                saveData();
+                renderCategories();
+                renderTemplates();
+            };
+            
+            // Drag and drop for categories
+            if (!isAll) {
+                div.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    div.classList.add('drag-over');
+                });
+                
+                div.addEventListener('dragleave', () => {
+                    div.classList.remove('drag-over');
+                });
+                
+                div.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    div.classList.remove('drag-over');
+                    
+                    const templateId = e.dataTransfer.getData('templateId');
+                    if (templateId) {
+                        moveTemplateToCategory(templateId, name);
+                    }
+                });
+            }
+            
+            return div;
+        }
+        
         function renderTemplates(searchTerm = '') {
             const container = document.getElementById('templatesContainer');
-            
-            if (allTemplates.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>Нет ни одного шаблона</h3>
-                        <p>Нажмите "➕ Новый шаблон", чтобы создать первый</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const filtered = allTemplates.filter(template => {
-                const searchableText = `${template.name} ${template.category} ${template.text}`.toLowerCase();
-                const matchesSearch = searchTerm === '' || searchableText.includes(searchTerm.toLowerCase());
-                const matchesCategory = currentCategory === 'Все' || template.category === currentCategory;
-                return matchesSearch && matchesCategory;
-            });
-            
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="empty-state">Ничего не найдено. Попробуйте изменить запрос.</div>';
-                return;
-            }
-            
             container.innerHTML = '';
             
-            filtered.forEach(template => {
-                const originalIndex = allTemplates.indexOf(template);
-                const card = document.createElement('div');
-                card.className = 'template-card';
-                
-                card.innerHTML = `
-                    <div class="template-category">${escapeHtml(template.category || 'Без категории')}</div>
-                    <div class="template-title">${escapeHtml(template.name)}</div>
-                    <div class="template-text">${escapeHtml(template.text)}</div>
-                    <div class="template-actions">
-                        <button class="copy-btn" onclick="copyTemplate(${originalIndex})">📋 Копировать</button>
-                        <button class="edit-btn" onclick="openEditModal(${originalIndex})">✏️ Редактировать</button>
-                        <button class="delete-btn" onclick="deleteTemplate(${originalIndex})">🗑️ Удалить</button>
+            let filtered = data.templates;
+            
+            // Filter by category
+            if (data.currentCategory !== 'Все') {
+                filtered = filtered.filter(t => t.category === data.currentCategory);
+            }
+            
+            // Filter by search
+            if (searchTerm) {
+                filtered = filtered.filter(t => 
+                    t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    t.text.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <h3>Нет шаблонов</h3>
+                        <p>${searchTerm ? 'Попробуйте изменить поиск' : 'Создайте новый шаблон или выберите другую категорию'}</p>
                     </div>
                 `;
-                
+                return;
+            }
+            
+            filtered.forEach(template => {
+                const card = createTemplateCard(template);
                 container.appendChild(card);
             });
         }
-
-        // ============================================
-        // CRUD ОПЕРАЦИИ
-        // ============================================
-        function openAddModal() {
-            editingIndex = -1;
-            document.getElementById('modalTitle').textContent = 'Новый шаблон';
-            document.getElementById('templateName').value = '';
-            document.getElementById('templateCategory').value = '';
-            document.getElementById('templateText').value = '';
-            document.getElementById('templateModal').classList.add('active');
+        
+        function createTemplateCard(template) {
+            const card = document.createElement('div');
+            card.className = 'template-card';
+            card.draggable = true;
+            
+            card.innerHTML = `
+                <div class="template-card-header">
+                    <span class="template-card-title">${escapeHtml(template.name)}</span>
+                    <span class="template-card-badge">${escapeHtml(template.category)}</span>
+                </div>
+                <div class="template-card-text">${escapeHtml(template.text)}</div>
+                <div class="template-card-actions">
+                    <button class="btn-card-action btn-copy" onclick="copyTemplate('${template.id}')">📋 Копировать</button>
+                    <button class="btn-card-action btn-edit" onclick="editTemplate('${template.id}')">✏️</button>
+                    <button class="btn-card-action btn-delete" onclick="deleteTemplate('${template.id}')">🗑️</button>
+                </div>
+            `;
+            
+            // Double click to copy
+            card.addEventListener('dblclick', () => {
+                copyTemplate(template.id);
+            });
+            
+            // Drag and drop
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('templateId', template.id);
+                card.classList.add('dragging');
+            });
+            
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+            
+            return card;
+        }
+        
+        // ============ CRUD OPERATIONS ============
+        function openTemplateModal(templateId = null) {
+            editingTemplateId = templateId;
+            const modal = document.getElementById('templateModal');
+            const title = document.getElementById('templateModalTitle');
+            
+            // Populate categories dropdown
+            const select = document.getElementById('templateCategory');
+            select.innerHTML = '';
+            data.categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                select.appendChild(option);
+            });
+            
+            if (templateId) {
+                // Edit mode
+                const template = data.templates.find(t => t.id === templateId);
+                title.textContent = 'Редактировать шаблон';
+                document.getElementById('templateName').value = template.name;
+                document.getElementById('templateCategory').value = template.category;
+                document.getElementById('templateText').value = template.text;
+            } else {
+                // New template
+                title.textContent = 'Новый шаблон';
+                document.getElementById('templateName').value = '';
+                document.getElementById('templateCategory').value = data.currentCategory !== 'Все' ? data.currentCategory : data.categories[0];
+                document.getElementById('templateText').value = '';
+            }
+            
+            modal.classList.add('active');
             document.getElementById('templateName').focus();
         }
-
-        function openEditModal(index) {
-            editingIndex = index;
-            const template = allTemplates[index];
-            document.getElementById('modalTitle').textContent = 'Редактировать шаблон';
-            document.getElementById('templateName').value = template.name;
-            document.getElementById('templateCategory').value = template.category || '';
-            document.getElementById('templateText').value = template.text;
-            document.getElementById('templateModal').classList.add('active');
-            document.getElementById('templateName').focus();
+        
+        function editTemplate(templateId) {
+            openTemplateModal(templateId);
         }
-
-        function closeModal() {
-            document.getElementById('templateModal').classList.remove('active');
-        }
-
+        
         function saveTemplate() {
             const name = document.getElementById('templateName').value.trim();
-            const category = document.getElementById('templateCategory').value.trim();
+            const category = document.getElementById('templateCategory').value;
             const text = document.getElementById('templateText').value.trim();
             
             if (!name || !text) {
-                alert('Пожалуйста, заполните название и текст шаблона');
+                showToast('Заполните название и текст', 'error');
                 return;
             }
             
-            if (editingIndex === -1) {
-                // Добавление нового
-                allTemplates.push({
-                    name: name,
-                    category: category || 'Общее',
-                    text: text
-                });
+            if (editingTemplateId) {
+                // Update existing
+                const template = data.templates.find(t => t.id === editingTemplateId);
+                template.name = name;
+                template.category = category;
+                template.text = text;
+                template.updatedAt = Date.now();
             } else {
-                // Редактирование существующего
-                allTemplates[editingIndex] = {
+                // Create new
+                data.templates.push({
+                    id: 't' + Date.now(),
                     name: name,
-                    category: category || 'Общее',
-                    text: text
-                };
+                    category: category,
+                    text: text,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                });
             }
             
-            saveToStorage();
-            closeModal();
+            saveData();
+            closeModal('templateModal');
             renderCategories();
             renderTemplates(document.getElementById('searchInput').value);
+            showToast('Шаблон сохранён', 'success');
         }
-
-        function deleteTemplate(index) {
-            const template = allTemplates[index];
+        
+        function deleteTemplate(templateId) {
+            const template = data.templates.find(t => t.id === templateId);
             if (confirm(`Удалить шаблон "${template.name}"?`)) {
-                allTemplates.splice(index, 1);
-                saveToStorage();
+                data.templates = data.templates.filter(t => t.id !== templateId);
+                saveData();
                 renderCategories();
                 renderTemplates(document.getElementById('searchInput').value);
+                showToast('Шаблон удалён', 'success');
             }
         }
-
-        // ============================================
-        // КОПИРОВАНИЕ
-        // ============================================
-        function copyTemplate(index) {
-            const template = allTemplates[index];
-            const text = template.text;
+        
+        function copyTemplate(templateId) {
+            const template = data.templates.find(t => t.id === templateId);
             
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text)
-                    .then(() => showCopied(index))
-                    .catch(() => fallbackCopy(text, index));
+                navigator.clipboard.writeText(template.text)
+                    .then(() => {
+                        showToast('Текст скопирован!', 'success');
+                        // Track usage
+                        data.stats[templateId] = (data.stats[templateId] || 0) + 1;
+                        saveData();
+                    })
+                    .catch(() => {
+                        fallbackCopy(template.text);
+                    });
             } else {
-                fallbackCopy(text, index);
+                fallbackCopy(template.text);
             }
         }
-
-        function fallbackCopy(text, index) {
+        
+        function fallbackCopy(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
             textarea.style.opacity = '0';
             document.body.appendChild(textarea);
             textarea.select();
-            
-            try {
-                document.execCommand('copy');
-                showCopied(index);
-            } catch (error) {
-                alert('Не удалось скопировать. Скопируйте текст вручную.');
-            }
-            
+            document.execCommand('copy');
             document.body.removeChild(textarea);
+            showToast('Текст скопирован!', 'success');
         }
-
-        function showCopied(index) {
-            const buttons = document.querySelectorAll('.copy-btn');
-            if (buttons[index]) {
-                const originalText = buttons[index].textContent;
-                buttons[index].textContent = '✅ Скопировано!';
-                buttons[index].classList.add('copied');
-                
-                setTimeout(() => {
-                    buttons[index].textContent = originalText;
-                    buttons[index].classList.remove('copied');
-                }, 2000);
+        
+        function moveTemplateToCategory(templateId, newCategory) {
+            const template = data.templates.find(t => t.id === templateId);
+            if (template && template.category !== newCategory) {
+                template.category = newCategory;
+                saveData();
+                renderCategories();
+                renderTemplates(document.getElementById('searchInput').value);
+                showToast(`Перемещено в "${newCategory}"`, 'success');
             }
         }
-
-        // ============================================
-        // ЭКСПОРТ / ИМПОРТ
-        // ============================================
+        
+        // ============ CATEGORY OPERATIONS ============
+        function openCategoryModal(categoryName = null) {
+            editingCategoryName = categoryName;
+            const modal = document.getElementById('categoryModal');
+            const title = document.getElementById('categoryModalTitle');
+            
+            if (categoryName) {
+                title.textContent = 'Переименовать категорию';
+                document.getElementById('categoryName').value = categoryName;
+            } else {
+                title.textContent = 'Новая категория';
+                document.getElementById('categoryName').value = '';
+            }
+            
+            modal.classList.add('active');
+            document.getElementById('categoryName').focus();
+        }
+        
+        function editCategory(categoryName) {
+            openCategoryModal(categoryName);
+        }
+        
+        function saveCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            
+            if (!name) {
+                showToast('Введите название категории', 'error');
+                return;
+            }
+            
+            if (editingCategoryName) {
+                // Rename category
+                const index = data.categories.indexOf(editingCategoryName);
+                if (index !== -1) {
+                    data.categories[index] = name;
+                    // Update templates
+                    data.templates.forEach(t => {
+                        if (t.category === editingCategoryName) {
+                            t.category = name;
+                        }
+                    });
+                }
+            } else {
+                // New category
+                if (data.categories.includes(name)) {
+                    showToast('Такая категория уже существует', 'error');
+                    return;
+                }
+                data.categories.push(name);
+            }
+            
+            saveData();
+            closeModal('categoryModal');
+            renderCategories();
+            renderTemplates();
+            showToast('Категория сохранена', 'success');
+        }
+        
+        function deleteCategory(categoryName) {
+            const templatesInCategory = data.templates.filter(t => t.category === categoryName).length;
+            
+            if (confirm(`Удалить категорию "${categoryName}"? (${templatesInCategory} шаблонов будет перемещено в "Общее")`)) {
+                data.categories = data.categories.filter(c => c !== categoryName);
+                data.templates.forEach(t => {
+                    if (t.category === categoryName) {
+                        t.category = 'Общее';
+                    }
+                });
+                
+                if (!data.categories.includes('Общее')) {
+                    data.categories.unshift('Общее');
+                }
+                
+                if (data.currentCategory === categoryName) {
+                    data.currentCategory = 'Все';
+                }
+                
+                saveData();
+                renderCategories();
+                renderTemplates();
+                showToast('Категория удалена', 'success');
+            }
+        }
+        
+        // ============ UTILITY FUNCTIONS ============
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        function showRandomTemplate() {
+            if (data.templates.length === 0) {
+                showToast('Нет шаблонов', 'error');
+                return;
+            }
+            
+            const random = data.templates[Math.floor(Math.random() * data.templates.length)];
+            showToast(`🎲 ${random.name}`, 'success');
+            copyTemplate(random.id);
+        }
+        
+        function showStats() {
+            const totalTemplates = data.templates.length;
+            const totalCategories = data.categories.length;
+            const totalCopies = Object.values(data.stats).reduce((a, b) => a + b, 0);
+            
+            alert(`📊 Статистика:\n\n📝 Шаблонов: ${totalTemplates}\n📁 Категорий: ${totalCategories}\n📋 Копирований: ${totalCopies}`);
+        }
+        
         function exportData() {
-            const data = JSON.stringify(allTemplates, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'my_templates_backup.json';
+            a.download = 'template_hub_backup.json';
             a.click();
             URL.revokeObjectURL(url);
+            showToast('Данные экспортированы', 'success');
         }
-
+        
         function importData() {
             const input = document.createElement('input');
             input.type = 'file';
@@ -662,76 +1222,70 @@
                 reader.onload = (event) => {
                     try {
                         const imported = JSON.parse(event.target.result);
-                        if (Array.isArray(imported)) {
-                            allTemplates = imported;
-                            saveToStorage();
+                        if (imported.templates && imported.categories) {
+                            data = imported;
+                            saveData();
                             renderCategories();
                             renderTemplates();
-                            alert('Данные успешно импортированы!');
+                            showToast('Данные импортированы', 'success');
                         } else {
-                            alert('Неверный формат файла');
+                            showToast('Неверный формат файла', 'error');
                         }
                     } catch (error) {
-                        alert('Ошибка импорта: ' + error.message);
+                        showToast('Ошибка импорта', 'error');
                     }
                 };
                 reader.readAsText(file);
             };
             input.click();
         }
-
+        
         function clearAll() {
-            if (confirm('Вы уверены, что хотите удалить ВСЕ шаблоны? Это действие нельзя отменить!')) {
-                allTemplates = [];
-                saveToStorage();
+            if (confirm('Удалить ВСЕ шаблоны и категории? Это действие нельзя отменить!')) {
+                data.templates = [];
+                data.categories = ['Общее'];
+                data.stats = {};
+                data.currentCategory = 'Все';
+                saveData();
                 renderCategories();
                 renderTemplates();
+                showToast('Всё очищено', 'success');
             }
         }
-
-        // ============================================
-        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-        // ============================================
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // ============================================
-        // ОБРАБОТЧИКИ СОБЫТИЙ
-        // ============================================
+        
+        // ============ EVENT LISTENERS ============
         document.getElementById('searchInput').addEventListener('input', (e) => {
             renderTemplates(e.target.value);
         });
-
-        // Закрытие модального окна по клику вне
-        document.getElementById('templateModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('templateModal')) {
-                closeModal();
-            }
+        
+        // Close modals on backdrop click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
         });
-
-        // Закрытие по Escape
+        
+        // Close on Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeModal();
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             }
-        });
-
-        // Сохранение по Ctrl+Enter
-        document.addEventListener('keydown', (e) => {
+            
+            // Ctrl+Enter to save in modal
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 if (document.getElementById('templateModal').classList.contains('active')) {
                     saveTemplate();
                 }
+                if (document.getElementById('categoryModal').classList.contains('active')) {
+                    saveCategory();
+                }
             }
         });
-
-        // ============================================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ============================================
-        loadFromStorage();
+        
+        // ============ INITIALIZATION ============
+        loadData();
         renderCategories();
         renderTemplates();
     </script>
