@@ -97,11 +97,13 @@
             flex-direction: column;
             transition: all 0.3s;
             backdrop-filter: blur(10px);
+            flex-shrink: 0;
         }
 
         .sidebar-header {
             padding: 20px;
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
         .logo {
@@ -163,6 +165,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 10px;
+            min-height: 0;
         }
 
         .categories-header {
@@ -174,6 +177,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .btn-add-category {
@@ -198,10 +202,12 @@
             transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             position: relative;
             border: 2px solid transparent;
             background: rgba(255, 255, 255, 0.02);
+            min-height: 48px;
+            overflow: hidden;
+            width: 100%;
         }
 
         .category-item:hover {
@@ -229,13 +235,20 @@
         .category-icon {
             margin-right: 10px;
             font-size: 1.2em;
-            transition: none;
+            flex-shrink: 0;
+            width: 24px;
+            text-align: center;
         }
 
         .category-name {
             font-weight: 500;
             cursor: pointer;
             flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            display: block;
         }
 
         .category-count {
@@ -244,19 +257,25 @@
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.8em;
-            margin-left: 10px;
+            margin-left: 8px;
             min-width: 24px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .category-actions {
-            display: none;
-            gap: 5px;
-            margin-left: 10px;
+            display: flex;
+            gap: 2px;
+            margin-left: 8px;
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+            width: 68px;
+            justify-content: flex-end;
         }
 
         .category-item:hover .category-actions {
-            display: flex;
+            opacity: 1;
         }
 
         .btn-category-action {
@@ -264,9 +283,15 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 2px 5px;
+            padding: 4px;
             font-size: 0.8em;
             transition: color 0.3s;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-category-action:hover {
@@ -290,6 +315,7 @@
             border-top: 1px solid var(--border);
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .btn-icon {
@@ -336,6 +362,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
 
         .main-header {
@@ -346,11 +373,13 @@
             align-items: center;
             gap: 20px;
             backdrop-filter: blur(10px);
+            flex-shrink: 0;
         }
 
         .search-wrapper {
             flex: 1;
             position: relative;
+            min-width: 0;
         }
 
         .search-icon {
@@ -387,6 +416,7 @@
         .header-actions {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .btn-header {
@@ -414,6 +444,7 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             align-content: start;
+            min-height: 0;
         }
 
         .template-card {
@@ -478,6 +509,10 @@
             font-size: 1.1em;
             color: var(--text-primary);
             flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .template-card-badge {
@@ -488,6 +523,7 @@
             font-size: 0.75em;
             margin-left: 10px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .template-card-text {
@@ -1064,13 +1100,13 @@
             
             div.innerHTML = `
                 <span class="category-icon">${icon}</span>
-                <span class="category-name">${name}</span>
+                <span class="category-name" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
                 <span class="category-count">${count}</span>
                 ${!isAll ? `
                     <div class="category-actions">
                         <button class="btn-category-action move" title="Перетащить">⠿</button>
-                        <button class="btn-category-action" onclick="editCategory('${name}')" title="Переименовать">✏️</button>
-                        <button class="btn-category-action delete" onclick="deleteCategory('${name}')" title="Удалить">🗑️</button>
+                        <button class="btn-category-action" onclick="editCategory('${escapeHtml(name)}')" title="Переименовать">✏️</button>
+                        <button class="btn-category-action delete" onclick="deleteCategory('${escapeHtml(name)}')" title="Удалить">🗑️</button>
                     </div>
                 ` : ''}
             `;
@@ -1194,7 +1230,7 @@
             
             card.innerHTML = `
                 <div class="template-card-header">
-                    <span class="template-card-title">${icon} ${escapeHtml(template.name)}</span>
+                    <span class="template-card-title" title="${escapeHtml(template.name)}">${icon} ${escapeHtml(template.name)}</span>
                     <span class="template-card-badge">${escapeHtml(template.category)}</span>
                 </div>
                 <div class="template-card-text">${escapeHtml(template.text)}</div>
