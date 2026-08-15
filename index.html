@@ -502,6 +502,7 @@
             margin-bottom: 15px;
             position: relative;
             z-index: 1;
+            gap: 10px;
         }
 
         .template-card-title {
@@ -526,6 +527,23 @@
             flex-shrink: 0;
         }
 
+        .shortcut-badge {
+            background: var(--success);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+
+        .shortcut-badge:hover {
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+        }
+
         .template-card-text {
             color: var(--text-secondary);
             line-height: 1.5;
@@ -546,6 +564,7 @@
             transition: opacity 0.3s;
             position: relative;
             z-index: 1;
+            flex-wrap: wrap;
         }
 
         .template-card:hover .template-card-actions {
@@ -751,6 +770,26 @@
             resize: vertical;
         }
 
+        .shortcut-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .shortcut-selector select {
+            flex: 1;
+        }
+
+        .shortcut-preview {
+            background: var(--success);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            white-space: nowrap;
+        }
+
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -939,6 +978,17 @@
             </div>
             
             <div class="form-group">
+                <label class="form-label">Горячая клавиша</label>
+                <div class="shortcut-selector">
+                    <select class="form-select" id="templateShortcut">
+                        <option value="">Нет</option>
+                        <!-- Will be populated -->
+                    </select>
+                    <span class="shortcut-preview" id="shortcutPreview">Нет</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
                 <label class="form-label">Текст шаблона</label>
                 <textarea class="form-textarea" id="templateText" placeholder="Введите текст шаблона..."></textarea>
             </div>
@@ -1000,6 +1050,44 @@
             }
         }
         
+        // ============ SHORTCUTS CONFIG ============
+        const AVAILABLE_SHORTCUTS = [
+            'Alt+1', 'Alt+2', 'Alt+3', 'Alt+4', 'Alt+5', 'Alt+6', 'Alt+7', 'Alt+8', 'Alt+9',
+            'Alt+Q', 'Alt+W', 'Alt+E', 'Alt+R', 'Alt+T', 'Alt+Y', 'Alt+U', 'Alt+I', 'Alt+O', 'Alt+P',
+            'Alt+A', 'Alt+S', 'Alt+D', 'Alt+F', 'Alt+G', 'Alt+H', 'Alt+J', 'Alt+K', 'Alt+L',
+            'Alt+Z', 'Alt+X', 'Alt+C', 'Alt+V', 'Alt+B', 'Alt+N', 'Alt+M',
+            'Ctrl+Shift+1', 'Ctrl+Shift+2', 'Ctrl+Shift+3', 'Ctrl+Shift+4', 'Ctrl+Shift+5',
+            'Ctrl+Shift+6', 'Ctrl+Shift+7', 'Ctrl+Shift+8', 'Ctrl+Shift+9'
+        ];
+        
+        function getShortcutKey(shortcut) {
+            if (!shortcut) return null;
+            const parts = shortcut.split('+');
+            return {
+                alt: parts.includes('Alt'),
+                ctrl: parts.includes('Ctrl'),
+                shift: parts.includes('Shift'),
+                key: parts[parts.length - 1]
+            };
+        }
+        
+        function shortcutToString(keyObj) {
+            if (!keyObj) return '';
+            const parts = [];
+            if (keyObj.ctrl) parts.push('Ctrl');
+            if (keyObj.alt) parts.push('Alt');
+            if (keyObj.shift) parts.push('Shift');
+            parts.push(keyObj.key);
+            return parts.join('+');
+        }
+        
+        function isShortcutTaken(shortcut, excludeTemplateId = null) {
+            if (!shortcut) return false;
+            return data.templates.some(t => 
+                t.shortcut === shortcut && t.id !== excludeTemplateId
+            );
+        }
+        
         // ============ DATA LAYER ============
         const STORAGE_KEY = 'templateHubData';
         let data = {
@@ -1037,7 +1125,8 @@
                     category: 'Общее',
                     text: 'Здравствуйте! Спасибо, что обратились в нашу поддержку. Меня зовут [Имя]. Подскажите, пожалуйста, номер вашего заказа или email, чтобы я мог(ла) вам помочь.',
                     createdAt: Date.now(),
-                    icon: '👋'
+                    icon: '👋',
+                    shortcut: 'Alt+1'
                 },
                 {
                     id: 't2',
@@ -1045,7 +1134,8 @@
                     category: 'Общее',
                     text: 'Спасибо за обращение! Если у вас появятся ещё вопросы — пишите, мы всегда на связи. Хорошего дня!',
                     createdAt: Date.now(),
-                    icon: '👋'
+                    icon: '👋',
+                    shortcut: 'Alt+2'
                 },
                 {
                     id: 't3',
@@ -1053,7 +1143,8 @@
                     category: 'Оплата',
                     text: 'Понимаю ваше беспокойство. Давайте разберёмся с оплатой. Пожалуйста, пришлите скриншот ошибки или номер транзакции, если он есть.',
                     createdAt: Date.now(),
-                    icon: '💳'
+                    icon: '💳',
+                    shortcut: 'Alt+3'
                 },
                 {
                     id: 't4',
@@ -1061,7 +1152,8 @@
                     category: 'Доставка',
                     text: 'Приносим извинения за задержку. Курьерская служба иногда сталкивается с непредвиденными обстоятельствами. Я проверю, где сейчас ваш заказ, и сообщу вам.',
                     createdAt: Date.now(),
-                    icon: '📦'
+                    icon: '📦',
+                    shortcut: 'Alt+4'
                 }
             ];
             
@@ -1078,11 +1170,9 @@
             const container = document.getElementById('categoriesList');
             container.innerHTML = '';
             
-            // "Все" category
             const allItem = createCategoryElement('Все', data.templates.length, true, 0);
             container.appendChild(allItem);
             
-            // Other categories
             data.categories.forEach((category, index) => {
                 const count = data.templates.filter(t => t.category === category).length;
                 const item = createCategoryElement(category, count, false, index + 1);
@@ -1112,16 +1202,13 @@
             `;
             
             div.onclick = (e) => {
-                // Don't trigger if clicking on action buttons
                 if (e.target.closest('.category-actions')) return;
-                
                 data.currentCategory = name;
                 saveData();
                 renderCategories();
                 renderTemplates();
             };
             
-            // Drag and drop for categories reordering
             div.addEventListener('dragstart', (e) => {
                 draggedCategory = name;
                 div.classList.add('dragging');
@@ -1137,8 +1224,6 @@
             div.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
-                
-                // Check if dragging template or category
                 if (draggedCategory && draggedCategory !== 'Все') {
                     div.classList.add('drag-over');
                 } else if (e.dataTransfer.types.includes('templateId')) {
@@ -1153,13 +1238,9 @@
             div.addEventListener('drop', (e) => {
                 e.preventDefault();
                 div.classList.remove('drag-over');
-                
-                // If dropping a category
                 if (draggedCategory && draggedCategory !== 'Все' && !isAll) {
                     reorderCategories(draggedCategory, name);
-                }
-                // If dropping a template
-                else if (!isAll) {
+                } else if (!isAll) {
                     const templateId = e.dataTransfer.getData('templateId');
                     if (templateId) {
                         moveTemplateToCategory(templateId, name);
@@ -1177,7 +1258,6 @@
             if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
                 const [movedCategory] = data.categories.splice(fromIndex, 1);
                 data.categories.splice(toIndex, 0, movedCategory);
-                
                 saveData();
                 renderCategories();
                 renderTemplates();
@@ -1191,12 +1271,10 @@
             
             let filtered = data.templates;
             
-            // Filter by category
             if (data.currentCategory !== 'Все') {
                 filtered = filtered.filter(t => t.category === data.currentCategory);
             }
             
-            // Filter by search
             if (searchTerm) {
                 filtered = filtered.filter(t => 
                     t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1227,12 +1305,16 @@
             card.draggable = true;
             
             const icon = template.icon || '📝';
+            const shortcutBadge = template.shortcut 
+                ? `<span class="shortcut-badge" title="Нажмите ${template.shortcut} для быстрого копирования">⌨️ ${template.shortcut}</span>`
+                : '';
             
             card.innerHTML = `
                 <div class="template-card-header">
                     <span class="template-card-title" title="${escapeHtml(template.name)}">${icon} ${escapeHtml(template.name)}</span>
                     <span class="template-card-badge">${escapeHtml(template.category)}</span>
                 </div>
+                ${shortcutBadge}
                 <div class="template-card-text">${escapeHtml(template.text)}</div>
                 <div class="template-card-actions">
                     <button class="btn-card-action btn-copy" onclick="copyTemplate('${template.id}')">📋 Копировать</button>
@@ -1241,12 +1323,10 @@
                 </div>
             `;
             
-            // Double click to copy
             card.addEventListener('dblclick', () => {
                 copyTemplate(template.id);
             });
             
-            // Drag and drop
             card.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('templateId', template.id);
                 card.classList.add('dragging');
@@ -1259,13 +1339,51 @@
             return card;
         }
         
+        // ============ SHORTCUT FUNCTIONS ============
+        function populateShortcutSelect(selectedShortcut = '') {
+            const select = document.getElementById('templateShortcut');
+            select.innerHTML = '<option value="">Нет</option>';
+            
+            AVAILABLE_SHORTCUTS.forEach(shortcut => {
+                const option = document.createElement('option');
+                option.value = shortcut;
+                option.textContent = shortcut;
+                
+                if (isShortcutTaken(shortcut, editingTemplateId)) {
+                    option.disabled = true;
+                    option.textContent = shortcut + ' (занято)';
+                }
+                
+                if (shortcut === selectedShortcut) {
+                    option.selected = true;
+                }
+                
+                select.appendChild(option);
+            });
+            
+            updateShortcutPreview();
+        }
+        
+        function updateShortcutPreview() {
+            const select = document.getElementById('templateShortcut');
+            const preview = document.getElementById('shortcutPreview');
+            
+            if (select.value) {
+                preview.textContent = select.value;
+                preview.style.background = 'var(--success)';
+            } else {
+                preview.textContent = 'Нет';
+                preview.style.background = 'var(--border)';
+                preview.style.color = 'var(--text-secondary)';
+            }
+        }
+        
         // ============ CRUD OPERATIONS ============
         function openTemplateModal(templateId = null) {
             editingTemplateId = templateId;
             const modal = document.getElementById('templateModal');
             const title = document.getElementById('templateModalTitle');
             
-            // Populate categories dropdown
             const select = document.getElementById('templateCategory');
             select.innerHTML = '';
             data.categories.forEach(cat => {
@@ -1276,18 +1394,18 @@
             });
             
             if (templateId) {
-                // Edit mode
                 const template = data.templates.find(t => t.id === templateId);
                 title.textContent = 'Редактировать шаблон';
                 document.getElementById('templateName').value = template.name;
                 document.getElementById('templateCategory').value = template.category;
                 document.getElementById('templateText').value = template.text;
+                populateShortcutSelect(template.shortcut || '');
             } else {
-                // New template
                 title.textContent = 'Новый шаблон';
                 document.getElementById('templateName').value = '';
                 document.getElementById('templateCategory').value = data.currentCategory !== 'Все' ? data.currentCategory : data.categories[0];
                 document.getElementById('templateText').value = '';
+                populateShortcutSelect('');
             }
             
             modal.classList.add('active');
@@ -1302,13 +1420,18 @@
             const name = document.getElementById('templateName').value.trim();
             const category = document.getElementById('templateCategory').value;
             const text = document.getElementById('templateText').value.trim();
+            const shortcut = document.getElementById('templateShortcut').value;
             
             if (!name || !text) {
                 showToast('Заполните название и текст', 'error');
                 return;
             }
             
-            // Choose icon based on category
+            if (shortcut && isShortcutTaken(shortcut, editingTemplateId)) {
+                showToast('Эта горячая клавиша уже занята!', 'error');
+                return;
+            }
+            
             const categoryIcons = {
                 'Общее': '💬',
                 'Оплата': '💳',
@@ -1318,20 +1441,20 @@
             const icon = categoryIcons[category] || '📝';
             
             if (editingTemplateId) {
-                // Update existing
                 const template = data.templates.find(t => t.id === editingTemplateId);
                 template.name = name;
                 template.category = category;
                 template.text = text;
+                template.shortcut = shortcut || null;
                 template.updatedAt = Date.now();
                 template.icon = icon;
             } else {
-                // Create new
                 data.templates.push({
                     id: 't' + Date.now(),
                     name: name,
                     category: category,
                     text: text,
+                    shortcut: shortcut || null,
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                     icon: icon
@@ -1362,20 +1485,19 @@
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(template.text)
                     .then(() => {
-                        showToast('Текст скопирован!', 'success');
-                        // Track usage
+                        showToast(`Скопировано: ${template.name}`, 'success');
                         data.stats[templateId] = (data.stats[templateId] || 0) + 1;
                         saveData();
                     })
                     .catch(() => {
-                        fallbackCopy(template.text);
+                        fallbackCopy(template.text, template.name);
                     });
             } else {
-                fallbackCopy(template.text);
+                fallbackCopy(template.text, template.name);
             }
         }
         
-        function fallbackCopy(text) {
+        function fallbackCopy(text, name) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
@@ -1384,7 +1506,7 @@
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            showToast('Текст скопирован!', 'success');
+            showToast(`Скопировано: ${name}`, 'success');
         }
         
         function moveTemplateToCategory(templateId, newCategory) {
@@ -1429,11 +1551,9 @@
             }
             
             if (editingCategoryName) {
-                // Rename category
                 const index = data.categories.indexOf(editingCategoryName);
                 if (index !== -1) {
                     data.categories[index] = name;
-                    // Update templates
                     data.templates.forEach(t => {
                         if (t.category === editingCategoryName) {
                             t.category = name;
@@ -1441,7 +1561,6 @@
                     });
                 }
             } else {
-                // New category
                 if (data.categories.includes(name)) {
                     showToast('Такая категория уже существует', 'error');
                     return;
@@ -1519,8 +1638,9 @@
             const totalTemplates = data.templates.length;
             const totalCategories = data.categories.length;
             const totalCopies = Object.values(data.stats).reduce((a, b) => a + b, 0);
+            const withShortcuts = data.templates.filter(t => t.shortcut).length;
             
-            alert(`📊 Статистика:\n\n📝 Шаблонов: ${totalTemplates}\n📁 Категорий: ${totalCategories}\n📋 Копирований: ${totalCopies}`);
+            alert(`📊 Статистика:\n\n📝 Шаблонов: ${totalTemplates}\n📁 Категорий: ${totalCategories}\n⌨️ С горячими клавишами: ${withShortcuts}\n📋 Копирований: ${totalCopies}`);
         }
         
         function exportData() {
@@ -1580,22 +1700,43 @@
             renderTemplates(e.target.value);
         });
         
-        // Close modals on backdrop click
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
+        document.getElementById('templateShortcut').addEventListener('change', updateShortcutPreview);
         
-        // Close on Escape
+        // Global keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Ignore if typing in input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            // Build shortcut string
+            const parts = [];
+            if (e.ctrlKey) parts.push('Ctrl');
+            if (e.altKey) parts.push('Alt');
+            if (e.shiftKey) parts.push('Shift');
+            if (e.key.length === 1) {
+                parts.push(e.key.toUpperCase());
+            } else if (e.key >= '1' && e.key <= '9') {
+                parts.push(e.key);
+            }
+            
+            const shortcut = parts.join('+');
+            
+            // Find template with this shortcut
+            if (shortcut && (e.altKey || e.ctrlKey)) {
+                const template = data.templates.find(t => t.shortcut === shortcut);
+                if (template) {
+                    e.preventDefault();
+                    copyTemplate(template.id);
+                }
+            }
+            
+            // Escape to close modals
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             }
             
-            // Ctrl+Enter to save in modal
+            // Ctrl+Enter to save
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 if (document.getElementById('templateModal').classList.contains('active')) {
                     saveTemplate();
@@ -1606,11 +1747,28 @@
             }
         });
         
+        // Close modals on backdrop click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+        
         // ============ INITIALIZATION ============
         generateStars();
         loadData();
         renderCategories();
         renderTemplates();
+        
+        // Show available shortcuts hint
+        console.log('🔥 Горячие клавиши:');
+        data.templates.forEach(t => {
+            if (t.shortcut) {
+                console.log(`  ${t.shortcut} → ${t.name}`);
+            }
+        });
     </script>
 </body>
 </html>
